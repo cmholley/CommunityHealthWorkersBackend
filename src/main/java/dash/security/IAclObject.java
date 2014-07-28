@@ -1,8 +1,6 @@
 package dash.security;
 
-import java.io.Serializable;
-
-public interface IAclObject extends Serializable {
+public interface IAclObject {
 
 	public Long getId();
 }
