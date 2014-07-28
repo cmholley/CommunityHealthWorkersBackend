@@ -3,6 +3,8 @@ package dash.service;
 import java.util.List;
 
 
+
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import dash.errorhandling.AppException;
@@ -41,6 +43,14 @@ public interface GroupService {
 	public List<Group> getGroups(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
 
+	@PostFilter("hasPermission(filterObject, 'MEMBER')")
+	public List<Group> getGroupsByMembership(String orderByInsertionDate,
+			Integer numberDaysToLookBack) throws AppException;
+	
+	@PostFilter("hasPermission(filterObject, 'Manager')")
+	public List<Group> getGroupsByManager(String orderByInsertionDate,
+			Integer numberDaysToLookBack) throws AppException;
+	
 	/**
 	 * Returns a group given its id
 	 *
@@ -48,6 +58,8 @@ public interface GroupService {
 	 * @return
 	 * @throws AppException
 	 */
+	
+	
 	
 	public Group getGroupById(Long id) throws AppException;
 

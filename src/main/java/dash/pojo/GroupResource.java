@@ -74,6 +74,30 @@ public class GroupResource {
 				orderByInsertionDate, numberDaysToLookBack);
 		return groups;
 	}
+	
+	@GET
+	@Path("byMembership")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<Group> getGroupsByMembership(
+			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+					throws IOException,	AppException {
+		List<Group> groups = groupService.getGroupsByMembership(
+				orderByInsertionDate, numberDaysToLookBack);
+		return groups;
+	}
+	
+	@GET
+	@Path("byManager")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<Group> getGroupsByManager(
+			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+					throws IOException,	AppException {
+		List<Group> groups = groupService.getGroupsByManager(
+				orderByInsertionDate, numberDaysToLookBack);
+		return groups;
+	}
 
 	@GET
 	@Path("{id}")

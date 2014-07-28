@@ -1,5 +1,6 @@
 package dash.security;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 
 		acl.insertAce(acl.getEntries().size(), permission, recipient,
 				true);
+		mutableAclService.updateAcl(acl);
 		return true;
 	}
 
@@ -141,6 +143,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 		acl.insertAce(acl.getEntries().size(), permission, new PrincipalSid(
 				getUsername()),
 				true);
+		mutableAclService.updateAcl(acl);
 		return true;
 	}
 
@@ -153,7 +156,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 			e.printStackTrace();
 			return false;
 		}
-
+		
 		return true;
 	}
 
@@ -199,7 +202,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 					+ ((IAclObject) object).getId()
 					+ " ACL permissions for recipient " + recipient);
 		}
-
+		
 		return true;
 
 	}
@@ -242,7 +245,40 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 		return true;
 
 	}
+	
+	public boolean hasPermission(T object, Permission permission, Sid recipient)
+	{
+		
+		MutableAcl acl;
+		ObjectIdentity oid;
 
+		try {
+			oid = new ObjectIdentityImpl(object.getClass(),
+					((IAclObject) object).getId());
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			acl = (MutableAcl) mutableAclService.readAclById(oid);
+		} catch (NotFoundException nfe) {
+			nfe.printStackTrace();
+			return false;
+		}
+		try{
+		acl.isGranted(Arrays.asList(permission) , Arrays.asList(recipient), false);
+		}catch (Exception e){return false;}
+		return true;
+
+	}
+
+	/*
+	public boolean hasPermission(T object, Permission permission)
+	{
+		return true;
+	}
+	*/
+	
 	// Gets the username of the current "logged in" user
 	protected String getUsername() {
 		Authentication auth = SecurityContextHolder.getContext()
@@ -254,5 +290,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 			return auth.getPrincipal().toString();
 		}
 	}
+	
+	
 
 }

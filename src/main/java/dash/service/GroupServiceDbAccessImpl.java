@@ -9,7 +9,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,6 +107,20 @@ GroupService {
 		List<GroupEntity> groups = groupDao.getGroups(orderByInsertionDate);
 
 		return getGroupsFromEntities(groups);
+	}
+	
+	@Override
+	public List<Group> getGroupsByMembership(String orderByInsertionDate,
+	Integer numberDaysToLookBack) throws AppException {
+	
+		return getGroups(orderByInsertionDate, numberDaysToLookBack);
+	}
+	
+	@Override
+	public List<Group> getGroupsByManager(String orderByInsertionDate,
+	Integer numberDaysToLookBack) throws AppException {
+	
+		return getGroups(orderByInsertionDate, numberDaysToLookBack);
 	}
 
 	private boolean isOrderByInsertionDateParameterValid(
@@ -263,30 +276,48 @@ GroupService {
 	 * ACL related methods
 	 */
 	// Adds an additional manager to the group
+	@Override
+	@Transactional
 	public void addManager(User user, Group group){
 		
 		aclController.createAce(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-			
+		if(aclController.hasPermission(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
+				aclController.deleteACE(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 		
 	}
 	
 	//Removes all managers and sets new manager to user
+	@Override
+	@Transactional
 	public void resetManager(User user, Group group){
 		aclController.clearPermission(group, CustomPermission.MANAGER);
 		aclController.createAce(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
+		if(aclController.hasPermission(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
+			aclController.deleteACE(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
+	
 	}
 	
 	//Removes a single manager from a group
+	@Override
+	@Transactional
 	public void deleteManager(User user, Group group){
 		aclController.deleteACE(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-	}
-	
-	//Adds a member to the group
-	public void addMember(User user, Group group){
 		aclController.createAce(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 	}
 	
+	//Adds a member to the group
+	@Override
+	@Transactional
+	public void addMember(User user, Group group){
+		aclController.createAce(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
+		if(aclController.hasPermission(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername())))	
+			aclController.deleteACE(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
+	
+	}
+	
 	//Removes single member
+	@Override
+	@Transactional
 	public void deleteMember(User user, Group group){
 		aclController.deleteACE(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 	}
