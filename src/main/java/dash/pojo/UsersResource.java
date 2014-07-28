@@ -230,6 +230,21 @@ public class UsersResource {
 				.entity("The user you specified has been successfully updated")
 				.build();
 	}
+	
+	@POST
+	@Path("{id}/password")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.TEXT_HTML })
+	public Response passwordReset(@PathParam("id") Long id, User user)
+			throws AppException {
+		user.setId(id);
+		userService.resetPassword(user);
+		return Response
+				.status(Response.Status.OK)
+				// 200
+				.entity("The user you specified has been successfully updated")
+				.build();
+	}
 
 	/*
 	 * *********************************** DELETE ***********************************

@@ -34,6 +34,8 @@
             </bean>
         </property>
     </bean>    
+    
+    
          	
 	<bean id="userDao" class="dash.dao.UserDaoJPA2Impl"/>	
     <bean id="userService" class="dash.service.UserServiceDbAccessImpl" />	

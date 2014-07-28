@@ -62,6 +62,9 @@ public interface UserService {
 
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updatePartiallyUser(User user) throws AppException;
+	
+	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_ADMIN')")
+	public void resetPassword(User user) throws AppException;
 
 	/*
 	 * ******************** Delete related methods **********************
