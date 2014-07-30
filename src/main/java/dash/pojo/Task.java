@@ -39,7 +39,7 @@ public class Task implements  IAclObject{
 	private String description;
 	
 	@XmlElement(name="time")
-	private Time time;
+	private Date time;
 	
 	@XmlElement(name="duration")
 	private int duration;
@@ -59,7 +59,7 @@ public class Task implements  IAclObject{
 	
 	
 	
-	public Task(Long id, Long group_id, String name, String description, Time time,
+	public Task(Long id, Long group_id, String name, String description, Date time,
 			int duration, String location, Date creation_timestamp,
 			int finished, Long badge_id) {
 		super();
@@ -142,11 +142,11 @@ public class Task implements  IAclObject{
 		this.description = description;
 	}
 
-	public Time getTime() {
+	public Date getTime() {
 		return time;
 	}
 
-	public void setTime(Time time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 

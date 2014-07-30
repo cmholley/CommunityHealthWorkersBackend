@@ -49,7 +49,7 @@ public class TaskEntity implements Serializable{
 	private String description;
 	
 	@Column(name="time")
-	private Time time;
+	private Date time;
 	
 	@Column(name="duration")
 	private int duration;
@@ -71,7 +71,7 @@ public class TaskEntity implements Serializable{
 
 	
 	
-	public TaskEntity(Long id, Long group_id, String name, String description, Time time,
+	public TaskEntity(Long id, Long group_id, String name, String description, Date time,
 			int duration, String location, Date creation_timestamp,
 			int finished, Long badge_id) {
 		super();
@@ -145,13 +145,13 @@ public class TaskEntity implements Serializable{
 
 
 
-	public Time getTime() {
+	public Date getTime() {
 		return time;
 	}
 
 
 
-	public void setTime(Time time) {
+	public void setTime(Date time) {
 		this.time = time;
 	}
 
