@@ -316,6 +316,7 @@ GroupService {
 	}
 	
 	//Removes single member
+	//TODO: Force deletion of permissions from tasks owned by group
 	@Override
 	@Transactional
 	public void deleteMember(User user, Group group){

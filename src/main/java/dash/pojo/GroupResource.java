@@ -19,8 +19,10 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import dash.errorhandling.AppException;
 import dash.service.GroupService;
+import dash.service.UserService;
 
 @Component
 @Path("/groups")
@@ -28,6 +30,9 @@ public class GroupResource {
 
 	@Autowired
 	private GroupService groupService;
+	
+	@Autowired 
+	private UserService userService;
 	
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -179,9 +184,8 @@ public class GroupResource {
 	@PUT
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response resetManager(@PathParam("user") String username, @PathParam("id") Long id){
-		User user=new User();
-		user.setUsername(username);
+	public Response resetManager(@PathParam("user") Long userId, @PathParam("id") Long id) throws AppException{
+		User user= userService.getUserById(userId);
 		Group group= new Group();
 		group.setId(id);
 		groupService.resetManager(user, group);
@@ -192,9 +196,8 @@ public class GroupResource {
 	@POST
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response addManager(@PathParam("user") String username, @PathParam("id") Long id){
-		User user=new User();
-		user.setUsername(username);
+	public Response addManager(@PathParam("user") Long userId, @PathParam("id") Long id) throws AppException{
+		User user= userService.getUserById(userId);
 		Group group= new Group();
 		group.setId(id);
 		groupService.addManager(user, group);
@@ -205,9 +208,8 @@ public class GroupResource {
 	@DELETE
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response deleteManager(@PathParam("user") String username, @PathParam("id") Long id){
-		User user=new User();
-		user.setUsername(username);
+	public Response deleteManager(@PathParam("user") Long userId, @PathParam("id") Long id) throws AppException{
+		User user= userService.getUserById(userId);
 		Group group= new Group();
 		group.setId(id);
 		groupService.deleteManager(user, group);
@@ -218,9 +220,8 @@ public class GroupResource {
 	@POST
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response addMember(@PathParam("user") String username, @PathParam("id") Long id){
-		User user=new User();
-		user.setUsername(username);
+	public Response addMember(@PathParam("user") Long userId, @PathParam("id") Long id) throws AppException{
+		User user= userService.getUserById(userId);
 		Group group= new Group();
 		group.setId(id);
 		groupService.addMember(user, group);
@@ -231,9 +232,8 @@ public class GroupResource {
 	@DELETE
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response deleteMember(@PathParam("user") String username, @PathParam("id") Long id){
-		User user=new User();
-		user.setUsername(username);
+	public Response deleteMember(@PathParam("user") Long userId, @PathParam("id") Long id) throws AppException{
+		User user= userService.getUserById(userId);
 		Group group= new Group();
 		group.setId(id);
 		groupService.deleteMember(user, group);

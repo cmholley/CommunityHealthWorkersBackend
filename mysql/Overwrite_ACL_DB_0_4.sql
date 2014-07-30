@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2014 at 05:09 PM
+-- Generation Time: Jul 30, 2014 at 09:25 PM
 -- Server version: 5.6.16-log
 -- PHP Version: 5.5.9
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `acl_entry` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_4` (`acl_object_identity`,`ace_order`),
   KEY `foreign_fk_5` (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=156 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=169 ;
 
 --
 -- Dumping data for table `acl_entry`
@@ -82,10 +82,11 @@ INSERT INTO `acl_entry` (`id`, `acl_object_identity`, `ace_order`, `sid`, `mask`
 (147, 60, 0, 41, 1, 1, 0, 0),
 (148, 60, 1, 41, 2, 1, 0, 0),
 (149, 60, 2, 41, 8, 1, 0, 0),
-(152, 59, 0, 35, 128, 1, 0, 0),
-(153, 59, 1, 41, 64, 1, 0, 0),
-(154, 59, 2, 41, 64, 1, 0, 0),
-(155, 61, 0, 41, 128, 1, 0, 0);
+(164, 59, 0, 35, 128, 1, 0, 0),
+(165, 59, 1, 41, 64, 1, 0, 0),
+(166, 59, 2, 41, 64, 1, 0, 0),
+(167, 59, 3, 41, 64, 1, 0, 0),
+(168, 63, 0, 41, 128, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -105,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   UNIQUE KEY `unique_uk_3` (`object_id_class`,`object_id_identity`),
   KEY `foreign_fk_1` (`parent_object`),
   KEY `foreign_fk_3` (`owner_sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=62 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=64 ;
 
 --
 -- Dumping data for table `acl_object_identity`
@@ -115,12 +116,10 @@ INSERT INTO `acl_object_identity` (`id`, `object_id_class`, `object_id_identity`
 (10, 4, 1, NULL, 4, 0),
 (45, 4, 7, NULL, 4, 1),
 (46, 4, 8, NULL, 35, 1),
-(56, 7, 15, NULL, 35, 1),
 (57, 4, 12, NULL, 39, 1),
-(58, 4, 13, NULL, NULL, 1),
 (59, 7, 16, NULL, 35, 1),
 (60, 4, 14, NULL, 41, 1),
-(61, 8, 4, NULL, 41, 1);
+(63, 8, 5, NULL, 41, 1);
 
 -- --------------------------------------------------------
 
@@ -186,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `group_data` (
   `creation_timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 --
 -- Dumping data for table `group_data`
@@ -237,21 +236,21 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   `time` datetime DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
   `location` varchar(128) DEFAULT NULL,
-  `creation_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `creation_timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `badge_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group_id` (`group_id`),
   KEY `name` (`name`),
   KEY `creation_timestamp` (`creation_timestamp`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- Dumping data for table `tasks`
 --
 
 INSERT INTO `tasks` (`id`, `group_id`, `name`, `description`, `time`, `duration`, `location`, `creation_timestamp`, `finished`, `badge_id`) VALUES
-(4, 16, 'TestTask2', NULL, NULL, 0, NULL, '2014-07-30 15:03:09', 0, NULL);
+(5, 16, 'TestTask', NULL, NULL, 0, NULL, '2014-07-30 14:13:42', 0, NULL);
 
 -- --------------------------------------------------------
 

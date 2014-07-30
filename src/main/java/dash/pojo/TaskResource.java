@@ -99,6 +99,8 @@ public class TaskResource {
 		List<Task> tasks = taskService.getTasksByGroup(group);
 		return tasks;
 	}
+	
+	
 
 	@GET
 	@Path("{id}")
@@ -337,7 +339,7 @@ public class TaskResource {
 		user.setUsername(username);
 		Group group = new Group();
 		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
+		if(task.getId() == null)
 		{
 			return Response
 					.status(Response.Status.BAD_REQUEST)

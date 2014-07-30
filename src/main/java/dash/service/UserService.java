@@ -51,7 +51,7 @@ public interface UserService {
 	 * @return
 	 * @throws AppException
 	 */
-	@PostAuthorize("hasPermission(returnObject, 'READ') or hasRole('ROLE_ADMIN')")
+	
 	public User getUserById(Long id) throws AppException;
 
 	/*
