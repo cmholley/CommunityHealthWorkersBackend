@@ -37,6 +37,7 @@ public class Group implements  IAclObject{
 	@XmlElement(name = "creation_timestamp")
 	private Date creation_timestamp;
 	
+	@Override
 	public Long getId() {
 		return id;
 	}
