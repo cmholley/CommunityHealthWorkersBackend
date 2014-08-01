@@ -39,6 +39,9 @@ public class PostEntity implements Serializable{
 	@Column(name="id")
 	private Long id;
 	
+	@Column(name="group_id")
+	private Long group_id;
+	
 	@Column(name="content")
 	private String content;
 	
@@ -62,13 +65,12 @@ public class PostEntity implements Serializable{
 	
 	public PostEntity(){}
 
-	
-
-	public PostEntity(Long id, String content, String image,
+	public PostEntity(Long id, Long group_id, String content, String image,
 			Date creation_timestamp, Date latest_activity_timestamp,
 			int like_count, Long task_link_id) {
 		super();
 		this.id = id;
+		this.group_id = group_id;
 		this.content = content;
 		this.image = image;
 		this.creation_timestamp = creation_timestamp;
@@ -76,7 +78,6 @@ public class PostEntity implements Serializable{
 		this.like_count = like_count;
 		this.task_link_id = task_link_id;
 	}
-
 
 
 	public PostEntity(Post post){
@@ -101,6 +102,18 @@ public class PostEntity implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+
+
+	public Long getGroup_id() {
+		return group_id;
+	}
+
+
+
+	public void setGroup_id(Long group_id) {
+		this.group_id = group_id;
 	}
 
 

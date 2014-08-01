@@ -39,7 +39,8 @@ public class PostDaoJPA2Impl implements PostDao {
 	@Override
 	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex, Group group) {
 		
-		String qlString = "SELECT u FROM PostEntity u where u.group_id = ?1 LIMIT ?2,?3";
+		String qlString = "SELECT u FROM PostEntity u where u.group_id = ?1"
+				+ "ORDER BY u.creation_timestamp DESC LIMIT ?2,?3";
 		TypedQuery<PostEntity> query = entityManager.createQuery(qlString,
 				PostEntity.class);
 		query.setParameter(1, group.getId() );

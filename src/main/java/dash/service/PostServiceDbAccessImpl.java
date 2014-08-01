@@ -53,7 +53,9 @@ PostService {
 		long postId = postDao.createPost(new PostEntity(post));
 		post.setId(postId);
 		aclController.createACL(post);
-		aclController.createAce(post, CustomPermission.MANAGER);
+		aclController.createAce(post, CustomPermission.READ);
+		aclController.createAce(post, CustomPermission.WRITE);
+		aclController.createAce(post, CustomPermission.DELETE);
 		return postId;
 	}
 
@@ -73,8 +75,8 @@ PostService {
 	@Override
 	public List<Post> getPosts(int numberOfPosts, Long startIndex) throws AppException{
 		
-		List<PostEntity> groupPosts = postDao.getPosts(numberOfPosts, startIndex);
-		return getPostsFromEntities(groupPosts);
+		List<PostEntity> posts = postDao.getPosts(numberOfPosts, startIndex);
+		return getPostsFromEntities(posts);
 	}
 	
 	@Override
@@ -253,59 +255,5 @@ PostService {
 
 	}
 
-	/**
-	 * ACL related methods
-	 */
-	// Adds an additional manager to the post
-	@Override
-	@Transactional
-	public void addManager(User user, Post post){
-		
-		aclController.createAce(post, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-		if(aclController.hasPermission(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
-				aclController.deleteACE(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-		
-	}
-	
-	//Removes all managers and sets new manager to user
-	@Override
-	@Transactional
-	public void resetManager(User user, Post post){
-		aclController.clearPermission(post, CustomPermission.MANAGER);
-		aclController.createAce(post, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-		if(aclController.hasPermission(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
-			aclController.deleteACE(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-	
-	}
-	
-	//Removes a single manager from a post
-	@Override
-	@Transactional
-	public void deleteManager(User user, Post post){
-		aclController.deleteACE(post, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-		aclController.createAce(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-	}
-	
-	//Adds a member to the post
-	@Override
-	@Transactional
-	public void addMember(User user, Post post){
-		aclController.createAce(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-		if(aclController.hasPermission(post, CustomPermission.MANAGER, new PrincipalSid(user.getUsername())))	
-			aclController.deleteACE(post, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-	
-	}
-	
-	//Removes single member
-	@Override
-	@Transactional
-	public void deleteMember(User user, Post post){
-		aclController.deleteACE(post, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-	}
-
-
-
-
-	
 
 }

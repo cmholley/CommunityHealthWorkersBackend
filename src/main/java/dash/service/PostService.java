@@ -64,10 +64,10 @@ public interface PostService {
 	/*
 	 * ******************** Update related methods **********************
 	 */
-	@PreAuthorize("hasPermission(#post, 'MANAGER') or hasRole('ROLE_MODERATOR')")
+	@PreAuthorize("hasPermission(#post, 'write') or hasRole('ROLE_MODERATOR')")
 	public void updateFullyPost(Post post) throws AppException;
 
-	@PreAuthorize("hasPermission(#post, 'MANAGER') or hasRole('ROLE_MODERATOR')")
+	@PreAuthorize("hasPermission(#post, 'write') or hasRole('ROLE_MODERATOR')")
 	public void updatePartiallyPost(Post post) throws AppException;
 
 	/*
@@ -75,7 +75,7 @@ public interface PostService {
 	 */
 
 
-	@PreAuthorize("hasPermission(#post, 'MANAGER') or hasRole('ROLE_MODERATOR')")
+	@PreAuthorize("hasPermission(#post, 'delete') or hasRole('ROLE_MODERATOR')")
 	public void deletePost(Post post);
 	/** removes all posts
 	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
@@ -84,30 +84,7 @@ public interface PostService {
 	@PreAuthorize("hasRole('ROLE_ROOT')")
 	public void deletePosts();
 	
-	/**
-	 * ACL related methods
-	 */
-	// Adds an additional manager to the post
-	@PreAuthorize("hasPermission(#post, 'MANAGER') or hasRole('ROLE_ADMIN')")
-	public void addManager(User user, Post post);
 	
-	//Removes all managers and sets new manager to user
-	@PreAuthorize("hasRole('ROLE_MODERATOR')")
-	public void resetManager(User user, Post post);
-	
-	//Removes a single manager from a post
-	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR')")
-	public void deleteManager(User user, Post post);
-	
-	//Adds a member to the post
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public void addMember(User user, Post post);
-	
-	//Removes memeber
-	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR') or hasPermission(#post, 'MANAGER')")
-	public void deleteMember(User user, Post post);
-	
-
 	/*
 	 * ******************** Helper methods **********************
 	 */

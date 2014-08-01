@@ -17,6 +17,7 @@ import dash.security.IAclObject;
 
 
 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
@@ -28,6 +29,9 @@ public class Post implements  IAclObject{
 	
 	@XmlElement(name="id")
 	private Long id;
+	
+	@XmlElement(name="group_id")
+	private Long group_id;
 	
 	@XmlElement(name="content")
 	private String content;
@@ -48,11 +52,12 @@ public class Post implements  IAclObject{
 	@XmlElement(name="task_link_id")
 	private Long task_link_id;
 
-
-	public Post(Long id, String content, String image, Date creation_timestamp,
-			Date latest_activity_timestamp, int like_count, Long task_link_id) {
+	public Post(Long id, Long group_id, String content, String image,
+			Date creation_timestamp, Date latest_activity_timestamp,
+			int like_count, Long task_link_id) {
 		super();
 		this.id = id;
+		this.group_id = group_id;
 		this.content = content;
 		this.image = image;
 		this.creation_timestamp = creation_timestamp;
@@ -81,6 +86,14 @@ public class Post implements  IAclObject{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getGroup_id() {
+		return group_id;
+	}
+
+	public void setGroup_id(Long group_id) {
+		this.group_id = group_id;
 	}
 
 	public String getContent() {
