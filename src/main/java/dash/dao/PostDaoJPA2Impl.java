@@ -26,12 +26,12 @@ public class PostDaoJPA2Impl implements PostDao {
 		String sqlString = null;
 		
 		sqlString = "SELECT u FROM PostEntity u"
-				+ " ORDER BY u.creation_timestamp DESC LIMIT ?1,?2";
+				+ " ORDER BY u.latest_activity_timestamp DESC";
 	
 		TypedQuery<PostEntity> query = entityManager.createQuery(sqlString,
 				PostEntity.class);
-		query.setParameter(1, startIndex);
-		query.setParameter(2, numberOfPosts);
+		query.setFirstResult(startIndex.intValue());
+		query.setMaxResults(numberOfPosts);
 
 		return query.getResultList();
 	}
@@ -39,14 +39,14 @@ public class PostDaoJPA2Impl implements PostDao {
 	@Override
 	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex, Group group) {
 		
-		String qlString = "SELECT u FROM PostEntity u where u.group_id = ?1"
-				+ "ORDER BY u.creation_timestamp DESC LIMIT ?2,?3";
+		String qlString = "SELECT u FROM PostEntity u where u.group_id = ?1 "
+				+ "ORDER BY u.latest_activity_timestamp DESC";
 		TypedQuery<PostEntity> query = entityManager.createQuery(qlString,
 				PostEntity.class);
+		query.setFirstResult(startIndex.intValue());
+		query.setMaxResults(numberOfPosts);
 		query.setParameter(1, group.getId() );
-		query.setParameter(2, startIndex);
-		query.setParameter(3, numberOfPosts);
-
+		
 		return query.getResultList();
 	}
 
@@ -67,43 +67,45 @@ public class PostDaoJPA2Impl implements PostDao {
 
 
 	@Override
-	public void deletePostById(Post groupPojo) {
+	public void deletePostById(Post postPojo) {
 
-		PostEntity group = entityManager
-				.find(PostEntity.class, groupPojo.getId());
-		entityManager.remove(group);
+		PostEntity post = entityManager
+				.find(PostEntity.class, postPojo.getId());
+		entityManager.remove(post);
 
 	}
 	
 
 	@Override
-	public Long createPost(PostEntity group) {
+	public Long createPost(PostEntity post) {
 
-		group.setCreation_timestamp(new Date());
-		entityManager.persist(group);
-		entityManager.flush();// force insert to receive the id of the group
+		post.setCreation_timestamp(new Date());
+		post.setLatest_activity_timestamp(new Date());
+		entityManager.persist(post);
+		entityManager.flush();// force insert to receive the id of the post
 
-		// Give admin over new group to the new group
+		// Give admin over new post to the new post
 
-		return group.getId();
+		return post.getId();
 	}
 
 	@Override
-	public void updatePost(PostEntity group) {
+	public void updatePost(PostEntity post) {
 		//TODO think about partial update and full update
-		entityManager.merge(group);
+		post.setLatest_activity_timestamp(new Date());
+		entityManager.merge(post);
 	}
 
 	@Override
 	public void deletePosts() {
-		Query query = entityManager.createNativeQuery("TRUNCATE TABLE group");
+		Query query = entityManager.createNativeQuery("TRUNCATE TABLE post");
 		query.executeUpdate();
 	}
 
 	@Override
 	public int getNumberOfPosts() {
 		try {
-			String qlString = "SELECT COUNT(*) FROM group";
+			String qlString = "SELECT COUNT(*) FROM post";
 			TypedQuery<PostEntity> query = entityManager.createQuery(qlString,
 					PostEntity.class);
 
