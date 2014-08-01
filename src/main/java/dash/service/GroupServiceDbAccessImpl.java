@@ -19,6 +19,7 @@ import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
 import dash.pojo.Group;
+import dash.pojo.Task;
 import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
@@ -35,6 +36,13 @@ GroupService {
 
 	@Autowired
 	private GenericAclController<Group> aclController;
+	
+	@Autowired
+	private GenericAclController<Task> taskAclController;
+	
+	@Autowired
+	private TaskService taskService;
+	
 
 	
 
@@ -79,7 +87,7 @@ GroupService {
 	@Override
 	@Transactional
 	public void createGroups(List<Group> groups) throws AppException {
-		for (Group group : groups) {
+		for (Group  group : groups) {
 			//createGroup(group);
 		}
 	}
@@ -278,7 +286,7 @@ GroupService {
 	// Adds an additional manager to the group
 	@Override
 	@Transactional
-	public void addManager(User user, Group group){
+	public void addManager(User user, Group group)throws AppException{
 		
 		aclController.createAce(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
 		if(aclController.hasPermission(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
@@ -289,7 +297,7 @@ GroupService {
 	//Removes all managers and sets new manager to user
 	@Override
 	@Transactional
-	public void resetManager(User user, Group group){
+	public void resetManager(User user, Group group)throws AppException{
 		aclController.clearPermission(group, CustomPermission.MANAGER);
 		aclController.createAce(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
 		if(aclController.hasPermission(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
@@ -300,7 +308,7 @@ GroupService {
 	//Removes a single manager from a group
 	@Override
 	@Transactional
-	public void deleteManager(User user, Group group){
+	public void deleteManager(User user, Group group)throws AppException{
 		aclController.deleteACE(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
 		aclController.createAce(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 	}
@@ -308,7 +316,7 @@ GroupService {
 	//Adds a member to the group
 	@Override
 	@Transactional
-	public void addMember(User user, Group group){
+	public void addMember(User user, Group group)throws AppException{
 		aclController.createAce(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 		if(aclController.hasPermission(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername())))	
 			aclController.deleteACE(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
@@ -316,10 +324,14 @@ GroupService {
 	}
 	
 	//Removes single member
-	//TODO: Force deletion of permissions from tasks owned by group
 	@Override
 	@Transactional
-	public void deleteMember(User user, Group group){
+	public void deleteMember(User user, Group group) throws AppException{
+		List<Task> tasks=taskService.getTasksByGroup(group);
+		for(int i=0; i<tasks.size();i++){
+			taskAclController.deleteACE(tasks.get(i), CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
+			taskAclController.deleteACE(tasks.get(i), CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
+		}
 		aclController.deleteACE(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 	}
 

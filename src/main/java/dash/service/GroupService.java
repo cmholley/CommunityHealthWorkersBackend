@@ -91,23 +91,23 @@ public interface GroupService {
 	 */
 	// Adds an additional manager to the group
 	@PreAuthorize("hasPermission(#group, 'MANAGER') or hasRole('ROLE_ADMIN')")
-	public void addManager(User user, Group group);
+	public void addManager(User user, Group group)throws AppException;
 	
 	//Removes all managers and sets new manager to user
 	@PreAuthorize("hasRole('ROLE_MODERATOR')")
-	public void resetManager(User user, Group group);
+	public void resetManager(User user, Group group)throws AppException;
 	
 	//Removes a single manager from a group
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR')")
-	public void deleteManager(User user, Group group);
+	public void deleteManager(User user, Group group)throws AppException;
 	
 	//Adds a member to the group
 	@PreAuthorize("hasRole('ROLE_USER')")
-	public void addMember(User user, Group group);
+	public void addMember(User user, Group group) throws AppException;
 	
 	//Removes memeber
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR') or hasPermission(#group, 'MANAGER')")
-	public void deleteMember(User user, Group group);
+	public void deleteMember(User user, Group group) throws AppException;
 	
 
 	/*

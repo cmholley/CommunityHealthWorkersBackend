@@ -85,6 +85,35 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 				+ object);
 		return true;
 	}
+	
+	//Creates an acl with a parent acl object.  Allows for situations where a permission on
+	//another object, grants access to the object being created.
+	public boolean createACL(T object, MutableAcl parentAcl) {
+		MutableAcl acl;
+		ObjectIdentity oid;
+
+		try {
+			oid = new ObjectIdentityImpl(object.getClass(),
+					((IAclObject) object).getId());
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		try {
+			acl = (MutableAcl) mutableAclService.readAclById(oid);
+		} catch (NotFoundException nfe) {
+			acl = mutableAclService.createAcl(oid);
+		}
+
+		acl.setOwner(new PrincipalSid(getUsername()));
+		acl.setParent(parentAcl);
+		mutableAclService.updateAcl(acl);
+
+		logger.debug("Added Acl for Sid " + getUsername() + " contact "
+				+ object);
+		return true;
+	}
 
 	/*
 	 * create ace will generate new permission entries in the acl_entries table
@@ -110,6 +139,14 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 		} catch (NotFoundException nfe) {
 			nfe.printStackTrace();
 			return false;
+		}
+		
+		List<AccessControlEntry> entries = acl.getEntries();
+		for (int i = 0; i < entries.size(); i++) {
+			if (entries.get(i).getSid().equals(recipient)
+					&& entries.get(i).getPermission().equals(permission)) {
+				acl.deleteAce(i);
+			}
 		}
 
 		acl.insertAce(acl.getEntries().size(), permission, recipient,
@@ -270,12 +307,18 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 
 	}
 
-	/*
-	public boolean hasPermission(T object, Permission permission)
-	{
-		return true;
+	public MutableAcl getAcl(T object){
+		MutableAcl acl;
+		ObjectIdentity oid;
+
+	
+		oid = new ObjectIdentityImpl(object.getClass(),
+				((IAclObject) object).getId());
+		acl = (MutableAcl) mutableAclService.readAclById(oid);
+		
+		return acl;
+		
 	}
-	*/
 	
 	// Gets the username of the current "logged in" user
 	protected String getUsername() {

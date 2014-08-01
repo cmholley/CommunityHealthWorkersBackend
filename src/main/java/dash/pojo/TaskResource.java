@@ -19,8 +19,10 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import dash.errorhandling.AppException;
 import dash.service.TaskService;
+import dash.service.UserService;
 import dash.pojo.Group;
 
 @Component
@@ -29,6 +31,9 @@ public class TaskResource {
 
 	@Autowired
 	private TaskService taskService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -237,10 +242,10 @@ public class TaskResource {
 	@PUT
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response resetManager(@PathParam("user") String username, @PathParam("id") Long id)
-	throws AppException{
-		User user=new User();
-		user.setUsername(username);
+	public Response resetManager(@PathParam("user") Long userId, @PathParam("id") Long id)
+	throws AppException
+	{
+		User user= userService.getUserById(userId);
 		Group group = new Group();
 		Task task = taskService.verifyTaskExistenceById(id);
 		if(task.getGroup_id() == null)
@@ -263,11 +268,10 @@ public class TaskResource {
 	@POST
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response addManager(@PathParam("user") String username, @PathParam("id") Long id)
-		throws AppException{
-		
-		User user=new User();
-		user.setUsername(username);
+	public Response addManager(@PathParam("user") Long userId, @PathParam("id") Long id)
+	throws AppException
+	{
+		User user= userService.getUserById(userId);
 		Group group = new Group();
 		Task task = taskService.verifyTaskExistenceById(id);
 		if(task.getGroup_id() == null)
@@ -290,11 +294,10 @@ public class TaskResource {
 	@DELETE
 	@Path("{id}/MANAGER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response deleteManager(@PathParam("user") String username, @PathParam("id") Long id)
+	public Response deleteManager(@PathParam("user") Long userId, @PathParam("id") Long id)
 	throws AppException
-	{		
-		User user=new User();
-		user.setUsername(username);
+	{
+		User user= userService.getUserById(userId);
 		Group group = new Group();
 		Task task = taskService.verifyTaskExistenceById(id);
 		if(task.getGroup_id() == null)
@@ -317,13 +320,11 @@ public class TaskResource {
 	@POST
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response addMember(@PathParam("user") String username, @PathParam("id") Long id)
+	public Response addMember(@PathParam("user") Long userId, @PathParam("id") Long id)
 	throws AppException
 	{
-		User user=new User();
-		user.setUsername(username);
-		Task task= new Task();
-		task.setId(id);
+		User user= userService.getUserById(userId);
+		Task task= taskService.verifyTaskExistenceById(id);
 		taskService.addMember(user, task);
 		return Response.status(Response.Status.OK).entity("MEMBER ADDED: User "+user.getUsername()
 				+" set as MEMBER for task "+task.getId()).build();
@@ -332,11 +333,10 @@ public class TaskResource {
 	@DELETE
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
-	public Response deleteMember(@PathParam("user") String username, @PathParam("id") Long id)
-	throws AppException
+	public Response deleteMember(@PathParam("user") Long userId, @PathParam("id") Long id)
+		throws AppException
 	{
-		User user=new User();
-		user.setUsername(username);
+		User user= userService.getUserById(userId);
 		Group group = new Group();
 		Task task = taskService.verifyTaskExistenceById(id);
 		if(task.getId() == null)
