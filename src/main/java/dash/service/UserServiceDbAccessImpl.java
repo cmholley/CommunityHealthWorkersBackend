@@ -118,6 +118,13 @@ UserService {
 
 		return getUsersFromEntities(users);
 	}
+	
+	@Override
+	public List<User> getMyUser(String orderByInsertionDate,
+			Integer numberDaysToLookBack) throws AppException {
+		return getUsers(orderByInsertionDate, numberDaysToLookBack);
+		
+	}
 
 	private boolean isOrderByInsertionDateParameterValid(
 			String orderByInsertionDate) {
@@ -330,6 +337,8 @@ UserService {
 		mutableAclService.deleteAcl(oid, false);
 
 	}
+
+	
 
 
 

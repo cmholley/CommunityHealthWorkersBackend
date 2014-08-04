@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2014 at 09:25 PM
+-- Generation Time: Aug 04, 2014 at 09:16 PM
 -- Server version: 5.6.16-log
 -- PHP Version: 5.5.9
 
@@ -33,14 +33,20 @@ CREATE TABLE IF NOT EXISTS `acl_class` (
   `class` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_2` (`class`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
+--
+-- Truncate table before insert `acl_class`
+--
+
+TRUNCATE TABLE `acl_class`;
 --
 -- Dumping data for table `acl_class`
 --
 
 INSERT INTO `acl_class` (`id`, `class`) VALUES
 (7, 'dash.pojo.Group'),
+(9, 'dash.pojo.Post'),
 (8, 'dash.pojo.Task'),
 (4, 'dash.pojo.User');
 
@@ -62,9 +68,15 @@ CREATE TABLE IF NOT EXISTS `acl_entry` (
   `audit_failure` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_4` (`acl_object_identity`,`ace_order`),
+  UNIQUE KEY `Permission` (`sid`,`acl_object_identity`,`mask`) COMMENT 'Prevents duplicate permissions',
   KEY `foreign_fk_5` (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=169 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=215 ;
 
+--
+-- Truncate table before insert `acl_entry`
+--
+
+TRUNCATE TABLE `acl_entry`;
 --
 -- Dumping data for table `acl_entry`
 --
@@ -82,11 +94,17 @@ INSERT INTO `acl_entry` (`id`, `acl_object_identity`, `ace_order`, `sid`, `mask`
 (147, 60, 0, 41, 1, 1, 0, 0),
 (148, 60, 1, 41, 2, 1, 0, 0),
 (149, 60, 2, 41, 8, 1, 0, 0),
-(164, 59, 0, 35, 128, 1, 0, 0),
-(165, 59, 1, 41, 64, 1, 0, 0),
-(166, 59, 2, 41, 64, 1, 0, 0),
-(167, 59, 3, 41, 64, 1, 0, 0),
-(168, 63, 0, 41, 128, 1, 0, 0);
+(195, 64, 0, 42, 1, 1, 0, 0),
+(196, 64, 1, 42, 2, 1, 0, 0),
+(197, 64, 2, 42, 8, 1, 0, 0),
+(198, 59, 0, 35, 128, 1, 0, 0),
+(199, 59, 1, 41, 64, 1, 0, 0),
+(200, 59, 2, 42, 64, 1, 0, 0),
+(207, 63, 0, 41, 128, 1, 0, 0),
+(208, 63, 1, 42, 64, 1, 0, 0),
+(212, 65, 0, 42, 1, 1, 0, 0),
+(213, 65, 1, 42, 2, 1, 0, 0),
+(214, 65, 2, 42, 8, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -106,8 +124,13 @@ CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   UNIQUE KEY `unique_uk_3` (`object_id_class`,`object_id_identity`),
   KEY `foreign_fk_1` (`parent_object`),
   KEY `foreign_fk_3` (`owner_sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=64 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=66 ;
 
+--
+-- Truncate table before insert `acl_object_identity`
+--
+
+TRUNCATE TABLE `acl_object_identity`;
 --
 -- Dumping data for table `acl_object_identity`
 --
@@ -119,7 +142,9 @@ INSERT INTO `acl_object_identity` (`id`, `object_id_class`, `object_id_identity`
 (57, 4, 12, NULL, 39, 1),
 (59, 7, 16, NULL, 35, 1),
 (60, 4, 14, NULL, 41, 1),
-(63, 8, 5, NULL, 41, 1);
+(63, 8, 5, NULL, 41, 1),
+(64, 4, 15, NULL, 42, 1),
+(65, 9, 1, NULL, 42, 1);
 
 -- --------------------------------------------------------
 
@@ -134,8 +159,13 @@ CREATE TABLE IF NOT EXISTS `acl_sid` (
   `sid` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_1` (`sid`,`principal`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=43 ;
 
+--
+-- Truncate table before insert `acl_sid`
+--
+
+TRUNCATE TABLE `acl_sid`;
 --
 -- Dumping data for table `acl_sid`
 --
@@ -144,6 +174,7 @@ INSERT INTO `acl_sid` (`id`, `principal`, `sid`) VALUES
 (39, 1, 'Admin'),
 (4, 1, 'Root'),
 (41, 1, 'TaskManagerDemo'),
+(42, 1, 'taskUser'),
 (35, 1, 'User'),
 (34, 1, 'Visitor');
 
@@ -161,6 +192,11 @@ CREATE TABLE IF NOT EXISTS `authorities` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Truncate table before insert `authorities`
+--
+
+TRUNCATE TABLE `authorities`;
+--
 -- Dumping data for table `authorities`
 --
 
@@ -168,6 +204,7 @@ INSERT INTO `authorities` (`username`, `authority`) VALUES
 ('Admin', 'ROLE_ADMIN'),
 ('Root', 'ROLE_ROOT'),
 ('TaskManagerDemo', 'ROLE_USER'),
+('taskUser', 'ROLE_USER'),
 ('User', 'ROLE_USER'),
 ('Visitor', 'ROLE_VISITOR');
 
@@ -187,6 +224,11 @@ CREATE TABLE IF NOT EXISTS `group_data` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
+--
+-- Truncate table before insert `group_data`
+--
+
+TRUNCATE TABLE `group_data`;
 --
 -- Dumping data for table `group_data`
 --
@@ -208,8 +250,13 @@ CREATE TABLE IF NOT EXISTS `login` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
+--
+-- Truncate table before insert `login`
+--
+
+TRUNCATE TABLE `login`;
 --
 -- Dumping data for table `login`
 --
@@ -219,7 +266,41 @@ INSERT INTO `login` (`username`, `password`, `enabled`, `id`) VALUES
 ('Visitor', 'test', 1, 7),
 ('User', 'test', 1, 8),
 ('Admin', 'test', 1, 12),
-('TaskManagerDemo', 'test', 1, 14);
+('TaskManagerDemo', 'test', 1, 14),
+('taskUser', 'test', 1, 15);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `post`
+--
+
+DROP TABLE IF EXISTS `post`;
+CREATE TABLE IF NOT EXISTS `post` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `content` varchar(1024) NOT NULL,
+  `image` varchar(256) DEFAULT NULL,
+  `creation_timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `latest_activity_timestamp` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `like_count` int(11) NOT NULL DEFAULT '0',
+  `task_link_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `group_id` (`group_id`),
+  KEY `latest_activity_timestamp` (`latest_activity_timestamp`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+--
+-- Truncate table before insert `post`
+--
+
+TRUNCATE TABLE `post`;
+--
+-- Dumping data for table `post`
+--
+
+INSERT INTO `post` (`id`, `group_id`, `content`, `image`, `creation_timestamp`, `latest_activity_timestamp`, `like_count`, `task_link_id`) VALUES
+(1, 16, 'This is test my post', NULL, '2014-08-01 15:53:19', '2014-08-01 15:53:19', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -245,6 +326,11 @@ CREATE TABLE IF NOT EXISTS `tasks` (
   KEY `creation_timestamp` (`creation_timestamp`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
+--
+-- Truncate table before insert `tasks`
+--
+
+TRUNCATE TABLE `tasks`;
 --
 -- Dumping data for table `tasks`
 --
@@ -272,8 +358,13 @@ CREATE TABLE IF NOT EXISTS `user_data` (
   `insertion_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
+--
+-- Truncate table before insert `user_data`
+--
+
+TRUNCATE TABLE `user_data`;
 --
 -- Dumping data for table `user_data`
 --
@@ -283,7 +374,8 @@ INSERT INTO `user_data` (`username`, `id`, `firstName`, `lastName`, `city`, `hom
 ('Visitor', 7, 'Client', 'Device', NULL, NULL, NULL, NULL, NULL, '2014-07-18 12:12:54'),
 ('User', 8, 'Demo', 'ofUser', NULL, NULL, NULL, NULL, NULL, '2014-07-18 12:14:26'),
 ('Admin', 12, 'Demo', 'ofAdmin', NULL, NULL, NULL, NULL, NULL, '2014-07-24 10:38:34'),
-('TaskManagerDemo', 14, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2014-07-29 16:17:31');
+('TaskManagerDemo', 14, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2014-07-29 16:17:31'),
+('taskUser', 15, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2014-08-01 12:23:02');
 
 --
 -- Constraints for dumped tables
@@ -322,6 +414,12 @@ ALTER TABLE `authorities`
 ALTER TABLE `login`
   ADD CONSTRAINT `login->user_data (id)` FOREIGN KEY (`id`) REFERENCES `user_data` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `login->user_data (username)` FOREIGN KEY (`username`) REFERENCES `user_data` (`username`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `post`
+--
+ALTER TABLE `post`
+  ADD CONSTRAINT `post->group_data.id` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tasks`

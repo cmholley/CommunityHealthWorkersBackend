@@ -40,10 +40,13 @@ public interface UserService {
 	 * @return list with users corresponding to search criteria
 	 * @throws AppException
 	 */
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
+	
 	public List<User> getUsers(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
-
+	
+	@PostFilter("hasPermission(filterObject, 'READ')")
+	public List<User> getMyUser(String orderByInsertionDate,
+			Integer numberDaysToLookBack) throws AppException;
 	/**
 	 * Returns a user given its id
 	 *

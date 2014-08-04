@@ -20,7 +20,7 @@ public interface PostService {
 	 *
 	 *Create a new post and set the current user as owner and manager.
 	 */
-	@PreAuthorize("hasPermission(#group, 'member')")
+	@PreAuthorize("hasPermission(#group, 'member') or hasPermisssion(#group, 'manager')")
 	public Long createPost(Post post, Group group) throws AppException;
 
 	/*

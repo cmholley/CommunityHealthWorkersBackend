@@ -150,6 +150,18 @@ public class UsersResource {
 				orderByInsertionDate, numberDaysToLookBack);
 		return users;
 	}
+	
+	@GET
+	@Path("myUser")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<User> getMyUser(
+			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+					throws IOException,	AppException {
+		List<User> users = userService.getMyUser(
+				orderByInsertionDate, numberDaysToLookBack);
+		return users;
+	}
 
 	@GET
 	@Path("{id}")
