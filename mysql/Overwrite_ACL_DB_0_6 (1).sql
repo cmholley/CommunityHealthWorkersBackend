@@ -3,11 +3,10 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 04, 2014 at 09:16 PM
+-- Generation Time: Aug 07, 2014 at 07:56 PM
 -- Server version: 5.6.16-log
 -- PHP Version: 5.5.9
 
-SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -70,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `acl_entry` (
   UNIQUE KEY `unique_uk_4` (`acl_object_identity`,`ace_order`),
   UNIQUE KEY `Permission` (`sid`,`acl_object_identity`,`mask`) COMMENT 'Prevents duplicate permissions',
   KEY `foreign_fk_5` (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=215 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=221 ;
 
 --
 -- Truncate table before insert `acl_entry`
@@ -104,7 +103,10 @@ INSERT INTO `acl_entry` (`id`, `acl_object_identity`, `ace_order`, `sid`, `mask`
 (208, 63, 1, 42, 64, 1, 0, 0),
 (212, 65, 0, 42, 1, 1, 0, 0),
 (213, 65, 1, 42, 2, 1, 0, 0),
-(214, 65, 2, 42, 8, 1, 0, 0);
+(214, 65, 2, 42, 8, 1, 0, 0),
+(218, 66, 0, 42, 1, 1, 0, 0),
+(219, 66, 1, 42, 2, 1, 0, 0),
+(220, 66, 2, 42, 8, 1, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -124,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   UNIQUE KEY `unique_uk_3` (`object_id_class`,`object_id_identity`),
   KEY `foreign_fk_1` (`parent_object`),
   KEY `foreign_fk_3` (`owner_sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=66 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=67 ;
 
 --
 -- Truncate table before insert `acl_object_identity`
@@ -144,7 +146,8 @@ INSERT INTO `acl_object_identity` (`id`, `object_id_class`, `object_id_identity`
 (60, 4, 14, NULL, 41, 1),
 (63, 8, 5, NULL, 41, 1),
 (64, 4, 15, NULL, 42, 1),
-(65, 9, 1, NULL, 42, 1);
+(65, 9, 1, NULL, 42, 1),
+(66, 9, 2, NULL, 42, 1);
 
 -- --------------------------------------------------------
 
@@ -278,6 +281,7 @@ INSERT INTO `login` (`username`, `password`, `enabled`, `id`) VALUES
 DROP TABLE IF EXISTS `post`;
 CREATE TABLE IF NOT EXISTS `post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `content` varchar(1024) NOT NULL,
   `image` varchar(256) DEFAULT NULL,
@@ -287,8 +291,9 @@ CREATE TABLE IF NOT EXISTS `post` (
   `task_link_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `group_id` (`group_id`),
-  KEY `latest_activity_timestamp` (`latest_activity_timestamp`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  KEY `latest_activity_timestamp` (`latest_activity_timestamp`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 --
 -- Truncate table before insert `post`
@@ -299,8 +304,8 @@ TRUNCATE TABLE `post`;
 -- Dumping data for table `post`
 --
 
-INSERT INTO `post` (`id`, `group_id`, `content`, `image`, `creation_timestamp`, `latest_activity_timestamp`, `like_count`, `task_link_id`) VALUES
-(1, 16, 'This is test my post', NULL, '2014-08-01 15:53:19', '2014-08-01 15:53:19', 0, NULL);
+INSERT INTO `post` (`id`, `user_id`, `group_id`, `content`, `image`, `creation_timestamp`, `latest_activity_timestamp`, `like_count`, `task_link_id`) VALUES
+(2, 15, 16, 'This is test my post', NULL, '2014-08-07 12:53:49', '2014-08-07 12:53:49', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -419,6 +424,7 @@ ALTER TABLE `login`
 -- Constraints for table `post`
 --
 ALTER TABLE `post`
+  ADD CONSTRAINT `post->user_data.id` FOREIGN KEY (`user_id`) REFERENCES `user_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `post->group_data.id` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
@@ -426,7 +432,6 @@ ALTER TABLE `post`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `task->group.id()` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

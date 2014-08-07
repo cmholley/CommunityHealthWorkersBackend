@@ -48,7 +48,7 @@ PostService {
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
-	public Long createPost(Post post, Group group) throws AppException {
+	public Long createPost(Post post,  Group group) throws AppException {
 
 		long postId = postDao.createPost(new PostEntity(post));
 		post.setId(postId);
