@@ -299,7 +299,7 @@ TaskService {
 	@Override
 	@Transactional
 	public void addManager(User user, Task task, Group group) throws AppException{
-		if(isGroupManager(user, group) && isGroupMember(user, group)){
+		if(isGroupManager(user, group) || isGroupMember(user, group)){
 			aclController.createAce(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
 			if(aclController.hasPermission(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
 				aclController.deleteACE(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
@@ -319,7 +319,7 @@ TaskService {
 	public void resetManager(User user, Task task) throws AppException{
 		Group group= new Group();
 		group.setId(task.getGroup_id());
-		if(isGroupManager(user, group) && isGroupMember(user, group)){
+		if(isGroupManager(user, group) || isGroupMember(user, group)){
 			aclController.clearPermission(task, CustomPermission.MANAGER);
 			aclController.createAce(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
 			if(aclController.hasPermission(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
@@ -348,7 +348,7 @@ TaskService {
 	public void addMember(User user, Task task) throws AppException{
 		Group group= new Group();
 		group.setId(task.getGroup_id());
-		if(!isGroupManager(user, group) && isGroupMember(user, group)){
+		if(isGroupManager(user, group) || isGroupMember(user, group)){
 			aclController.createAce(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 			if(aclController.hasPermission(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername())))	
 				aclController.deleteACE(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
@@ -356,8 +356,8 @@ TaskService {
 			throw new AppException(Response.Status.CONFLICT.getStatusCode(),
 					409,
 					"Cannot add user as member because user is already manager of the group"
-					+ "or they are not a member of the group to which this task belongs.",
-					"Users with group manager status may not have task specific permissions for that groups tasks"
+					+ " or they are not a member of the group to which this task belongs.",
+					" Users with group manager status may not have task specific permissions for that groups tasks"
 							+ task.getId(), AppConstants.DASH_POST_URL);
 		}
 		
