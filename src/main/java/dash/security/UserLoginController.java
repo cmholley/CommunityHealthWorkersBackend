@@ -76,7 +76,7 @@ public class UserLoginController  extends JdbcDaoSupport {
 	
 	protected class ResetPassword extends SqlUpdate {
 		protected ResetPassword(DataSource ds) {
-			super(ds, "UPDATE `volunteermanagementapp`.`login` SET `password` = ? WHERE `login`.`id` = ?;");
+			super(ds, "UPDATE `login` SET `password` = ? WHERE `login`.`id` = ? ;");
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			declareParameter(new SqlParameter(Types.INTEGER));
 			compile();
