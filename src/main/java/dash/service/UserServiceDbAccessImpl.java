@@ -225,6 +225,7 @@ UserService {
 	@Transactional
 	public void deleteUser(User user) {
 
+		
 		userDao.deleteUserById(user);
 
 	}
@@ -322,7 +323,7 @@ UserService {
 		acl.insertAce(acl.getEntries().size(), BasePermission.DELETE,
 				recipient, true);
 		mutableAclService.updateAcl(acl);
-		acl.setOwner(recipient);
+		acl.setOwner(new PrincipalSid("Root"));
 		mutableAclService.updateAcl(acl);
 
 		logger.debug("Added permission " + "Read, Write, Delete" + " for Sid "
@@ -332,7 +333,7 @@ UserService {
 	}
 
 	public void deleteACL(User user) {
-
+		
 		ObjectIdentity oid = new ObjectIdentityImpl(User.class, user.getId());
 		mutableAclService.deleteAcl(oid, false);
 

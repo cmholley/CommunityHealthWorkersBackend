@@ -47,7 +47,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 			acl = mutableAclService.createAcl(oid);
 		}
 
-		acl.setOwner(recipient);
+		acl.setOwner(new PrincipalSid("Root"));
 		mutableAclService.updateAcl(acl);
 
 		logger.debug("Added Acl for Sid " + recipient + " contact " + object);
@@ -55,7 +55,7 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 	}
 
 	/*
-	 * Creates new Acl with current user as owner
+	 * Creates new Acl with Root as owner
 	 * 
 	 * Params object- the object to generate an ACL for
 	 */
@@ -78,10 +78,10 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 			acl = mutableAclService.createAcl(oid);
 		}
 
-		acl.setOwner(new PrincipalSid(getUsername()));
+		acl.setOwner(new PrincipalSid("Root"));
 		mutableAclService.updateAcl(acl);
 
-		logger.debug("Added Acl for Sid " + getUsername() + " contact "
+		logger.debug("Added Acl for Sid " + getUsername() + " object "
 				+ object);
 		return true;
 	}
@@ -179,6 +179,52 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 				getUsername()),
 				true);
 		mutableAclService.updateAcl(acl);
+		return true;
+	}
+	
+	public boolean setOwner(T object, Sid recipient){
+		MutableAcl acl;
+		ObjectIdentity oid;
+
+		try {
+			oid = new ObjectIdentityImpl(object.getClass(),
+					((IAclObject) object).getId());
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			acl = (MutableAcl) mutableAclService.readAclById(oid);
+		} catch (NotFoundException nfe) {
+			nfe.printStackTrace();
+			return false;
+		}
+		
+		acl.setOwner(recipient);
+		
+		return true;
+	}
+	
+	public boolean setOwner(T object){
+		MutableAcl acl;
+		ObjectIdentity oid;
+
+		try {
+			oid = new ObjectIdentityImpl(object.getClass(),
+					((IAclObject) object).getId());
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			acl = (MutableAcl) mutableAclService.readAclById(oid);
+		} catch (NotFoundException nfe) {
+			nfe.printStackTrace();
+			return false;
+		}
+		
+		acl.setOwner(new PrincipalSid(getUsername()));
+		
 		return true;
 	}
 

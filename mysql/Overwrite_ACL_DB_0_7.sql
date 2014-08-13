@@ -3,10 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 07, 2014 at 07:56 PM
+-- Generation Time: Aug 13, 2014 at 10:46 PM
 -- Server version: 5.6.16-log
 -- PHP Version: 5.5.9
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -69,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `acl_entry` (
   UNIQUE KEY `unique_uk_4` (`acl_object_identity`,`ace_order`),
   UNIQUE KEY `Permission` (`sid`,`acl_object_identity`,`mask`) COMMENT 'Prevents duplicate permissions',
   KEY `foreign_fk_5` (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=221 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=228 ;
 
 --
 -- Truncate table before insert `acl_entry`
@@ -120,13 +121,13 @@ CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   `object_id_class` bigint(20) NOT NULL,
   `object_id_identity` bigint(20) NOT NULL,
   `parent_object` bigint(20) DEFAULT NULL,
-  `owner_sid` bigint(20) DEFAULT NULL,
+  `owner_sid` bigint(20) NOT NULL DEFAULT '4',
   `entries_inheriting` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_3` (`object_id_class`,`object_id_identity`),
   KEY `foreign_fk_1` (`parent_object`),
   KEY `foreign_fk_3` (`owner_sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=67 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
 
 --
 -- Truncate table before insert `acl_object_identity`
@@ -140,14 +141,14 @@ TRUNCATE TABLE `acl_object_identity`;
 INSERT INTO `acl_object_identity` (`id`, `object_id_class`, `object_id_identity`, `parent_object`, `owner_sid`, `entries_inheriting`) VALUES
 (10, 4, 1, NULL, 4, 0),
 (45, 4, 7, NULL, 4, 1),
-(46, 4, 8, NULL, 35, 1),
-(57, 4, 12, NULL, 39, 1),
-(59, 7, 16, NULL, 35, 1),
-(60, 4, 14, NULL, 41, 1),
-(63, 8, 5, NULL, 41, 1),
-(64, 4, 15, NULL, 42, 1),
-(65, 9, 1, NULL, 42, 1),
-(66, 9, 2, NULL, 42, 1);
+(46, 4, 8, NULL, 4, 1),
+(57, 4, 12, NULL, 4, 1),
+(59, 7, 16, NULL, 4, 1),
+(60, 4, 14, NULL, 4, 1),
+(63, 8, 5, NULL, 4, 1),
+(64, 4, 15, NULL, 4, 1),
+(65, 9, 1, NULL, 4, 1),
+(66, 9, 2, NULL, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -162,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `acl_sid` (
   `sid` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_uk_1` (`sid`,`principal`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=43 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=44 ;
 
 --
 -- Truncate table before insert `acl_sid`
@@ -237,7 +238,8 @@ TRUNCATE TABLE `group_data`;
 --
 
 INSERT INTO `group_data` (`id`, `name`, `description`, `creation_timestamp`) VALUES
-(16, 'TestGroup', 'This is the description, ''User'' is the group manager', '2014-07-29 16:14:53');
+(16, 'TestGroup', 'This is the description, ''User'' is the group manager', '2014-07-29 16:14:53'),
+(17, 'Breaking', NULL, '2014-08-12 15:34:08');
 
 -- --------------------------------------------------------
 
@@ -253,7 +255,7 @@ CREATE TABLE IF NOT EXISTS `login` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
 --
 -- Truncate table before insert `login`
@@ -363,7 +365,7 @@ CREATE TABLE IF NOT EXISTS `user_data` (
   `insertion_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
 --
 -- Truncate table before insert `user_data`
@@ -397,9 +399,9 @@ ALTER TABLE `acl_entry`
 -- Constraints for table `acl_object_identity`
 --
 ALTER TABLE `acl_object_identity`
-  ADD CONSTRAINT `foreign_fk_1` FOREIGN KEY (`parent_object`) REFERENCES `acl_object_identity` (`id`),
-  ADD CONSTRAINT `foreign_fk_2` FOREIGN KEY (`object_id_class`) REFERENCES `acl_class` (`id`),
-  ADD CONSTRAINT `foreign_fk_3` FOREIGN KEY (`owner_sid`) REFERENCES `acl_sid` (`id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `object_id->acl_sid.id` FOREIGN KEY (`owner_sid`) REFERENCES `acl_sid` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `object_id->acl_class.id` FOREIGN KEY (`object_id_class`) REFERENCES `acl_class` (`id`),
+  ADD CONSTRAINT `object_id->object_id.id` FOREIGN KEY (`parent_object`) REFERENCES `acl_object_identity` (`id`);
 
 --
 -- Constraints for table `acl_sid`
@@ -424,14 +426,15 @@ ALTER TABLE `login`
 -- Constraints for table `post`
 --
 ALTER TABLE `post`
-  ADD CONSTRAINT `post->user_data.id` FOREIGN KEY (`user_id`) REFERENCES `user_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `post->group_data.id` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `post->group_data.id` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `post->user_data.id` FOREIGN KEY (`user_id`) REFERENCES `user_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tasks`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `task->group.id()` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
