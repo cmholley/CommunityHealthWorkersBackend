@@ -3,10 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2014 at 07:20 PM
+-- Generation Time: Aug 15, 2014 at 08:41 PM
 -- Server version: 5.6.16
 -- PHP Version: 5.5.9
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -26,6 +27,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `acl_class`
 --
 
+DROP TABLE IF EXISTS `acl_class`;
 CREATE TABLE IF NOT EXISTS `acl_class` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `class` varchar(255) NOT NULL,
@@ -33,6 +35,11 @@ CREATE TABLE IF NOT EXISTS `acl_class` (
   UNIQUE KEY `unique_uk_2` (`class`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
+--
+-- Truncate table before insert `acl_class`
+--
+
+TRUNCATE TABLE `acl_class`;
 --
 -- Dumping data for table `acl_class`
 --
@@ -50,6 +57,7 @@ INSERT INTO `acl_class` (`id`, `class`) VALUES
 -- Table structure for table `acl_entry`
 --
 
+DROP TABLE IF EXISTS `acl_entry`;
 CREATE TABLE IF NOT EXISTS `acl_entry` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `acl_object_identity` bigint(20) NOT NULL,
@@ -65,6 +73,11 @@ CREATE TABLE IF NOT EXISTS `acl_entry` (
   KEY `foreign_fk_5` (`sid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=614 ;
 
+--
+-- Truncate table before insert `acl_entry`
+--
+
+TRUNCATE TABLE `acl_entry`;
 --
 -- Dumping data for table `acl_entry`
 --
@@ -274,6 +287,7 @@ INSERT INTO `acl_entry` (`id`, `acl_object_identity`, `ace_order`, `sid`, `mask`
 -- Table structure for table `acl_object_identity`
 --
 
+DROP TABLE IF EXISTS `acl_object_identity`;
 CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `object_id_class` bigint(20) NOT NULL,
@@ -287,6 +301,11 @@ CREATE TABLE IF NOT EXISTS `acl_object_identity` (
   KEY `foreign_fk_3` (`owner_sid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=138 ;
 
+--
+-- Truncate table before insert `acl_object_identity`
+--
+
+TRUNCATE TABLE `acl_object_identity`;
 --
 -- Dumping data for table `acl_object_identity`
 --
@@ -376,6 +395,7 @@ INSERT INTO `acl_object_identity` (`id`, `object_id_class`, `object_id_identity`
 -- Table structure for table `acl_sid`
 --
 
+DROP TABLE IF EXISTS `acl_sid`;
 CREATE TABLE IF NOT EXISTS `acl_sid` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `principal` tinyint(1) NOT NULL,
@@ -384,6 +404,11 @@ CREATE TABLE IF NOT EXISTS `acl_sid` (
   UNIQUE KEY `unique_uk_1` (`sid`,`principal`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=47 ;
 
+--
+-- Truncate table before insert `acl_sid`
+--
+
+TRUNCATE TABLE `acl_sid`;
 --
 -- Dumping data for table `acl_sid`
 --
@@ -403,12 +428,18 @@ INSERT INTO `acl_sid` (`id`, `principal`, `sid`) VALUES
 -- Table structure for table `authorities`
 --
 
+DROP TABLE IF EXISTS `authorities`;
 CREATE TABLE IF NOT EXISTS `authorities` (
   `username` varchar(50) NOT NULL,
   `authority` varchar(50) NOT NULL,
   UNIQUE KEY `ix_auth_username` (`username`,`authority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Truncate table before insert `authorities`
+--
+
+TRUNCATE TABLE `authorities`;
 --
 -- Dumping data for table `authorities`
 --
@@ -428,6 +459,7 @@ INSERT INTO `authorities` (`username`, `authority`) VALUES
 -- Table structure for table `group_data`
 --
 
+DROP TABLE IF EXISTS `group_data`;
 CREATE TABLE IF NOT EXISTS `group_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL,
@@ -437,6 +469,11 @@ CREATE TABLE IF NOT EXISTS `group_data` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 
+--
+-- Truncate table before insert `group_data`
+--
+
+TRUNCATE TABLE `group_data`;
 --
 -- Dumping data for table `group_data`
 --
@@ -453,6 +490,7 @@ INSERT INTO `group_data` (`id`, `name`, `description`, `creation_timestamp`) VAL
 -- Table structure for table `login`
 --
 
+DROP TABLE IF EXISTS `login`;
 CREATE TABLE IF NOT EXISTS `login` (
   `username` varchar(50) NOT NULL,
   `password` varchar(128) NOT NULL,
@@ -462,6 +500,11 @@ CREATE TABLE IF NOT EXISTS `login` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
+--
+-- Truncate table before insert `login`
+--
+
+TRUNCATE TABLE `login`;
 --
 -- Dumping data for table `login`
 --
@@ -481,6 +524,7 @@ INSERT INTO `login` (`username`, `password`, `enabled`, `id`) VALUES
 -- Table structure for table `message`
 --
 
+DROP TABLE IF EXISTS `message`;
 CREATE TABLE IF NOT EXISTS `message` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender_uid` int(11) NOT NULL,
@@ -491,11 +535,16 @@ CREATE TABLE IF NOT EXISTS `message` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=55 ;
 
 --
+-- Truncate table before insert `message`
+--
+
+TRUNCATE TABLE `message`;
+--
 -- Dumping data for table `message`
 --
 
 INSERT INTO `message` (`id`, `sender_uid`, `content`, `time`, `task_id`) VALUES
-(53, 19, 'This is a test message.', '2014-08-15 12:19:38', 9),
+(53, 19, 'HI', '2014-08-15 12:19:38', 9),
 (54, 19, 'Test message!', '2014-08-15 12:20:06', 5);
 
 -- --------------------------------------------------------
@@ -504,6 +553,7 @@ INSERT INTO `message` (`id`, `sender_uid`, `content`, `time`, `task_id`) VALUES
 -- Table structure for table `post`
 --
 
+DROP TABLE IF EXISTS `post`;
 CREATE TABLE IF NOT EXISTS `post` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
@@ -521,6 +571,11 @@ CREATE TABLE IF NOT EXISTS `post` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 --
+-- Truncate table before insert `post`
+--
+
+TRUNCATE TABLE `post`;
+--
 -- Dumping data for table `post`
 --
 
@@ -535,6 +590,7 @@ INSERT INTO `post` (`id`, `user_id`, `group_id`, `content`, `image`, `creation_t
 -- Table structure for table `tasks`
 --
 
+DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `group_id` int(11) NOT NULL,
@@ -553,6 +609,11 @@ CREATE TABLE IF NOT EXISTS `tasks` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
 
 --
+-- Truncate table before insert `tasks`
+--
+
+TRUNCATE TABLE `tasks`;
+--
 -- Dumping data for table `tasks`
 --
 
@@ -569,6 +630,7 @@ INSERT INTO `tasks` (`id`, `group_id`, `name`, `description`, `time`, `duration`
 -- Table structure for table `user_data`
 --
 
+DROP TABLE IF EXISTS `user_data`;
 CREATE TABLE IF NOT EXISTS `user_data` (
   `username` varchar(50) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -584,6 +646,11 @@ CREATE TABLE IF NOT EXISTS `user_data` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
+--
+-- Truncate table before insert `user_data`
+--
+
+TRUNCATE TABLE `user_data`;
 --
 -- Dumping data for table `user_data`
 --
@@ -647,6 +714,7 @@ ALTER TABLE `post`
 --
 ALTER TABLE `tasks`
   ADD CONSTRAINT `task->group.id()` FOREIGN KEY (`group_id`) REFERENCES `group_data` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
