@@ -8,5 +8,5 @@
 		validationQuery="SELECT 1" validationInterval="34" testOnBorrow="true"
 		removeAbandoned="true" removeAbandonedTimeout="233" username="root"
 		password="" driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://localhost:3306/VolunteerManagementApp?allowMultiQueries=true" />
+		url="jdbc:mysql://localhost:3306/volunteermanagementapp?allowMultiQueries=true" />
 </Context>

@@ -13,6 +13,7 @@ import dash.errorhandling.GenericExceptionMapper;
 import dash.errorhandling.NotFoundExceptionMapper;
 import dash.filters.LoggingResponseFilter;
 import dash.pojo.GroupResource;
+import dash.pojo.MessageResource;
 import dash.pojo.TaskResource;
 import dash.pojo.UserDetailedView;
 import dash.pojo.UsersResource;
@@ -35,6 +36,7 @@ public class DashApplicationSetup extends ResourceConfig {
 		register(GroupResource.class);
 		register(TaskResource.class);
 		register(PostResource.class);
+		register(MessageResource.class);
 
 		// register filters
 		register(RequestContextFilter.class);
