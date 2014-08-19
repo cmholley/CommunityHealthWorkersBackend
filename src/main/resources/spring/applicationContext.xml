@@ -53,6 +53,14 @@
     <bean id="postService" class="dash.service.PostServiceDbAccessImpl" />	
     <bean id="postResource" class="dash.pojo.PostResource" />
     
+    <bean id="commentDao" class="dash.dao.CommentDaoJPA2Impl"/>	
+    <bean id="commentService" class="dash.service.CommentServiceDbAccessImpl" />	
+    <bean id="commentResource" class="dash.pojo.CommentResource" />
+     
+    <bean id="messageDao" class="dash.dao.MessageDaoJPA2Impl"/>	
+    <bean id="messageService" class="dash.service.MessageServiceDbAccessImpl" />	
+    <bean id="messageResource" class="dash.pojo.MessageResource" />
+    
     <bean id="aclController" class="dash.security.GenericAclController"/>
     
 	<bean id="dashDS" class="org.springframework.jndi.JndiObjectFactoryBean" scope="singleton">
