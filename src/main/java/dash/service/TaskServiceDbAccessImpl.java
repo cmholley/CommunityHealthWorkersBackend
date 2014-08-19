@@ -203,13 +203,7 @@ TaskService {
 	@Transactional
 	public void updateFullyTask(Task task, Group group) throws AppException {
 		//do a validation to verify FULL update with PUT
-		if (isFullUpdate(task)) {
-			throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
-					400,
-					"Please specify all properties for Full UPDATE",
-					"required properties - name, description",
-					AppConstants.DASH_POST_URL);
-		}
+		
 
 		Task verifyTaskExistenceById = verifyTaskExistenceById(task
 				.getId());
@@ -221,20 +215,29 @@ TaskService {
 							+ task.getId(),
 							AppConstants.DASH_POST_URL);
 		}
+		copyAllProperties(verifyTaskExistenceById, task);
+		taskDao.updateTask(new TaskEntity(verifyTaskExistenceById));
 
-		taskDao.updateTask(new TaskEntity(task));
 	}
 
-	/**
-	 * Verifies the "completeness" of task resource sent over the wire
-	 *
-	 * @param Task
-	 * @return
-	 */
-	private boolean isFullUpdate(Task task) {
-		return task.getId() == null
-				|| task.getName() == null
-				|| task.getDescription() == null;
+	private void copyAllProperties(Task verifyTaskExistenceById, Task task) {
+
+		BeanUtilsBean withNull=new BeanUtilsBean();
+		try {
+			withNull.copyProperty(verifyTaskExistenceById, "description", task.getDescription());
+			withNull.copyProperty(verifyTaskExistenceById, "name", task.getName());
+			withNull.copyProperty(verifyTaskExistenceById, "time", task.getTime());
+			withNull.copyProperty(verifyTaskExistenceById, "duration", task.getDuration());
+			withNull.copyProperty(verifyTaskExistenceById, "location",  task.getLocation());
+			withNull.copyProperty(verifyTaskExistenceById, "badge_id",  task.getBadge_id());
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/********************* DELETE-related methods implementation ***********************/

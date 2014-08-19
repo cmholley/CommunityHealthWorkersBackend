@@ -45,9 +45,8 @@ public class TaskResource {
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new task has been created")
-				.header("Location",
-						"http://localhost:8080/tasks/"
-								+ String.valueOf(createTaskId)).build();
+				.header("Location", String.valueOf(createTaskId))
+				.header("ObjectId", String.valueOf(createTaskId)).build();
 	}
 	
 	@POST
@@ -70,6 +69,7 @@ public class TaskResource {
 		return tasks;
 	}
 	
+	//TODO: Modify so it filters out completed tasks by default
 	@GET
 	@Path("byMembership")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -82,6 +82,7 @@ public class TaskResource {
 		return tasks;
 	}
 	
+	//TODO: Modify so it filters out completed tasks by default
 	@GET
 	@Path("byManager")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -124,6 +125,8 @@ public class TaskResource {
 						.allow("OPTIONS").build();
 	}
 	
+	//TODO: We need to create some kind of way
+	
 	/************************ Update Methods *********************/
 	
 	
@@ -134,21 +137,10 @@ public class TaskResource {
 	@Produces({ MediaType.TEXT_HTML })
 	public Response putTaskById(@PathParam("id") Long id, Task task)
 			throws AppException {
-
+		task.setId(id);
 		Group group = new Group();
 		Task taskById = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Must have set group_id")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
-		}
+		
 		if (taskById == null) {
 			// resource not existent yet, and should be created under the
 			// specified URI
@@ -162,6 +154,8 @@ public class TaskResource {
 									+ String.valueOf(createTaskId)).build();
 		} else {
 			// resource is existent and a full update should occur
+			task.setGroup_id(taskById.getGroup_id());
+			group.setId(task.getGroup_id());
 			taskService.updateFullyTask(task, group);
 			return Response
 					.status(Response.Status.OK)
@@ -182,16 +176,16 @@ public class TaskResource {
 			throws AppException {
 		task.setId(id);
 		Group group = new Group();
-		if(task.getGroup_id() == null)
-		{
+		Task taskById = taskService.verifyTaskExistenceById(id);
+		
+		if (taskById == null) {
+			// resource not existent yet, and should be created under the
+			// specified URI
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Must have set group_id")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
+					.entity("Task Id not found")
+					.header("Location", String.valueOf(task)).build();
+		} else {
 			group.setId(task.getGroup_id());
 		}
 		taskService.updatePartiallyTask(task, group);
@@ -317,6 +311,7 @@ public class TaskResource {
 				+" removed as MANAGER for task "+task.getId()).build();
 	}
 
+	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
 	@POST
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
@@ -330,6 +325,7 @@ public class TaskResource {
 				+" set as MEMBER for task "+task.getId()).build();
 	}
 	
+	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
 	@DELETE
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})

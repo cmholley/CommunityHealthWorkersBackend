@@ -182,15 +182,9 @@ GroupService {
 	@Override
 	@Transactional
 	public void updateFullyGroup(Group group) throws AppException {
-		//do a validation to verify FULL update with PUT
-		if (isFullUpdate(group)) {
-			throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
-					400,
-					"Please specify all properties for Full UPDATE",
-					"required properties - name, description",
-					AppConstants.DASH_POST_URL);
-		}
-
+		
+		
+		
 		Group verifyGroupExistenceById = verifyGroupExistenceById(group
 				.getId());
 		if (verifyGroupExistenceById == null) {
@@ -201,20 +195,24 @@ GroupService {
 							+ group.getId(),
 							AppConstants.DASH_POST_URL);
 		}
-
+		copyAllProperties(verifyGroupExistenceById, group);
 		groupDao.updateGroup(new GroupEntity(group));
 	}
 
-	/**
-	 * Verifies the "completeness" of group resource sent over the wire
-	 *
-	 * @param Group
-	 * @return
-	 */
-	private boolean isFullUpdate(Group group) {
-		return group.getId() == null
-				|| group.getName() == null
-				|| group.getDescription() == null;
+	private void copyAllProperties(Group verifyGroupExistenceById, Group group) {
+
+		BeanUtilsBean withNull=new BeanUtilsBean();
+		try {
+			withNull.copyProperty(verifyGroupExistenceById, "name", group.getName());
+			withNull.copyProperty(verifyGroupExistenceById, "description", group.getDescription());
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/********************* DELETE-related methods implementation ***********************/

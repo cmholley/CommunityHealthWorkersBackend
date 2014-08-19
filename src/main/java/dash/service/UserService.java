@@ -71,14 +71,16 @@ public interface UserService {
 
 	/*
 	 * ******************** Delete related methods **********************
+	 * 
+	 * Deletions temporarily disabled while a deactivate method is worked on
 	 */
 
 
-	@PreAuthorize("hasPermission(#user, 'DELETE') or hasRole('ROLE_ADMIN')")
-	public void deleteUser(User user);
-	/** removes all users */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void deleteUsers();
+//	@PreAuthorize("hasPermission(#user, 'DELETE') or hasRole('ROLE_ADMIN')")
+//	public void deleteUser(User user);
+//	/** removes all users */
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
+//	public void deleteUsers();
 
 	/*
 	 * ******************** Helper methods **********************

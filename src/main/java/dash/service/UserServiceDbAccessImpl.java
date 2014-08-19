@@ -178,14 +178,7 @@ UserService {
 	@Transactional
 	public void updateFullyUser(User user) throws AppException {
 		//do a validation to verify FULL update with PUT
-		if (isFullUpdate(user)) {
-			throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
-					400,
-					"Please specify all properties for Full UPDATE",
-					"required properties - id, username, password, firstName, lastName, city, homePhone, cellPhone, email, picture",
-					AppConstants.DASH_POST_URL);
-		}
-
+		
 		User verifyUserExistenceById = verifyUserExistenceById(user
 				.getId());
 		if (verifyUserExistenceById == null) {
@@ -196,47 +189,63 @@ UserService {
 							+ user.getId(),
 							AppConstants.DASH_POST_URL);
 		}
-
-		userDao.updateUser(new UserEntity(user));
-	}
-
-	/**
-	 * Verifies the "completeness" of user resource sent over the wire
-	 *
-	 * @param User
-	 * @return
-	 */
-	private boolean isFullUpdate(User user) {
-		return user.getId() == null
-				|| user.getUsername() == null
-				|| user.getPassword() == null
-				|| user.getFirstName() == null
-				|| user.getLastName() == null
-				|| user.getCity() == null
-				|| user.getHomePhone() == null
-				|| user.getCellPhone() == null
-				|| user.getEmail() == null
-				|| user.getPicture() == null;
-	}
-
-	/********************* DELETE-related methods implementation ***********************/
-
-	@Override
-	@Transactional
-	public void deleteUser(User user) {
-
 		
-		userDao.deleteUserById(user);
+		copyAllProperties(verifyUserExistenceById, user);
+		userDao.updateUser(new UserEntity(verifyUserExistenceById));
+	}
+
+	
+	
+	/**
+	 * Allows for merging bean with object does not ignore null properties.
+	 * 
+	 * 
+	 */
+	private void copyAllProperties(User verifyUserExistenceById, User user) {
+
+		BeanUtilsBean withNull=new BeanUtilsBean();
+		try {
+			withNull.copyProperty(verifyUserExistenceById, "firstName", user.getFirstName());
+			withNull.copyProperty(verifyUserExistenceById, "lastName", user.getLastName());
+			withNull.copyProperty(verifyUserExistenceById, "city", user.getCity());
+			withNull.copyProperty(verifyUserExistenceById, "homePhone", user.getHomePhone());
+			withNull.copyProperty(verifyUserExistenceById, "cellPhone", user.getCellPhone());
+			withNull.copyProperty(verifyUserExistenceById, "email", user.getEmail());
+			withNull.copyProperty(verifyUserExistenceById, "picture", user.getPicture());
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
-	@Override
-	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Users to delete
-	public void deleteUsers() {
-		userDao.deleteUsers();
-	}
+	/********************* DELETE-related methods implementation **********************
+	 * 
+	 * Disabled
+	 * TODO: Implement deactivation of a user account
+	 * 
+	 * */
+
+//	@Override
+//	@Transactional
+//	public void deleteUser(User user) {
+//
+//		
+//		userDao.deleteUserById(user);
+//		deleteACL(user);
+//
+//	}
+//
+//	@Override
+//	@Transactional
+//	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
+//	// Users to delete
+//	public void deleteUsers() {
+//		userDao.deleteUsers();
+//	}
 
 	@Override
 	// TODO: This doesnt need to exist. It is the exact same thing as

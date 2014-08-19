@@ -42,9 +42,8 @@ public class GroupResource {
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new group has been created")
-				.header("Location",
-						"http://localhost:8080/groups/"
-								+ String.valueOf(createGroupId)).build();
+				.header("Location", String.valueOf(createGroupId))
+		         .header("ObjectId", String.valueOf(createGroupId)).build();
 	}
 	
 	@POST

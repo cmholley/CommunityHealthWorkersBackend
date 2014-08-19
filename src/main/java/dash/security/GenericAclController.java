@@ -88,32 +88,32 @@ public class GenericAclController<T> extends ApplicationObjectSupport {
 	
 	//Creates an acl with a parent acl object.  Allows for situations where a permission on
 	//another object, grants access to the object being created.
-	public boolean createACL(T object, MutableAcl parentAcl) {
-		MutableAcl acl;
-		ObjectIdentity oid;
-
-		try {
-			oid = new ObjectIdentityImpl(object.getClass(),
-					((IAclObject) object).getId());
-		} catch (ClassCastException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		try {
-			acl = (MutableAcl) mutableAclService.readAclById(oid);
-		} catch (NotFoundException nfe) {
-			acl = mutableAclService.createAcl(oid);
-		}
-
-		acl.setOwner(new PrincipalSid(getUsername()));
-		acl.setParent(parentAcl);
-		mutableAclService.updateAcl(acl);
-
-		logger.debug("Added Acl for Sid " + getUsername() + " contact "
-				+ object);
-		return true;
-	}
+//	public boolean createACL(T object, MutableAcl parentAcl) {
+//		MutableAcl acl;
+//		ObjectIdentity oid;
+//
+//		try {
+//			oid = new ObjectIdentityImpl(object.getClass(),
+//					((IAclObject) object).getId());
+//		} catch (ClassCastException e) {
+//			e.printStackTrace();
+//			return false;
+//		}
+//
+//		try {
+//			acl = (MutableAcl) mutableAclService.readAclById(oid);
+//		} catch (NotFoundException nfe) {
+//			acl = mutableAclService.createAcl(oid);
+//		}
+//
+//		acl.setOwner(new PrincipalSid(getUsername()));
+//		acl.setParent(parentAcl);
+//		mutableAclService.updateAcl(acl);
+//
+//		logger.debug("Added Acl for Sid " + getUsername() + " contact "
+//				+ object);
+//		return true;
+//	}
 
 	/*
 	 * create ace will generate new permission entries in the acl_entries table
