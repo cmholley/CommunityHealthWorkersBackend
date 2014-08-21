@@ -22,7 +22,7 @@ public class CommentDaoJPA2Impl implements CommentDao {
 		String sqlString = null;
 		
 		sqlString = "SELECT u FROM CommentEntity u"
-				+ " ORDER BY u.latest_activity_timestamp DESC";
+				+ " ORDER BY u.creation_timestamp DESC";
 	
 		TypedQuery<CommentEntity> query = entityManager.createQuery(sqlString,
 				CommentEntity.class);
@@ -35,7 +35,7 @@ public class CommentDaoJPA2Impl implements CommentDao {
 	public List<CommentEntity> getComments(int numberOfComments, Long startIndex, Post post) {
 		
 		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 "
-				+ "ORDER BY u.latest_activity_timestamp DESC";
+				+ "ORDER BY u.creation_timestamp DESC";
 		TypedQuery<CommentEntity> query = entityManager.createQuery(qlString,
 				CommentEntity.class);
 		query.setFirstResult(startIndex.intValue());
