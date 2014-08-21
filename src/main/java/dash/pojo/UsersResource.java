@@ -139,6 +139,10 @@ public class UsersResource {
 	 * @throws JsonGenerationException
 	 * @throws AppException
 	 */
+	
+	//TODO: Create a get method for app level roles
+	
+	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<User> getUsers(

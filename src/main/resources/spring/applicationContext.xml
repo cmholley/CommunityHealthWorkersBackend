@@ -61,6 +61,10 @@
     <bean id="messageService" class="dash.service.MessageServiceDbAccessImpl" />	
     <bean id="messageResource" class="dash.pojo.MessageResource" />
     
+    <bean id="hourDao" class="dash.dao.HourDaoJPA2Impl"/>	
+    <bean id="hourService" class="dash.service.HourServiceDbAccessImpl" />	
+    <bean id="hourResource" class="dash.pojo.HourResource" />
+    
     <bean id="aclController" class="dash.security.GenericAclController"/>
     
 	<bean id="dashDS" class="org.springframework.jndi.JndiObjectFactoryBean" scope="singleton">
