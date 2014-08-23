@@ -63,10 +63,9 @@ public class UsersResource {
 		Long createUserId = userService.createUser(user);
 		return Response.status(Response.Status.CREATED)
 				// 201
-				.entity("A new user has been created")
-				.header("Location",
-						"http://localhost:8080/services/users/"
-								+ String.valueOf(createUserId)).build();
+				.entity("A new user has been created at index")
+				.header("Location", String.valueOf(createUserId))
+		         .header("ObjectId", String.valueOf(createUserId)).build();
 	}
 
 	/**
@@ -140,6 +139,10 @@ public class UsersResource {
 	 * @throws JsonGenerationException
 	 * @throws AppException
 	 */
+	
+	//TODO: Create a get method for app level roles
+	
+	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<User> getUsers(
@@ -211,9 +214,7 @@ public class UsersResource {
 					.status(Response.Status.CREATED)
 					// 201
 					.entity("A new user has been created AT THE LOCATION you specified")
-					.header("Location",
-							"http://localhost:8080/services/users/"
-									+ String.valueOf(createUserId)).build();
+					.header("Location", String.valueOf(createUserId)).build();
 		} else {
 			// resource is existent and a full update should occur
 			userService.updateFullyUser(user);
@@ -221,9 +222,7 @@ public class UsersResource {
 					.status(Response.Status.OK)
 					// 200
 					.entity("The user you specified has been fully updated created AT THE LOCATION you specified")
-					.header("Location",
-							"http://localhost:8888/services/users/"
-									+ String.valueOf(id)).build();
+					.header("Location", String.valueOf(id)).build();
 		}
 	}
 
@@ -260,7 +259,9 @@ public class UsersResource {
 
 	/*
 	 * *********************************** DELETE ***********************************
-	 */
+	 * 
+	 * Currently disabled
+	 
 	@DELETE
 	@Path("{id}")
 	@Produces({ MediaType.TEXT_HTML })
@@ -281,7 +282,9 @@ public class UsersResource {
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("All users have been successfully removed").build();
 	}
-
+*/
+	
+	
 	public void setuserService(UserService userService) {
 		this.userService = userService;
 	}

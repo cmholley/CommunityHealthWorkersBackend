@@ -14,6 +14,7 @@ import dash.errorhandling.NotFoundExceptionMapper;
 import dash.filters.LoggingResponseFilter;
 import dash.pojo.CommentResource;
 import dash.pojo.GroupResource;
+import dash.pojo.HourResource;
 import dash.pojo.MessageResource;
 import dash.pojo.TaskResource;
 import dash.pojo.UserDetailedView;
@@ -39,6 +40,7 @@ public class DashApplicationSetup extends ResourceConfig {
 		register(PostResource.class);
 		register(CommentResource.class);
 		register(MessageResource.class);
+		register(HourResource.class);
 
 		// register filters
 		register(RequestContextFilter.class);

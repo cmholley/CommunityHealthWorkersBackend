@@ -10,9 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.apache.commons.beanutils.BeanUtils;
 
 import dash.pojo.Post;
@@ -39,10 +36,10 @@ public class PostEntity implements Serializable{
 	@Column(name="id")
 	private Long id;
 	
-	@Column(name="group_id")
+	@Column(name="group_id", updatable=false)
 	private Long group_id;
 	
-	@Column(name="user_id")
+	@Column(name="user_id", updatable=false)
 	private Long user_id;
 	
 	@Column(name="content")
@@ -52,7 +49,7 @@ public class PostEntity implements Serializable{
 	private String image;
 	
 	@GeneratedValue
-	@Column(name="creation_timestamp")
+	@Column(name="creation_timestamp", updatable=false)
 	private Date creation_timestamp;
 	
 	@GeneratedValue

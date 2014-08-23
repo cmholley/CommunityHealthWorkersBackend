@@ -13,6 +13,7 @@ import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
+import dash.dao.GroupEntity;
 import dash.dao.PostDao;
 import dash.dao.PostEntity;
 import dash.dao.TaskEntity;
@@ -155,18 +156,13 @@ PostService {
 
 
 	/********************* UPDATE-related methods implementation ***********************/
+	
 	@Override
 	@Transactional
 	public void updateFullyPost(Post post) throws AppException {
-		//do a validation to verify FULL update with PUT
-		if (isFullUpdate(post)) {
-			throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
-					400,
-					"Please specify all properties for Full UPDATE",
-					"required properties - name, description",
-					AppConstants.DASH_POST_URL);
-		}
-
+		
+		
+		
 		Post verifyPostExistenceById = verifyPostExistenceById(post
 				.getId());
 		if (verifyPostExistenceById == null) {
@@ -177,21 +173,30 @@ PostService {
 							+ post.getId(),
 							AppConstants.DASH_POST_URL);
 		}
+		copyAllProperties(verifyPostExistenceById, post);
 
-		postDao.updatePost(new PostEntity(post));
+		postDao.updatePost(new PostEntity(verifyPostExistenceById));
+
 	}
 
-	/**
-	 * Verifies the "completeness" of post resource sent over the wire
-	 *
-	 * @param Post
-	 * @return
-	 */
-	private boolean isFullUpdate(Post post) {
-		return post.getId() == null
-				|| post.getContent() == null
-				|| post.getImage() == null;
+	private void copyAllProperties(Post verifyPostExistenceById, Post post) {
+
+		BeanUtilsBean withNull=new BeanUtilsBean();
+		try {
+			withNull.copyProperty(verifyPostExistenceById, "content", post.getContent());
+			withNull.copyProperty(verifyPostExistenceById, "image", post.getImage());
+			withNull.copyProperty(verifyPostExistenceById, "task_link_id", post.getTask_link_id());
+			
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
+
 
 	/********************* DELETE-related methods implementation ***********************/
 

@@ -49,9 +49,8 @@ public class PostResource {
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new post has been created")
-				.header("Location",
-						"http://localhost:8080/posts/"
-								+ String.valueOf(createPostId)).build();
+				.header("Location", String.valueOf(createPostId))
+				.header("ObjectId", String.valueOf(createPostId)).build();
 	}
 	
 	@POST
@@ -154,11 +153,11 @@ public class PostResource {
 					.status(Response.Status.CREATED)
 					// 201
 					.entity("A new post has been created AT THE LOCATION you specified")
-					.header("Location",
-							"http://localhost:8080/services/posts/"
-									+ String.valueOf(createPostId)).build();
+					.header("Location", String.valueOf(createPostId))
+					.header("ObjectId", String.valueOf(createPostId)).build();
 		} else {
 			// resource is existent and a full update should occur
+			post.setId(id);
 			postService.updateFullyPost(post);
 			return Response
 					.status(Response.Status.OK)
@@ -178,19 +177,9 @@ public class PostResource {
 	public Response partialUpdatePost(@PathParam("id") Long id, Post post)
 			throws AppException {
 		post.setId(id);
+		post.setGroup_id(postService.verifyPostExistenceById(id).getGroup_id());
 		Group group = new Group();
-		if(post.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Must have set group_id")
-					.header("Location",
-							"http://localhost:8080/services/posts/"
-									+ String.valueOf(post)).build();
-		}else
-		{
-			group.setId(post.getGroup_id());
-		}
+		group.setId(post.getGroup_id());
 		postService.updatePartiallyPost(post);
 		return Response
 				.status(Response.Status.OK)
@@ -207,20 +196,8 @@ public class PostResource {
 	@Produces({ MediaType.TEXT_HTML })
 	public Response deletePost(@PathParam("id") Long id)
 			throws AppException {
-		Group group = new Group();
 		Post post = postService.verifyPostExistenceById(id);
-		if(post.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Post Id not found")
-					.header("Location",
-							"http://localhost:8080/services/posts/"
-									+ String.valueOf(post)).build();
-		}else
-		{
-			group.setId(post.getGroup_id());
-		}
+		
 		
 		postService.deletePost(post);
 		return Response.status(Response.Status.NO_CONTENT)// 204
