@@ -102,7 +102,7 @@ PostService {
 		
 		List<Post> postsByMyGroups=new ArrayList<Post>();
 		for(int i=0; i<myGroups.size(); i++){
-			postsByMyGroups.addAll(getPostsByGroup(numberOfPosts, 0L,
+			postsByMyGroups.addAll(getPostsByGroup(numberOfPosts, startIndex,
 					myGroups.get(i)));
 		}
 		

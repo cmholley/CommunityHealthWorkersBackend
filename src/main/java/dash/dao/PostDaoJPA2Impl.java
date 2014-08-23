@@ -19,13 +19,12 @@ public class PostDaoJPA2Impl implements PostDao {
 	@Override
 	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex) {
 		String sqlString = null;
-		
-		sqlString = "SELECT u FROM PostEntity u"
-				+ " ORDER BY u.latest_activity_timestamp DESC";
-	
-		TypedQuery<PostEntity> query = entityManager.createQuery(sqlString,
-				PostEntity.class);
-		query.setFirstResult(startIndex.intValue());
+
+		sqlString = "SELECT u FROM PostEntity u WHERE u.id < ?1 ORDER BY u.latest_activity_timestamp DESC";
+
+		TypedQuery<PostEntity> query = entityManager.createQuery(sqlString, PostEntity.class);
+		if(startIndex == 0) startIndex = Long.MAX_VALUE;
+		query.setParameter(1, startIndex);
 		query.setMaxResults(numberOfPosts);
 
 		return query.getResultList();
@@ -34,13 +33,13 @@ public class PostDaoJPA2Impl implements PostDao {
 	@Override
 	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex, Group group) {
 		
-		String qlString = "SELECT u FROM PostEntity u where u.group_id = ?1 "
-				+ "ORDER BY u.latest_activity_timestamp DESC";
-		TypedQuery<PostEntity> query = entityManager.createQuery(qlString,
-				PostEntity.class);
-		query.setFirstResult(startIndex.intValue());
+		String qlString = "SELECT u FROM PostEntity u WHERE u.group_id = ?1 AND u.id < ?2 ORDER BY u.latest_activity_timestamp DESC";
+		
+		TypedQuery<PostEntity> query = entityManager.createQuery(qlString, PostEntity.class);
+		if(startIndex == 0) startIndex = Long.MAX_VALUE;
+		query.setParameter(1, group.getId());
+		query.setParameter(2, startIndex);
 		query.setMaxResults(numberOfPosts);
-		query.setParameter(1, group.getId() );
 		
 		return query.getResultList();
 	}
