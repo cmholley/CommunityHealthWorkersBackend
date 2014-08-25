@@ -15,15 +15,16 @@ public class PostDaoJPA2Impl implements PostDao {
 	@PersistenceContext(unitName = "dashPersistence")
 	private EntityManager entityManager;
 
-
 	@Override
 	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex) {
 		String sqlString = null;
 
-		sqlString = "SELECT u FROM PostEntity u WHERE u.id < ?1 ORDER BY u.latest_activity_timestamp DESC";
+		sqlString = "SELECT u FROM PostEntity u WHERE u.id < ?1 ORDER BY u.creation_timestamp DESC";
 
-		TypedQuery<PostEntity> query = entityManager.createQuery(sqlString, PostEntity.class);
-		if(startIndex == 0) startIndex = Long.MAX_VALUE;
+		TypedQuery<PostEntity> query = entityManager.createQuery(sqlString,
+				PostEntity.class);
+		if (startIndex == 0)
+			startIndex = Long.MAX_VALUE;
 		query.setParameter(1, startIndex);
 		query.setMaxResults(numberOfPosts);
 
@@ -31,16 +32,19 @@ public class PostDaoJPA2Impl implements PostDao {
 	}
 
 	@Override
-	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex, Group group) {
-		
-		String qlString = "SELECT u FROM PostEntity u WHERE u.group_id = ?1 AND u.id < ?2 ORDER BY u.latest_activity_timestamp DESC";
-		
-		TypedQuery<PostEntity> query = entityManager.createQuery(qlString, PostEntity.class);
-		if(startIndex == 0) startIndex = Long.MAX_VALUE;
+	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex,
+			Group group) {
+
+		String qlString = "SELECT u FROM PostEntity u WHERE u.group_id = ?1 AND u.id < ?2 ORDER BY u.creation_timestamp DESC";
+
+		TypedQuery<PostEntity> query = entityManager.createQuery(qlString,
+				PostEntity.class);
+		if (startIndex == 0)
+			startIndex = Long.MAX_VALUE;
 		query.setParameter(1, group.getId());
 		query.setParameter(2, startIndex);
 		query.setMaxResults(numberOfPosts);
-		
+
 		return query.getResultList();
 	}
 
@@ -59,7 +63,6 @@ public class PostDaoJPA2Impl implements PostDao {
 		}
 	}
 
-
 	@Override
 	public void deletePostById(Post postPojo) {
 
@@ -68,7 +71,6 @@ public class PostDaoJPA2Impl implements PostDao {
 		entityManager.remove(post);
 
 	}
-	
 
 	@Override
 	public Long createPost(PostEntity post) {
@@ -85,7 +87,7 @@ public class PostDaoJPA2Impl implements PostDao {
 
 	@Override
 	public void updatePost(PostEntity post) {
-		//TODO think about partial update and full update
+		// TODO think about partial update and full update
 		post.setLatest_activity_timestamp(new Date());
 		entityManager.merge(post);
 	}

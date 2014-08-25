@@ -16,32 +16,36 @@ public class CommentDaoJPA2Impl implements CommentDao {
 	@PersistenceContext(unitName = "dashPersistence")
 	private EntityManager entityManager;
 
-
 	@Override
 	public List<CommentEntity> getComments(int numberOfComments, Long startIndex) {
 		String sqlString = null;
-		
-		sqlString = "SELECT u FROM CommentEntity u"
-				+ " ORDER BY u.creation_timestamp DESC";
-	
+
+		sqlString = "SELECT u FROM CommentEntity u WHERE u.id < ?1 ORDER BY u.creation_timestamp DESC";
+
 		TypedQuery<CommentEntity> query = entityManager.createQuery(sqlString,
 				CommentEntity.class);
-		query.setFirstResult(startIndex.intValue());
+
+		if (startIndex == 0)
+			startIndex = Long.MAX_VALUE;
+		query.setParameter(1, startIndex);
 		query.setMaxResults(numberOfComments);
 		return query.getResultList();
 	}
 
 	@Override
-	public List<CommentEntity> getComments(int numberOfComments, Long startIndex, Post post) {
-		
-		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 "
-				+ "ORDER BY u.creation_timestamp DESC";
+	public List<CommentEntity> getComments(int numberOfComments,
+			Long startIndex, Post post) {
+		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 AND u.id < ?2 ORDER BY u.creation_timestamp DESC";
+
 		TypedQuery<CommentEntity> query = entityManager.createQuery(qlString,
 				CommentEntity.class);
-		query.setFirstResult(startIndex.intValue());
+
+		if (startIndex == 0)
+			startIndex = Long.MAX_VALUE;
+		query.setParameter(1, post.getId());
+		query.setParameter(2, startIndex);
 		query.setMaxResults(numberOfComments);
-		query.setParameter(1, post.getId() );
-		
+
 		return query.getResultList();
 	}
 
@@ -50,8 +54,8 @@ public class CommentDaoJPA2Impl implements CommentDao {
 
 		try {
 			String qlString = "SELECT u FROM CommentEntity u WHERE u.id = ?1";
-			TypedQuery<CommentEntity> query = entityManager.createQuery(qlString,
-					CommentEntity.class);
+			TypedQuery<CommentEntity> query = entityManager.createQuery(
+					qlString, CommentEntity.class);
 			query.setParameter(1, id);
 
 			return query.getSingleResult();
@@ -63,12 +67,12 @@ public class CommentDaoJPA2Impl implements CommentDao {
 	@Override
 	public void deleteCommentById(Comment commentPojo) {
 
-		CommentEntity post = entityManager
-				.find(CommentEntity.class, commentPojo.getId());
+		CommentEntity post = entityManager.find(CommentEntity.class,
+				commentPojo.getId());
 		entityManager.remove(post);
 
 	}
-	
+
 	@Override
 	public Long createComment(CommentEntity comment) {
 
@@ -84,7 +88,7 @@ public class CommentDaoJPA2Impl implements CommentDao {
 
 	@Override
 	public void updateComment(CommentEntity comment) {
-		//TODO think about partial update and full update
+		// TODO think about partial update and full update
 		comment.setLatest_activity_timestamp(new Date());
 		entityManager.merge(comment);
 	}
