@@ -182,6 +182,26 @@ public class UsersResource {
 						.header("Access-Control-Allow-Headers", "X-extra-header")
 						.allow("OPTIONS").build();
 	}
+	
+	@GET
+	@Path("myRole")
+	@Produces( {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getMyRole() throws IOException, AppException {
+		
+		try{
+			String role=userService.getMyRole();
+			return Response.status(Response.Status.OK)
+					.entity(role).build();
+		}catch(Exception e){
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+					.entity(e.getMessage())
+					.build();
+		}
+		
+		
+				
+		
+	}
 
 	/*
 	 * *********************************** UPDATE ***********************************

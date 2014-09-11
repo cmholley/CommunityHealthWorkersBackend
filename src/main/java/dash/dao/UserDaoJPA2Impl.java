@@ -85,6 +85,21 @@ UserDao {
 		}
 	}
 
+	@Override
+	public String getRoleByName(String username){
+		
+		try{
+			String qlString = "SELECT u.authority FROM AuthorityEntity u  WHERE u.username= ?1";
+			TypedQuery<String> query = entityManager.createQuery(qlString, String.class);
+			query.setParameter(1, username);
+			
+			return query.getSingleResult();
+		}catch(NoResultException e){
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 
 	@Override
 	public void deleteUserById(User userPojo) {

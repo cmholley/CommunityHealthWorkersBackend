@@ -34,7 +34,8 @@ public interface UserDao {
 	 */
 	public UserEntity getUserByName(String name);
 
-
+	public String getRoleByName(String username);
+	
 	public void deleteUserById(User user);
 
 	public Long createUser(UserEntity user);

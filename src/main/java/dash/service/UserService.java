@@ -56,6 +56,8 @@ public interface UserService {
 	 */
 	
 	public User getUserById(Long id) throws AppException;
+	
+	public String getMyRole();
 
 	/*
 	 * ******************** Update related methods **********************

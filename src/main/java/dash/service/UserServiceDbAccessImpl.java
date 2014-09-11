@@ -17,6 +17,9 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.NotFoundException;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Sid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.UserDao;
@@ -171,7 +174,21 @@ UserService {
 
 	}
 
+	@Override
+	public String getMyRole() {
+		return userDao.getRoleByName(getUsername());
+	}
+	
+	protected String getUsername() {
+		Authentication auth = SecurityContextHolder.getContext()
+				.getAuthentication();
 
+		if (auth.getPrincipal() instanceof UserDetails) {
+			return ((UserDetails) auth.getPrincipal()).getUsername();
+		} else {
+			return auth.getPrincipal().toString();
+		}
+	}
 
 	/********************* UPDATE-related methods implementation ***********************/
 	@Override
