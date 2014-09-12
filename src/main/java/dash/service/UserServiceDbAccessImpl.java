@@ -175,8 +175,10 @@ UserService {
 	}
 
 	@Override
-	public String getMyRole() {
-		return userDao.getRoleByName(getUsername());
+	public List<String> getMyRole() {
+		ArrayList<String> tempRole = new ArrayList<String>();
+		tempRole.add(userDao.getRoleByName(getUsername()));
+		return tempRole;
 	}
 	
 	protected String getUsername() {

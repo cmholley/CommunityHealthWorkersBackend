@@ -189,7 +189,7 @@ public class UsersResource {
 	public Response getMyRole() throws IOException, AppException {
 		
 		try{
-			String role=userService.getMyRole();
+			List<String> role=userService.getMyRole();
 			return Response.status(Response.Status.OK)
 					.entity(role).build();
 		}catch(Exception e){
