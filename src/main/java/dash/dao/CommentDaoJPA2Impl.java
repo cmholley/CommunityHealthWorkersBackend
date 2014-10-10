@@ -33,18 +33,13 @@ public class CommentDaoJPA2Impl implements CommentDao {
 	}
 
 	@Override
-	public List<CommentEntity> getComments(int numberOfComments,
-			Long startIndex, Post post) {
-		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 AND u.id < ?2 ORDER BY u.creation_timestamp DESC";
+	public List<CommentEntity> getComments(int numberOfComments, Long startIndex, Post post) {
+//		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 AND u.id < ?2 ORDER BY u.creation_timestamp ASC";
+		String qlString = "SELECT u FROM CommentEntity u where u.post_id = ?1 ORDER BY u.creation_timestamp ASC";
 
 		TypedQuery<CommentEntity> query = entityManager.createQuery(qlString,
 				CommentEntity.class);
-
-		if (startIndex == 0)
-			startIndex = Long.MAX_VALUE;
 		query.setParameter(1, post.getId());
-		query.setParameter(2, startIndex);
-		query.setMaxResults(numberOfComments);
 
 		return query.getResultList();
 	}
