@@ -367,6 +367,24 @@ UserService {
 
 	}
 
+	@Override
+	public void setRoleUser(User user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRoleModerator(User user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRoleAdmin(User user) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 

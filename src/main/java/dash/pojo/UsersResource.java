@@ -262,6 +262,27 @@ public class UsersResource {
 				.build();
 	}
 	
+	//Changes this users Role
+	//Expects role to = {ROLE_USER, ROLE_MODERATOR, ROLE_ADMIN}
+	@POST
+	@Path("{id}")
+	public Response updateUserRole(@PathParam("id")Long id, 
+			@QueryParam("role") String role) throws AppException {
+		
+		User user =userService.getUserById(id);
+		switch(role){
+			case "ROLE_USER": userService.setRoleUser(user);break;
+			case "ROLE_MODERATOR": userService.setRoleModerator(user); break;
+			case "ROLE_ADMIN": userService.setRoleAdmin(user); break;
+			default: return Response.status(Response.Status.BAD_REQUEST)
+					.entity("The role you specified does not exist").build();
+		}
+		return Response
+				.status(Response.Status.OK)
+				.entity("The users role you specified has been successfully updated")
+				.build();
+	}
+	
 	@POST
 	@Path("{id}/password")
 	@Consumes({ MediaType.APPLICATION_JSON })
