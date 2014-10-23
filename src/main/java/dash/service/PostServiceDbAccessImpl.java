@@ -9,20 +9,16 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
-import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
-import dash.dao.GroupEntity;
 import dash.dao.PostDao;
 import dash.dao.PostEntity;
-import dash.dao.TaskEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
 import dash.pojo.Group;
 import dash.pojo.Post;
-import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
 

@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import dash.errorhandling.AppException;
 import dash.pojo.Group;
 import dash.pojo.Hour;
-import dash.pojo.User;
 
 public interface HourService {
 	/*

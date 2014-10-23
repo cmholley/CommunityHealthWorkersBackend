@@ -2,7 +2,6 @@ package dash.dao;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Time;
 import java.util.Date;
 
 import javax.persistence.Column;

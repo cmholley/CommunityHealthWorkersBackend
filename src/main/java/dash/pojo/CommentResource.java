@@ -2,7 +2,6 @@ package dash.pojo;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +20,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.DefaultValue;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import dash.dao.UserEntity;
 import dash.errorhandling.AppException;
 import dash.service.CommentService;
 import dash.service.GroupService;
 import dash.service.PostService;
-import dash.service.UserService;
 
 @Component
 @Path("/comments")

@@ -12,24 +12,21 @@ import javax.persistence.Table;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import dash.pojo.Task;
+import dash.pojo.Class;
 
-
-/*
- * Task entity
- * @author tswensen
+/**
+ * Class entity
+ * @author plindner
  * 
  */
 @Entity
-@Table(name="tasks")
-public class TaskEntity implements Serializable{
+@Table(name="classes")
+public class ClassEntity implements Serializable{
 
-
-	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 3988487193956434387L;
+	private static final long serialVersionUID = -2594194624009518406L;
 
 	@Id
 	@GeneratedValue
@@ -51,8 +48,8 @@ public class TaskEntity implements Serializable{
 	@Column(name="duration")
 	private int duration;
 	
-	@Column(name="location")
-	private String location;
+	@Column(name="room")
+	private String room;
 	
 	@GeneratedValue
 	@Column(name="creation_timestamp")
@@ -64,31 +61,11 @@ public class TaskEntity implements Serializable{
 	@Column(name="badge_id")
 	private Long badge_id;
 	
-	public TaskEntity(){}
-
+	public ClassEntity(){}
 	
-	
-	public TaskEntity(Long id, Long group_id, String name, String description, Date time,
-			int duration, String location, Date creation_timestamp,
-			int finished, Long badge_id) {
-		super();
-		this.id = id;
-		this.group_id = id;
-		this.name = name;
-		this.description = description;
-		this.time = time;
-		this.duration = duration;
-		this.location = location;
-		this.creation_timestamp = creation_timestamp;
-		this.finished = finished;
-		this.badge_id = badge_id;
-	}
-
-
-
-	public TaskEntity(Task task){
+	public ClassEntity(Class clas){
 		try {
-			BeanUtils.copyProperties(this, task);
+			BeanUtils.copyProperties(this, clas);
 		} catch ( IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,13 +75,9 @@ public class TaskEntity implements Serializable{
 		}
 	}
 
-
-
 	public Long getId() {
 		return id;
 	}
-
-
 
 	public void setId(Long id) {
 		this.id = id;
@@ -122,96 +95,64 @@ public class TaskEntity implements Serializable{
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	public String getDescription() {
 		return description;
 	}
 
-
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-
 
 	public Date getTime() {
 		return time;
 	}
 
-
-
 	public void setTime(Date time) {
 		this.time = time;
 	}
-
-
-
+	
 	public int getDuration() {
 		return duration;
 	}
-
-
-
+	
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 
-
-
-	public String getLocation() {
-		return location;
+	public String getRoom() {
+		return room;
 	}
 
-
-
-	public void setLocation(String location) {
-		this.location = location;
+	public void setRoom(String room) {
+		this.room = room;
 	}
-
-
-
+	
 	public Date getCreation_timestamp() {
 		return creation_timestamp;
 	}
-
-
-
+	
 	public void setCreation_timestamp(Date creation_timestamp) {
 		this.creation_timestamp = creation_timestamp;
 	}
-
-
 
 	public int getFinished() {
 		return finished;
 	}
 
-
-
 	public void setFinished(int finished) {
 		this.finished = finished;
 	}
-
-
 
 	public Long getBadge_id() {
 		return badge_id;
 	}
 
-
-
 	public void setBadge_id(Long badge_id) {
 		this.badge_id = badge_id;
 	}
-
-	
 	
 }

@@ -9,19 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.beanutils.BeanUtils;
 
 import dash.dao.CommentEntity;
-import dash.dao.PostEntity;
 import dash.security.IAclObject;
-
-
-
-
-
-
-
-
-
-
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 

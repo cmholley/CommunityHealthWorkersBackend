@@ -25,7 +25,6 @@ import dash.errorhandling.AppException;
 import dash.service.MessageService;
 import dash.service.TaskService;
 import dash.service.UserService;
-import dash.pojo.Group;
 
 /*
  * Message Resource

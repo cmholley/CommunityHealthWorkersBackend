@@ -21,7 +21,6 @@ import dash.helpers.NullAwareBeanUtilsBean;
 import dash.pojo.Comment;
 import dash.pojo.Group;
 import dash.pojo.Post;
-import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
 
