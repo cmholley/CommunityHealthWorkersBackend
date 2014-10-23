@@ -41,6 +41,8 @@ public interface UserDao {
 	public Long createUser(UserEntity user);
 
 	public void updateUser(UserEntity user);
+	
+	public void updateUserRole(String role, String username);
 
 	/** removes all users */
 	public void deleteUsers();

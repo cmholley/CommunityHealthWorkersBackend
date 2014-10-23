@@ -44,7 +44,7 @@ public class UserLoginController  extends JdbcDaoSupport {
 	/********* Inner Classes  ************/
 	protected class InsertAuthority extends SqlUpdate {
 		protected InsertAuthority(DataSource ds) {
-			super(ds, "INSERT INTO authorities VALUES (?, ?)");
+			super(ds, "INSERT INTO authorities (username, authority) VALUES (?, ?)");
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			declareParameter(new SqlParameter(Types.VARCHAR));
 			compile();

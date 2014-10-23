@@ -57,7 +57,7 @@ public interface UserService {
 	
 	public User getUserById(Long id) throws AppException;
 	
-	public List<String> getMyRole();
+	public List<String> getRole(User user);
 
 	/*
 	 * ******************** Update related methods **********************
