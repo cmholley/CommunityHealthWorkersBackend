@@ -175,9 +175,9 @@ UserService {
 	}
 
 	@Override
-	public List<String> getMyRole() {
+	public List<String> getRole(User user) {
 		ArrayList<String> tempRole = new ArrayList<String>();
-		tempRole.add(userDao.getRoleByName(getUsername()));
+		tempRole.add(userDao.getRoleByName(user.getUsername()));
 		return tempRole;
 	}
 	
@@ -267,8 +267,6 @@ UserService {
 //	}
 
 	@Override
-	// TODO: This doesnt need to exist. It is the exact same thing as
-	// getUserById(Long)
 	public User verifyUserExistenceById(Long id) {
 		UserEntity userById = userDao.getUserById(id);
 		if (userById == null) {
@@ -368,20 +366,23 @@ UserService {
 	}
 
 	@Override
+	@Transactional
 	public void setRoleUser(User user) {
-		// TODO Auto-generated method stub
+		userDao.updateUserRole("ROLE_USER", user.getUsername());
 		
 	}
 
 	@Override
+	@Transactional
 	public void setRoleModerator(User user) {
-		// TODO Auto-generated method stub
+		userDao.updateUserRole("ROLE_MODERATOR", user.getUsername());
 		
 	}
 
 	@Override
+	@Transactional
 	public void setRoleAdmin(User user) {
-		// TODO Auto-generated method stub
+		userDao.updateUserRole("ROLE_ADMIN", user.getUsername());
 		
 	}
 

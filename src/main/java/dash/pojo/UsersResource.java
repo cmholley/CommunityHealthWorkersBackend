@@ -189,7 +189,7 @@ public class UsersResource {
 	public Response getMyRole() throws IOException, AppException {
 		
 		try{
-			List<String> role=userService.getMyRole();
+			List<String> role=userService.getRole(userService.getMyUser("ASC", null).get(0));
 			return Response.status(Response.Status.OK)
 					.entity(role).build();
 		}catch(Exception e){
@@ -265,11 +265,22 @@ public class UsersResource {
 	//Changes this users Role
 	//Expects role to = {ROLE_USER, ROLE_MODERATOR, ROLE_ADMIN}
 	@POST
-	@Path("{id}")
+	@Path("{id}/role")
 	public Response updateUserRole(@PathParam("id")Long id, 
 			@QueryParam("role") String role) throws AppException {
 		
 		User user =userService.getUserById(id);
+		switch(userService.getRole(user).get(0)){
+			case "ROLE_ROOT":	return Response.status(Response.Status.BAD_REQUEST)
+					.entity("Cannot modify root user permissions").build(); 
+			case "ROLE_ADMIN":	if(userService.getRole(userService.getMyUser("ASC", null).get(0)).contains("ROLE_ADMIN")
+					||userService.getRole(userService.getMyUser("ASC", null).get(0)).contains("ROLE_ROOT")){break;}
+			else return Response.status(401).entity("You do not have required permissions for this"
+					+ ".  You must have admin priviliges to modify another admin's role.")
+					.build();
+			case "ROLE_VISITOR": return Response.status(Response.Status.BAD_REQUEST)
+					.entity("Cannot modify visitor user permissions").build();
+		}
 		switch(role){
 			case "ROLE_USER": userService.setRoleUser(user);break;
 			case "ROLE_MODERATOR": userService.setRoleModerator(user); break;

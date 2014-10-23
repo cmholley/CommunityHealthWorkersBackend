@@ -127,6 +127,18 @@ UserDao {
 		//TODO think about partial update and full update
 		entityManager.merge(user);
 	}
+	
+	public void updateUserRole(String role, String username){
+		String qlString = "SELECT u FROM AuthorityEntity u WHERE u.username = ?1";
+		TypedQuery<AuthorityEntity> query = entityManager.createQuery(qlString,
+				AuthorityEntity.class);
+		query.setParameter(1, username);
+
+		AuthorityEntity authority= query.getSingleResult();
+		authority.setAuthority(role);
+		entityManager.merge(authority);
+	}
+	
 
 	@Override
 	public void deleteUsers() {
