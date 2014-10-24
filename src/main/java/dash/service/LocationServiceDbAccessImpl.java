@@ -46,7 +46,7 @@ LocationService {
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
-	public Long createLocation(Location location, User user) throws AppException {
+	public Long createLocation(Location location, String user_name) throws AppException {
 
 		validateInputForCreation(location);
 
@@ -65,8 +65,8 @@ LocationService {
 		long locationId = locationDao.createLocation(new LocationEntity(location));
 		location.setId(locationId);
 		aclController.createACL(location);
-		if (user != null)
-			aclController.createAce(location, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
+		if (user_name != null)
+			aclController.createAce(location, CustomPermission.MANAGER, new PrincipalSid(user_name));
 		else
 			aclController.createAce(location, CustomPermission.MANAGER);
 		return locationId;

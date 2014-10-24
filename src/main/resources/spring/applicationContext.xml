@@ -65,6 +65,14 @@
     <bean id="hourService" class="dash.service.HourServiceDbAccessImpl" />	
     <bean id="hourResource" class="dash.pojo.HourResource" />
     
+    <bean id="locationDao" class="dash.dao.LocationDaoJPA2Impl"/>	
+    <bean id="locationService" class="dash.service.LocationServiceDbAccessImpl" />	
+    <bean id="locationResource" class="dash.pojo.LocationResource" />
+    
+    <bean id="classDao" class="dash.dao.ClassDaoJPA2Impl"/>	
+    <bean id="classService" class="dash.service.ClassServiceDbAccessImpl" />	
+    <bean id="classResource" class="dash.pojo.ClassResource" />
+    
     <bean id="aclController" class="dash.security.GenericAclController"/>
     
 	<bean id="dashDS" class="org.springframework.jndi.JndiObjectFactoryBean" scope="singleton">

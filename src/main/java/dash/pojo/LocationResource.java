@@ -36,8 +36,8 @@ public class LocationResource {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response createLocation(Location location, User user) throws AppException {
-		Long createLocationId = locationService.createLocation(location, user);
+	public Response createLocation(Location location, @QueryParam("userName") String user_name) throws AppException {
+		Long createLocationId = locationService.createLocation(location, user_name);
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new location has been created")
@@ -86,7 +86,7 @@ public class LocationResource {
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response putLocationById(@PathParam("id") Long id, Location location, User user)
+	public Response putLocationById(@PathParam("id") Long id, Location location, @QueryParam("userName") String user_name)
 			throws AppException {
 
 		Location locationById = locationService.verifyLocationExistenceById(id);
@@ -94,13 +94,13 @@ public class LocationResource {
 		if (locationById == null) {
 			// resource not existent yet, and should be created under the
 			// specified URI
-			Long createLocationId = locationService.createLocation(location, user);
+			Long createLocationId = locationService.createLocation(location, user_name);
 			return Response
 					.status(Response.Status.CREATED)
 					// 201
 					.entity("A new location has been created AT THE LOCATION you specified")
 					.header("Location",
-							"../locations"
+							"../locations/"
 									+ String.valueOf(createLocationId)).build();
 		} else {
 			// resource is existent and a full update should occur
@@ -110,7 +110,7 @@ public class LocationResource {
 					// 200
 					.entity("The location you specified has been fully updated created AT THE LOCATION you specified")
 					.header("Location",
-							"../locations"
+							"../locations/"
 									+ String.valueOf(id)).build();
 		}
 	}

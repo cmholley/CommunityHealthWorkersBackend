@@ -58,8 +58,8 @@ public class ClassEntity implements Serializable{
 	@Column(name="finished")
 	private int finished;
 	
-	@Column(name="badge_id")
-	private Long badge_id;
+	@Column(name="core_id")
+	private Long core_id;
 	
 	public ClassEntity(){}
 	
@@ -147,12 +147,12 @@ public class ClassEntity implements Serializable{
 		this.finished = finished;
 	}
 
-	public Long getBadge_id() {
-		return badge_id;
+	public Long getCore_id() {
+		return core_id;
 	}
 
-	public void setBadge_id(Long badge_id) {
-		this.badge_id = badge_id;
+	public void setCore_id(Long badge_id) {
+		this.core_id = badge_id;
 	}
 	
 }

@@ -21,6 +21,7 @@ import dash.pojo.UserDetailedView;
 import dash.pojo.UsersResource;
 import dash.pojo.PostResource;
 import dash.pojo.LocationResource;
+import dash.pojo.ClassResource;
 
 /**
  * Registers the components to be used by the JAX-RS application
@@ -43,6 +44,7 @@ public class DashApplicationSetup extends ResourceConfig {
 		register(MessageResource.class);
 		register(HourResource.class);
 		register(LocationResource.class);
+		register(ClassResource.class);
 
 		// register filters
 		register(RequestContextFilter.class);

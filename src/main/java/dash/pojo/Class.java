@@ -45,8 +45,8 @@ public class Class implements  IAclObject{
 	@XmlElement(name="finished")
 	private int finished;
 	
-	@XmlElement(name="badge_id")
-	private Long badge_id;
+	@XmlElement(name="core_id")
+	private Long core_id;
 	
 	public Class(ClassEntity classEntity) {
 		try {
@@ -134,11 +134,11 @@ public class Class implements  IAclObject{
 		this.finished = finished;
 	}
 
-	public Long getBadge_id() {
-		return badge_id;
+	public Long getCore_id() {
+		return core_id;
 	}
 
-	public void setBadge_id(Long badge_id) {
-		this.badge_id = badge_id;
+	public void setCore_id(Long core_id) {
+		this.core_id = core_id;
 	}
 }

@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import dash.errorhandling.AppException;
+import dash.pojo.Group;
 import dash.pojo.Location;
 import dash.pojo.Class;
+import dash.pojo.User;
 
 public interface ClassService {
 	/*
@@ -55,13 +57,25 @@ public interface ClassService {
 	 */
 	@PreAuthorize("hasPermission(#class, 'MANAGER')"
 			+ "or hasRole('ROLE_MODERATOR')")
-	public void deleteClass(Class clas, Location location) throws AppException;
+	public void deleteClass(Class clas) throws AppException;
 	/** removes all classes
 	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
 	 * Functional but does not destroy old acl's which doesnt hurt anything
 	 * but they will take up space if this is commonly used */
 	@PreAuthorize("hasRole('ROLE_ROOT')")
 	public void deleteClasses();
+	
+	
+	/*
+	 * ******************** Membership related methods **********************
+	 */
+		@PreAuthorize("hasRole('ROLE_USER')")
+		public void addMember(User user, Class clas) throws AppException;
+		
+		//Removes member
+		@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR') or hasPermission(#group, 'MANAGER')")
+		public void deleteMember(User user, Class clas) throws AppException;
+		
 		
 	/*
 	 * ******************** Helper methods **********************

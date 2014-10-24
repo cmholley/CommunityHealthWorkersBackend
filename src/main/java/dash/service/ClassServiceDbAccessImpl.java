@@ -24,7 +24,6 @@ import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
 
-
 public class ClassServiceDbAccessImpl extends ApplicationObjectSupport implements
 ClassService {
 
@@ -37,9 +36,6 @@ ClassService {
 	@Autowired
 	private GenericAclController<Class> aclController;
 	
-	@Autowired
-	private GenericAclController<Location> groupAclController;
-
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
@@ -53,9 +49,9 @@ ClassService {
 			throw new AppException(
 					Response.Status.CONFLICT.getStatusCode(),
 					409,
-					"Task with taskname already existing in the database with the id "
+					"Class with classname already existing in the database with the id "
 							+ classByName.getId(),
-							"Please verify that the taskname and password are properly generated",
+							"Please verify that the classname and description are properly generated",
 							AppConstants.DASH_POST_URL);
 		}
 
@@ -118,23 +114,23 @@ ClassService {
 		if (classById == null) {
 			return null;
 		} else {
-			return new Task(taskById);
+			return new Class(classById);
 		}
 	}
 
 	@Override
-	public Task getTaskById(Long id) throws AppException {
-		TaskEntity taskById = taskDao.getTaskById(id);
-		if (taskById == null) {
+	public Class getClassById(Long id) throws AppException {
+		ClassEntity classById = classDao.getClassById(id);
+		if (classById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
-					"The task you requested with id " + id
+					"The class you requested with id " + id
 					+ " was not found in the database",
-					"Verify the existence of the task with the id " + id
+					"Verify the existence of the class with the id " + id
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Task(taskDao.getTaskById(id));
+		return new Class(classDao.getClassById(id));
 	}
 
 	private List<Class> getClassesFromEntities(List<ClassEntity> classEntities) {
@@ -146,55 +142,44 @@ ClassService {
 		return response;
 	}
 
-	public List<Task> getRecentTasks(int numberOfDaysToLookBack) {
-		List<TaskEntity> recentTasks = taskDao
-				.getRecentTasks(numberOfDaysToLookBack);
+	public List<Class> getRecentClasses(int numberOfDaysToLookBack) {
+		List<ClassEntity> recentClasses = classDao
+				.getRecentClasses(numberOfDaysToLookBack);
 
-		return getTasksFromEntities(recentTasks);
+		return getClassesFromEntities(recentClasses);
 	}
-
-	@Override
-	public int getNumberOfTasks() {
-		int totalNumber = taskDao.getNumberOfTasks();
-
-		return totalNumber;
-
-	}
-
-
 
 	/********************* UPDATE-related methods implementation ***********************/
 	@Override
 	@Transactional
-	public void updateFullyTask(Task task, Group group) throws AppException {
+	public void updateFullyClass(Class clas, Location location) throws AppException {
 		//do a validation to verify FULL update with PUT
-		
 
-		Task verifyTaskExistenceById = verifyTaskExistenceById(task
+		Class verifyClassExistenceById = verifyClassExistenceById(clas
 				.getId());
-		if (verifyTaskExistenceById == null) {
+		if (verifyClassExistenceById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
-							+ task.getId(),
+							+ clas.getId(),
 							AppConstants.DASH_POST_URL);
 		}
-		copyAllProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(new TaskEntity(verifyTaskExistenceById));
+		copyAllProperties(verifyClassExistenceById, clas);
+		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
 
 	}
 
-	private void copyAllProperties(Task verifyTaskExistenceById, Task task) {
+	private void copyAllProperties(Class verifyClassExistenceById, Class clas) {
 
 		BeanUtilsBean withNull=new BeanUtilsBean();
 		try {
-			withNull.copyProperty(verifyTaskExistenceById, "description", task.getDescription());
-			withNull.copyProperty(verifyTaskExistenceById, "name", task.getName());
-			withNull.copyProperty(verifyTaskExistenceById, "time", task.getTime());
-			withNull.copyProperty(verifyTaskExistenceById, "duration", task.getDuration());
-			withNull.copyProperty(verifyTaskExistenceById, "location",  task.getLocation());
-			withNull.copyProperty(verifyTaskExistenceById, "badge_id",  task.getBadge_id());
+			withNull.copyProperty(verifyClassExistenceById, "description", clas.getDescription());
+			withNull.copyProperty(verifyClassExistenceById, "name", clas.getName());
+			withNull.copyProperty(verifyClassExistenceById, "time", clas.getTime());
+			withNull.copyProperty(verifyClassExistenceById, "duration", clas.getDuration());
+			withNull.copyProperty(verifyClassExistenceById, "room",  clas.getRoom());
+			withNull.copyProperty(verifyClassExistenceById, "core_id",  clas.getCore_id());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -209,47 +194,44 @@ ClassService {
 
 	@Override
 	@Transactional
-	public void deleteTask(Task task, Group group)  throws AppException{
+	public void deleteClass(Class clas) throws AppException{
 
-		taskDao.deleteTaskById(task);
-		aclController.deleteACL(task);
+		classDao.deleteClass(clas);
+		aclController.deleteACL(clas);
 
 	}
 
 	@Override
 	@Transactional
 	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Tasks to delete
-	public void deleteTasks() {
-		taskDao.deleteTasks();
+	// Classes to delete
+	public void deleteClasses() {
+		classDao.deleteClasses();
 	}
 	
 	/****************** Update Related Methods ***********************/
-
-	
-
 	@Override
 	@Transactional
-	public void updatePartiallyTask(Task task, Group group) throws AppException {
+	public void updatePartiallyClass(Class clas, Location location) throws AppException {
 		//do a validation to verify existence of the resource
-		Task verifyTaskExistenceById = verifyTaskExistenceById(task.getId());
-		if (verifyTaskExistenceById == null) {
+		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
+		if (verifyClassExistenceById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
-							+ task.getId(), AppConstants.DASH_POST_URL);
+							+ clas.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(new TaskEntity(verifyTaskExistenceById));
+		copyPartialProperties(verifyClassExistenceById, clas);
+		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
 
 	}
 
-	private void copyPartialProperties(Task verifyTaskExistenceById, Task task) {
+	private void copyPartialProperties(Class verifyClassExistenceById, Class clas) {
 
 		BeanUtilsBean notNull=new NullAwareBeanUtilsBean();
 		try {
-			notNull.copyProperties(verifyTaskExistenceById, task);
+			notNull.copyProperties(verifyClassExistenceById, clas);
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -257,100 +239,17 @@ ClassService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	}
-
-	/**
-	 * ACL related methods
-	 */
-	// Adds an additional manager to the task
-	@Override
-	@Transactional
-	public void addManager(User user, Task task, Group group) throws AppException{
-		if(isGroupManager(user, group) || isGroupMember(user, group)){
-			aclController.createAce(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-			if(aclController.hasPermission(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
-				aclController.deleteACE(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-		}else{
-			throw new AppException(Response.Status.CONFLICT.getStatusCode(),
-					409,
-					"Cannot add user as manager because user is already manager of the group"
-					+ "or they are not a member of the group to which this task belongs.",
-					"Users with group manager status may not have task specific permissions for that groups tasks"
-							+ task.getId(), AppConstants.DASH_POST_URL);
-		}
-	}
+	}	
 	
-	//Removes all managers and sets new manager to user
 	@Override
 	@Transactional
-	public void resetManager(User user, Task task) throws AppException{
-		Group group= new Group();
-		group.setId(task.getGroup_id());
-		if(isGroupManager(user, group) || isGroupMember(user, group)){
-			aclController.clearPermission(task, CustomPermission.MANAGER);
-			aclController.createAce(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-			if(aclController.hasPermission(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername())))	
-				aclController.deleteACE(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-		}else{
-			throw new AppException(Response.Status.CONFLICT.getStatusCode(),
-					409,
-					"Cannot add user as manager because user is already manager of the group"
-					+ "or they are not a member of the group to which this task belongs.",
-					"Users with group manager status may not have task specific permissions for that groups tasks"
-							+ task.getId(), AppConstants.DASH_POST_URL);
-		}
-	}
-	
-	//Removes a single manager from a task
-	@Override
-	@Transactional
-	public void deleteManager(User user, Task task, Group group) throws AppException{
-		aclController.deleteACE(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-		aclController.createAce(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-	}
-	
-	//Adds a member to the task
-	@Override
-	@Transactional
-	public void addMember(User user, Task task) throws AppException{
-		Group group= new Group();
-		group.setId(task.getGroup_id());
-		if(isGroupManager(user, group) || isGroupMember(user, group)){
-			aclController.createAce(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-			if(aclController.hasPermission(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername())))	
-				aclController.deleteACE(task, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-		}else{
-			throw new AppException(Response.Status.CONFLICT.getStatusCode(),
-					409,
-					"Cannot add user as member because user is already manager of the group"
-					+ " or they are not a member of the group to which this task belongs.",
-					" Users with group manager status may not have task specific permissions for that groups tasks"
-							+ task.getId(), AppConstants.DASH_POST_URL);
-		}
+	public void addMember(User user, Class clas)throws AppException{
+		aclController.createAce(clas, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
+	}		
 		
-	}
-	
-	//Removes single member
 	@Override
 	@Transactional
-	public void deleteMember(User user, Task task, Group group) throws AppException{
-		aclController.deleteACE(task, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
+	public void deleteMember(User user, Class clas) throws AppException{
+		aclController.deleteACE(clas, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
 	}
-	
-	
-	
-	/***********************  Helper Methods  **************************************/
-
-	//Verifies that an user is not already a manager of the group
-	//This avoids having a group manager also have task level permissions since they are redundant
-	private boolean isGroupManager(User user, Group group){
-		return groupAclController.hasPermission(group, CustomPermission.MANAGER, new PrincipalSid(user.getUsername()));
-	}
-	private boolean isGroupMember(User user, Group group){
-		return groupAclController.hasPermission(group, CustomPermission.MEMBER, new PrincipalSid(user.getUsername()));
-	}
-	
-	
-
 }

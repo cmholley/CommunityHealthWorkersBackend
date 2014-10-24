@@ -21,16 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dash.errorhandling.AppException;
-import dash.service.TaskService;
+import dash.service.ClassService;
 import dash.service.UserService;
-import dash.pojo.Group;
 
 @Component
 @Path("/tasks")
 public class ClassResource {
 
 	@Autowired
-	private TaskService taskService;
+	private ClassService classService;
 	
 	@Autowired
 	private UserService userService;
@@ -38,8 +37,8 @@ public class ClassResource {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response createTask(Task task) throws AppException {
-		Group group= new Group();
+	public Response createClass(Class class) throws AppException {
+		Location location= new Location();
 		group.setId(task.getGroup_id());
 		Long createTaskId = taskService.createTask(task, group);
 		return Response.status(Response.Status.CREATED)
