@@ -3,12 +3,14 @@ CommunityHealthWorker Backend
 
 
 
-Collection of RESTful web service implementation for Community Health Worker App functions. The source code is developed as Eclipse Maven project using facets "Dynamic Web Project" and "Java". The code has been tested for a default JRE Java 1.7 The following assumptions have been made:
+Collection of RESTful web service implementation for Community Health Worker App functions. 
 
-=======
-1. Java backend provides a RESTful web service. We are using Jersey  for providing REST.
+The source code is developed as Eclipse Maven project using facets "Dynamic Web Project" and "Java". The backend provides a RESTful web service vie Jersey. The security is handled by Spring. We are using Tomcat as servlet container.
 
-2. AngularJS consumes the web service.
+Tested with versions:
+Jersey 2.9
+JDK 1.7
+Tomcat 7.0
 
 
 Instructions for authentication against the security filter
