@@ -10,7 +10,7 @@ Jersey 2.9
 JDK 1.7
 Tomcat 7.0
 
-This project is a clone of the VolunteerManagementBackend and uses ACL as described there.
+This project is a clone of the VolunteerManagementBackend and uses ACL as described (https://github.com/DataAnalyticsinStudentHands/VolunteerManagementBackend) [there].
 
 
 Instruction
