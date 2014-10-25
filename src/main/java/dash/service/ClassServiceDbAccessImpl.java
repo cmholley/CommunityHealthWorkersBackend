@@ -152,7 +152,7 @@ ClassService {
 	/********************* UPDATE-related methods implementation ***********************/
 	@Override
 	@Transactional
-	public void updateFullyClass(Class clas, Location location) throws AppException {
+	public void updateFullyClass(Class clas) throws AppException {
 		//do a validation to verify FULL update with PUT
 
 		Class verifyClassExistenceById = verifyClassExistenceById(clas
@@ -212,7 +212,7 @@ ClassService {
 	/****************** Update Related Methods ***********************/
 	@Override
 	@Transactional
-	public void updatePartiallyClass(Class clas, Location location) throws AppException {
+	public void updatePartiallyClass(Class clas) throws AppException {
 		//do a validation to verify existence of the resource
 		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
 		if (verifyClassExistenceById == null) {

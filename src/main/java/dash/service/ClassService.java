@@ -46,11 +46,11 @@ public interface ClassService {
 	 */
 	@PreAuthorize("hasPermission(#class, 'MANAGER')"
 			+ "or hasRole('ROLE_MODERATOR')")
-	public void updateFullyClass(Class clas, Location location) throws AppException;
+	public void updateFullyClass(Class clas) throws AppException;
 
 	@PreAuthorize("hasPermission(#class, 'MANAGER')"
 			+ "or hasRole('ROLE_MODERATOR')")
-	public void updatePartiallyClass(Class clas, Location location) throws AppException;
+	public void updatePartiallyClass(Class clas) throws AppException;
 
 	/*
 	 * ******************** Delete related methods **********************

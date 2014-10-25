@@ -20,7 +20,7 @@ import dash.pojo.Location;
  * 
  */
 @Entity
-@Table(name="location")
+@Table(name="locations")
 public class LocationEntity implements Serializable{
 
 	/**

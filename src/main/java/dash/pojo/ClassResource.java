@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -25,7 +24,7 @@ import dash.service.ClassService;
 import dash.service.UserService;
 
 @Component
-@Path("/tasks")
+@Path("/classes")
 public class ClassResource {
 
 	@Autowired
@@ -37,10 +36,10 @@ public class ClassResource {
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response createClass(Class class) throws AppException {
+	public Response createClass(Class clas) throws AppException {
 		Location location= new Location();
-		group.setId(task.getGroup_id());
-		Long createTaskId = taskService.createTask(task, group);
+		location.setId(clas.getLocation_id());
+		Long createTaskId = classService.createClass(clas);
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new task has been created")
@@ -48,120 +47,73 @@ public class ClassResource {
 				.header("ObjectId", String.valueOf(createTaskId)).build();
 	}
 	
-	@POST
-	@Path("list")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public Response createTasks(List<Task> tasks) throws AppException {
-		taskService.createTasks(tasks);
-		return Response.status(Response.Status.CREATED) // 201
-				.entity("List of tasks was successfully created").build();
-	}
-	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public List<Task> getTasks(
+	public List<Class> getClasses(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
 			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
 					throws IOException,	AppException {
-		List<Task> tasks = taskService.getTasks(
+		List<Class> classes = classService.getClasses(
 				orderByInsertionDate, numberDaysToLookBack);
-		return tasks;
+		return classes;
 	}
 	
-	//TODO: Modify so it filters out completed tasks by default
 	@GET
-	@Path("byMembership")
+	@Path("byLocation")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public List<Task> getTasksByMembership(
-			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+	public List<Class> getClassesByLocation(
+			@QueryParam("location") Location location)
 					throws IOException,	AppException {
-		List<Task> tasks = taskService.getTasksByMembership(
-				orderByInsertionDate, numberDaysToLookBack);
-		return tasks;
+		List<Class> classes = classService.getClassesByLocation(location);
+		return classes;
 	}
-	
-	//TODO: Modify so it filters out completed tasks by default
-	@GET
-	@Path("byManager")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public List<Task> getTasksByManager(
-			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
-					throws IOException,	AppException {
-		List<Task> tasks = taskService.getTasksByManager(
-				orderByInsertionDate, numberDaysToLookBack);
-		return tasks;
-	}
-	
-	@GET
-	@Path("byGroup/{groupId}")
-	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public List<Task> getTasksByGroup(@PathParam("groupId") Long id)
-					throws IOException,	AppException {
-		Group group= new Group();
-		group.setId(id);
-		List<Task> tasks = taskService.getTasksByGroup(group);
-		return tasks;
-	}
-	
-	
 
 	@GET
 	@Path("{id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getTaskById(@PathParam("id") Long id,
+	public Response getClassById(@PathParam("id") Long id,
 			@QueryParam("detailed") boolean detailed)
 					throws IOException,	AppException {
-		Task taskById = taskService.getTaskById(id);
+		Class classById = classService.getClassById(id);
 		return Response
-				.status(200)
-				.entity(new GenericEntity<Task>(taskById) {
-				},
-				detailed ? new Annotation[] { TaskDetailedView.Factory
-						.get() } : new Annotation[0])
+				.status(Response.Status.OK)
+				.entity(new GenericEntity<Class>(classById) {
+				})
 						.header("Access-Control-Allow-Headers", "X-extra-header")
 						.allow("OPTIONS").build();
 	}
 	
-	//TODO: We need to create some kind of way
-	
 	/************************ Update Methods *********************/
-	
 	
 	//Full update or creation in not already existing
 	@PUT
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response putTaskById(@PathParam("id") Long id, Task task)
+	public Response putClassById(@PathParam("id") Long id, Class clas)
 			throws AppException {
-		task.setId(id);
-		Group group = new Group();
-		Task taskById = taskService.verifyTaskExistenceById(id);
+		clas.setId(id);
+		Class classById = classService.verifyClassExistenceById(id);
 		
-		if (taskById == null) {
+		if (classById == null) {
 			// resource not existent yet, and should be created under the
 			// specified URI
-			Long createTaskId = taskService.createTask(task, group);
+			Long createClassId = classService.createClass(clas);
 			return Response
 					.status(Response.Status.CREATED)
-					// 201
-					.entity("A new task has been created AT THE LOCATION you specified")
+					.entity("A new class has been created AT THE LOCATION you specified")
 					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(createTaskId)).build();
+							"../classes/"
+									+ String.valueOf(createClassId)).build();
 		} else {
 			// resource is existent and a full update should occur
-			task.setGroup_id(taskById.getGroup_id());
-			group.setId(task.getGroup_id());
-			taskService.updateFullyTask(task, group);
+			clas.setLocation_id(classById.getLocation_id());
+			classService.updateFullyClass(clas);
 			return Response
 					.status(Response.Status.OK)
-					// 200
-					.entity("The task you specified has been fully updated created AT THE LOCATION you specified")
+					.entity("The class you specified has been fully updated AT THE LOCATION you specified")
 					.header("Location",
-							"http://localhost:8888/services/tasks/"
+							"../classes/"
 									+ String.valueOf(id)).build();
 		}
 	}
@@ -171,28 +123,27 @@ public class ClassResource {
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
-	public Response partialUpdateTask(@PathParam("id") Long id, Task task)
+	public Response partialUpdateTask(@PathParam("id") Long id, Class clas)
 			throws AppException {
-		task.setId(id);
-		Group group = new Group();
-		Task taskById = taskService.verifyTaskExistenceById(id);
+		clas.setId(id);
+		Class classById = classService.verifyClassExistenceById(id);
 		
-		if (taskById == null) {
+		if (classById == null) {
 			// resource not existent yet, and should be created under the
 			// specified URI
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location", String.valueOf(task)).build();
-		} else {
-			group.setId(task.getGroup_id());
-		}
-		taskService.updatePartiallyTask(task, group);
+					.entity("Class Id not found")
+					.header("Location", String.valueOf(clas)).build();
+		} 
+			
+		classService.updatePartiallyClass(clas);
 		return Response
 				.status(Response.Status.OK)
 				// 200
-				.entity("The task you specified has been successfully updated")
+				.entity("The class you specified has been successfully updated")
 				.build();
+		
 	}
 
 	/*
@@ -201,116 +152,34 @@ public class ClassResource {
 	@DELETE
 	@Path("{id}")
 	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteTask(@PathParam("id") Long id)
+	public Response deleteClass(@PathParam("id") Long id)
 			throws AppException {
-		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
+		Class clas = classService.verifyClassExistenceById(id);
+		if(clas == null)
 		{
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
+					.entity("Class Id not found")
 					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
+							"../classes/"
+									+ String.valueOf(clas)).build();
 		}
 		
-		taskService.deleteTask(task, group);
+		classService.deleteClass(clas);
 		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("Task successfully removed from database").build();
+				.entity("Class successfully removed from database").build();
 	}
 
 	@DELETE
 	@Path("admin")
 	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteTasks() {
-		taskService.deleteTasks();
+	public Response deleteClasses() {
+		classService.deleteClasses();
 		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All tasks have been successfully removed").build();
-	}
-	
-	@PUT
-	@Path("{id}/MANAGER/{user}")
-	@Produces({MediaType.TEXT_HTML})
-	public Response resetManager(@PathParam("user") Long userId, @PathParam("id") Long id)
-	throws AppException
-	{
-		User user= userService.getUserById(userId);
-		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
-		}
-		taskService.resetManager(user, task);
-		return Response.status(Response.Status.OK).entity("MANAGER RESET: User "+user.getUsername()
-				+" set as sole MANAGER for task "+task.getId()).build();
-	}
-	
-	@POST
-	@Path("{id}/MANAGER/{user}")
-	@Produces({MediaType.TEXT_HTML})
-	public Response addManager(@PathParam("user") Long userId, @PathParam("id") Long id)
-	throws AppException
-	{
-		User user= userService.getUserById(userId);
-		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
-		}
-		taskService.addManager(user, task, group);
-		return Response.status(Response.Status.OK).entity("MANAGER ADDED: User "+user.getUsername()
-				+" added as a MANAGER for task "+task.getId()).build();
-	}
-	
-	@DELETE
-	@Path("{id}/MANAGER/{user}")
-	@Produces({MediaType.TEXT_HTML})
-	public Response deleteManager(@PathParam("user") Long userId, @PathParam("id") Long id)
-	throws AppException
-	{
-		User user= userService.getUserById(userId);
-		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
-			return Response
-					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}
-		else{
-			group.setId(task.getGroup_id());
-		}
-		taskService.deleteManager(user, task, group);
-		return Response.status(Response.Status.OK).entity("MANAGER DELETED: User "+user.getUsername()
-				+" removed as MANAGER for task "+task.getId()).build();
+				.entity("All classes have been successfully removed").build();
 	}
 
-	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
+	//TODO: Implement mechanism to limit the number of people that can sign up for a class.
 	@POST
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
@@ -318,13 +187,12 @@ public class ClassResource {
 	throws AppException
 	{
 		User user= userService.getUserById(userId);
-		Task task= taskService.verifyTaskExistenceById(id);
-		taskService.addMember(user, task);
-		return Response.status(Response.Status.OK).entity("MEMBER ADDED: User "+user.getUsername()
-				+" set as MEMBER for task "+task.getId()).build();
+		Class clas= classService.verifyClassExistenceById(id);
+		classService.addMember(user, clas);
+		return Response.status(Response.Status.OK).entity("MEMBER ADDED: User "+ user.getUsername()
+				+" set as MEMBER for class "+ clas.getId()).build();
 	}
 	
-	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
 	@DELETE
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
@@ -332,23 +200,20 @@ public class ClassResource {
 		throws AppException
 	{
 		User user= userService.getUserById(userId);
-		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getId() == null)
+		Class clas = classService.verifyClassExistenceById(id);
+		if(clas == null)
 		{
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
+					.entity("Class Id not found")
 					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
+							"../classes/"
+									+ String.valueOf(clas)).build();
 		}
-		else{
-			group.setId(task.getGroup_id());
-		}
-		taskService.deleteMember(user, task, group);
-		return Response.status(Response.Status.OK).entity("MEMBER DELETED: User "+user.getUsername()
-				+" removed as MEMBER from task "+task.getId()).build();
+		
+		classService.deleteMember(user, clas);
+		return Response.status(Response.Status.OK).entity("MEMBER DELETED: User "+ user.getUsername()
+				+" removed as MEMBER from task "+ clas.getId()).build();
 	}
 	
 }

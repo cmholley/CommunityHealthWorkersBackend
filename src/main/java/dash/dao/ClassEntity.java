@@ -33,8 +33,8 @@ public class ClassEntity implements Serializable{
 	@Column(name="id")
 	private Long id;
 	
-	@Column(name="group_id")
-	private Long group_id;
+	@Column(name="location_id")
+	private Long location_id;
 	
 	@Column(name="name")
 	private String name;
@@ -83,12 +83,12 @@ public class ClassEntity implements Serializable{
 		this.id = id;
 	}
 
-	public Long getGroup_id(){
-		return group_id;
+	public Long getLocation_id(){
+		return location_id;
 	}
 	
-	public void setGroup_id(Long group_id){
-		this.group_id = group_id;
+	public void setLoction_id(Long group_id){
+		this.location_id = group_id;
 	}
 
 	public String getName() {
