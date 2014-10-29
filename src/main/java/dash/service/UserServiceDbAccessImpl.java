@@ -243,28 +243,24 @@ UserService {
 
 	/********************* DELETE-related methods implementation **********************
 	 * 
-	 * Disabled
-	 * TODO: Implement deactivation of a user account
 	 * 
 	 * */
 
-//	@Override
-//	@Transactional
-//	public void deleteUser(User user) {
-//
-//		
-//		userDao.deleteUserById(user);
-//		deleteACL(user);
-//
-//	}
-//
-//	@Override
-//	@Transactional
-//	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-//	// Users to delete
-//	public void deleteUsers() {
-//		userDao.deleteUsers();
-//	}
+	@Override
+	@Transactional
+	public void deleteUser(User user) {
+		userDao.deleteUserById(user);
+		deleteACL(user);
+
+	}
+
+	@Override
+	@Transactional
+	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
+	// Users to delete
+	public void deleteUsers() {
+		userDao.deleteUsers();
+	}
 
 	@Override
 	public User verifyUserExistenceById(Long id) {
