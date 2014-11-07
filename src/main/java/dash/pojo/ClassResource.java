@@ -1,6 +1,7 @@
 package dash.pojo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import dash.errorhandling.AppException;
 import dash.service.ClassService;
+import dash.service.CoreService;
 import dash.service.UserService;
 
 @Component
@@ -33,18 +35,36 @@ public class ClassResource {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private CoreService coreService;
+	
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
 	public Response createClass(Class clas) throws AppException {
-		Location location= new Location();
-		location.setId(clas.getLocation_id());
-		Long createTaskId = classService.createClass(clas);
+		
+		Long createClassId = classService.createClass(clas);
+		
+		List<Core> listCores = new ArrayList<Core>();
+		for (Long core_id : clas.getCores()) {
+			listCores.add(new Core(core_id, createClassId));
+		}
+		
+		coreService.createCores(listCores);
 		return Response.status(Response.Status.CREATED)
 				// 201
-				.entity("A new task has been created")
-				.header("Location", String.valueOf(createTaskId))
-				.header("ObjectId", String.valueOf(createTaskId)).build();
+				.entity("A new class has been created")
+				.header("Location", String.valueOf(createClassId))
+				.header("ObjectId", String.valueOf(createClassId)).build();
+	}
+	
+	@POST
+	@Path("list")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	public Response createClasses(List<Class> classes) throws AppException {
+		classService.createClasses(classes);
+		return Response.status(Response.Status.CREATED) 
+				.entity("List of classes was successfully created").build();
 	}
 	
 	@GET

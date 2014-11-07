@@ -18,6 +18,7 @@ import dash.dao.LocationEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
+import dash.pojo.Class;
 import dash.pojo.Location;
 import dash.pojo.Task;
 import dash.pojo.User;
@@ -70,6 +71,14 @@ LocationService {
 		else
 			aclController.createAce(location, CustomPermission.MANAGER);
 		return locationId;
+	}
+	
+	@Override
+	@Transactional
+	public void createLocations(List<Location> locations, String user_name) throws AppException {
+		for (Location location : locations) {
+			createLocation(location, user_name);
+		}
 	}
 
 	private void validateInputForCreation(Location location) throws AppException {

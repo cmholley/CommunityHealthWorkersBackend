@@ -22,6 +22,12 @@ public interface LocationService {
 	public Long createLocation(Location location, String user_name) throws AppException;
 
 	/*
+	 * Create multiple locations as ADMIN.
+	 */
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public void createLocations(List<Location> locations, String user_name) throws AppException;
+	
+	/*
 	 * ******************* Read related methods ********************
 	 */
 	/**

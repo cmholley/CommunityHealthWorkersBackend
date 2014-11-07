@@ -18,6 +18,12 @@ public interface ClassService {
 	 */
 	@PreAuthorize("hasPermission(#location, 'MANAGER') or hasRole('ROLE_MODERATOR')")
 	public Long createClass(Class clas) throws AppException;
+	
+	/*
+	 * Create multiple groups as MANAGER.
+	 */
+	@PreAuthorize("hasRole(#location, 'MANAGER')")
+	public void createClasses(List<Class> classes) throws AppException;
 
 	/*
 	 * ******************* Read related methods ********************

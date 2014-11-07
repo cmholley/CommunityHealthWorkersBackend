@@ -13,6 +13,7 @@ import dash.security.IAclObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -45,8 +46,8 @@ public class Class implements  IAclObject{
 	@XmlElement(name="finished")
 	private int finished;
 	
-	@XmlElement(name="core_id")
-	private Long core_id;
+	@XmlElement(name="cores")
+	private List<Long> cores;
 	
 	public Class(ClassEntity classEntity) {
 		try {
@@ -133,12 +134,12 @@ public class Class implements  IAclObject{
 	public void setFinished(int finished) {
 		this.finished = finished;
 	}
-
-	public Long getCore_id() {
-		return core_id;
+	
+	public List<Long> getCores() {
+		return cores;
 	}
 
-	public void setCore_id(Long core_id) {
-		this.core_id = core_id;
+	public void setCores(List<Long> cores) {
+		this.cores = cores;
 	}
 }

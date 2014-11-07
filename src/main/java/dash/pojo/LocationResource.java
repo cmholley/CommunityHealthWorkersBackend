@@ -45,6 +45,15 @@ public class LocationResource {
 		         .header("ObjectId", String.valueOf(createLocationId)).build();
 	}
 	
+	@POST
+	@Path("list")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	public Response createLocations(List<Location> locations, @QueryParam("userName") String user_name) throws AppException {
+		locationService.createLocations(locations, user_name);
+		return Response.status(Response.Status.CREATED) 
+				.entity("List of clocations was successfully created").build();
+	}
+	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Location> getLocations(

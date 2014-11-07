@@ -87,8 +87,8 @@ public class ClassEntity implements Serializable{
 		return location_id;
 	}
 	
-	public void setLoction_id(Long group_id){
-		this.location_id = group_id;
+	public void setLocation_id(Long location_id){
+		this.location_id = location_id;
 	}
 
 	public String getName() {

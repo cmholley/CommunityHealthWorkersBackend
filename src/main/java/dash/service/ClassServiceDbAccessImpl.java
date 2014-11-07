@@ -55,11 +55,20 @@ ClassService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		long classId = classDao.createClass(new ClassEntity(clas));
+		ClassEntity newEnt = new ClassEntity(clas);
+		long classId = classDao.createClass(newEnt);
 		clas.setId(classId);
 		aclController.createACL(clas);
 		aclController.createAce(clas, CustomPermission.MANAGER);
 		return classId;
+	}
+	
+	@Override
+	@Transactional
+	public void createClasses(List<Class> classes) throws AppException {
+		for (Class clas : classes) {
+			createClass(clas);
+		}
 	}
 
 	private void validateInputForCreation(Class clas) throws AppException {
@@ -179,7 +188,7 @@ ClassService {
 			withNull.copyProperty(verifyClassExistenceById, "time", clas.getTime());
 			withNull.copyProperty(verifyClassExistenceById, "duration", clas.getDuration());
 			withNull.copyProperty(verifyClassExistenceById, "room",  clas.getRoom());
-			withNull.copyProperty(verifyClassExistenceById, "core_id",  clas.getCore_id());
+			
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
