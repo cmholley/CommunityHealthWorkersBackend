@@ -25,7 +25,7 @@ public interface CoreService {
 	 *
 	 *Create a new class and set the current user as owner and manager.
 	 */
-	@PreAuthorize("hasPermission(#location, 'MANAGER') or hasRole('ADMIN')")
+	@PreAuthorize("hasPermission(#location, 'MANAGER') or hasRole('ROLE_ADMIN')")
 	public void createCores(List<Core> cores) throws AppException;
 
 }

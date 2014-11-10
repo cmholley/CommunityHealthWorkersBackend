@@ -24,6 +24,7 @@ public class CoreServiceDbAccessImpl implements CoreService {
 	CoreDao coreDao;	
 
 	@Override
+	@Transactional
 	public void createCores(List<Core> listCores) throws AppException {
 		for (Core core : listCores) {
 			coreDao.createCore(new CoreEntity(core));

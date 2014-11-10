@@ -19,7 +19,7 @@ import dash.pojo.Core;
  *
  */
 @Entity
-@Table(name="classes_core")
+@Table(name="classes_cores")
 public class CoreEntity implements Serializable {
 
 	
