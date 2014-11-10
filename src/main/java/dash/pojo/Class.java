@@ -5,10 +5,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.beanutils.BeanUtils;
 
 import dash.dao.ClassEntity;
+import dash.helpers.SimpleDateAdapter;
 import dash.security.IAclObject;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,6 +34,7 @@ public class Class implements  IAclObject{
 	private String description;
 	
 	@XmlElement(name="time")
+	@XmlJavaTypeAdapter(SimpleDateAdapter.class)
 	private Date time;
 	
 	@XmlElement(name="duration")
