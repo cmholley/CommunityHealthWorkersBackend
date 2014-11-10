@@ -1,5 +1,9 @@
 package dash.dao;
 
+import java.util.List;
+
+import dash.pojo.Core;
+
 /**
  *
  *
@@ -8,7 +12,7 @@ package dash.dao;
  */
 public interface CoreDao {
 	
-	public int getCoresByClassId(int class_id);
+	public List<CoreEntity> getCoresByClassId(Long class_id);
 	
 	public void createCore(CoreEntity coreentity);
 	

@@ -17,13 +17,13 @@ import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
 import dash.pojo.Core;
 
-
 public class CoreServiceDbAccessImpl implements CoreService {
 
 	@Autowired
-	CoreDao coreDao;	
+	CoreDao coreDao;
 
 	@Override
+	@Transactional
 	public void createCores(List<Core> listCores) throws AppException {
 		for (Core core : listCores) {
 			coreDao.createCore(new CoreEntity(core));
@@ -31,12 +31,8 @@ public class CoreServiceDbAccessImpl implements CoreService {
 	}
 
 	@Override
-	public List<Core> getCore(Long class_id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CoreEntity> getCoreByClassId(Long class_id) {
+		return coreDao.getCoresByClassId(class_id);
 	}
 
-	
-
-	
 }
