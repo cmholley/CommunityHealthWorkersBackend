@@ -70,14 +70,14 @@ public class ClassResource {
 	}
 
 	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Class> getClasses(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
 			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
 			throws IOException, AppException {
 		List<Class> classes = classService.getClasses(orderByInsertionDate,
 				numberDaysToLookBack);
-		for(Class c : classes) {
+		for (Class c : classes) {
 			addCores(c);
 		}
 		return classes;
@@ -85,12 +85,12 @@ public class ClassResource {
 
 	@GET
 	@Path("byLocation")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public List<Class> getClassesByLocation(
 			@QueryParam("location") Location location) throws IOException,
 			AppException {
 		List<Class> classes = classService.getClassesByLocation(location);
-		for(Class c : classes) {
+		for (Class c : classes) {
 			addCores(c);
 		}
 		return classes;
@@ -98,7 +98,7 @@ public class ClassResource {
 
 	@GET
 	@Path("{id}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getClassById(@PathParam("id") Long id,
 			@QueryParam("detailed") boolean detailed) throws IOException,
 			AppException {
@@ -112,8 +112,8 @@ public class ClassResource {
 
 	private void addCores(Class cls) {
 		List<Long> ceList = new ArrayList<Long>();
-		for(CoreEntity ce : coreService.getCoreByClassId(cls.getId()))
-			ceList.add((long)ce.getCore_id());
+		for (CoreEntity ce : coreService.getCoreByClassId(cls.getId()))
+			ceList.add((long) ce.getCore_id());
 		cls.setCores(ceList);
 	}
 
