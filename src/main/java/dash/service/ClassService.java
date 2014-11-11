@@ -2,12 +2,14 @@ package dash.service;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import dash.errorhandling.AppException;
 import dash.pojo.Group;
 import dash.pojo.Location;
 import dash.pojo.Class;
+import dash.pojo.Task;
 import dash.pojo.User;
 
 public interface ClassService {
@@ -46,6 +48,10 @@ public interface ClassService {
 	public List<Class> getClassesByLocation(Location location) throws AppException;
 	
 	public Class getClassById(Long id) throws AppException;
+	
+	@PostFilter("hasPermission(filterObject, 'MEMBER')")
+	public List<Class> getClassesByMembership(String orderByInsertionDate,
+			Integer numberDaysToLookBack) throws AppException;
 
 	/*
 	 * ******************** Update related methods **********************

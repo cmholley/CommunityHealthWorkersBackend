@@ -18,8 +18,10 @@ import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
+import dash.pojo.Core;
 import dash.pojo.Location;
 import dash.pojo.Class;
+import dash.pojo.Task;
 import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
@@ -36,6 +38,9 @@ ClassService {
 	@Autowired
 	private GenericAclController<Class> aclController;
 	
+	@Autowired
+	private CoreService coreService;
+	
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
@@ -43,23 +48,19 @@ ClassService {
 
 		validateInputForCreation(clas);
 
-		//verify existence of resource in the db (feed must be unique)
-		ClassEntity classByName = classDao.getClassByName(clas.getName());
-		if (classByName != null) {
-			throw new AppException(
-					Response.Status.CONFLICT.getStatusCode(),
-					409,
-					"Class with classname already existing in the database with the id "
-							+ classByName.getId(),
-							"Please verify that the classname and description are properly generated",
-							AppConstants.DASH_POST_URL);
-		}
-
 		ClassEntity newEnt = new ClassEntity(clas);
 		long classId = classDao.createClass(newEnt);
 		clas.setId(classId);
 		aclController.createACL(clas);
 		aclController.createAce(clas, CustomPermission.MANAGER);
+		
+		//add cores to intersection table
+		List<Core> listCores = new ArrayList<Core>();
+		for (Long core_id : clas.getCores()) {
+			listCores.add(new Core(core_id, classId));
+		}
+		coreService.createCores(listCores);
+		
 		return classId;
 	}
 	
@@ -140,6 +141,13 @@ ClassService {
 		}
 
 		return new Class(classDao.getClassById(id));
+	}
+	
+	@Override
+	public List<Class> getClassesByMembership(String orderByInsertionDate,
+	Integer numberDaysToLookBack) throws AppException {
+	
+		return getClasses(orderByInsertionDate, numberDaysToLookBack);
 	}
 
 	private List<Class> getClassesFromEntities(List<ClassEntity> classEntities) {

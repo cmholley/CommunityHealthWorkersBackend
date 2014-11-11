@@ -35,7 +35,7 @@ public class ClassResource {
 
 	@Autowired
 	private UserService userService;
-
+	
 	@Autowired
 	private CoreService coreService;
 
@@ -45,13 +45,6 @@ public class ClassResource {
 	public Response createClass(Class clas) throws AppException {
 
 		Long createClassId = classService.createClass(clas);
-
-		List<Core> listCores = new ArrayList<Core>();
-		for (Long core_id : clas.getCores()) {
-			listCores.add(new Core(core_id, createClassId));
-		}
-
-		coreService.createCores(listCores);
 		return Response
 				.status(Response.Status.CREATED)
 				// 201
@@ -109,7 +102,22 @@ public class ClassResource {
 				}).header("Access-Control-Allow-Headers", "X-extra-header")
 				.allow("OPTIONS").build();
 	}
+	
+	
+	//TODO: Modify so it filters out completed tasks by default
+		@GET
+		@Path("byMembership")
+		@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+		public List<Class> getClassesByMembership(
+				@QueryParam("orderByInsertionDate") String orderByInsertionDate,
+				@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+						throws IOException,	AppException {
+			List<Class> classes = classService.getClassesByMembership(
+					orderByInsertionDate, numberDaysToLookBack);
+			return classes;
+		}
 
+	//TODO: should move into service
 	private void addCores(Class cls) {
 		List<Long> ceList = new ArrayList<Long>();
 		for (CoreEntity ce : coreService.getCoreByClassId(cls.getId()))
