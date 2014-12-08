@@ -17,3 +17,10 @@ Instruction
 
 1. Import the CHWApp.sql file included in the mysql directory. This includes all necessary tables for user management and acl.
 2. Change src/resources/webapp/META-INF/context.xml to connect to the database.
+
+Changelog after Clone from VMA
+==============================
+- Added Locations - Extension to existing "Groups"
+    - Removed ability to be member of this element
+- Added Classes - Extension to existing "Tasks"
+    - Removed need to be member of location to join class.
