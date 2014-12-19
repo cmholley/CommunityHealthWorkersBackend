@@ -52,6 +52,18 @@ public class Location implements  IAclObject {
 	@XmlElement(name="county")
 	private String county;
 	
+	@XmlElement(name="contact_name")
+	private String contact_name;
+	
+	@XmlElement(name="phone_number")
+	private String phone_number;
+	
+	@XmlElement(name="email")
+	private String email;
+	
+	@XmlElement(name="website")
+	private String website;
+	
 	public Location(){};
 	
 	public Location(LocationEntity locationEntity) {
@@ -145,5 +157,37 @@ public class Location implements  IAclObject {
 
 	public void setCounty(String county) {
 		this.county = county;
+	}
+
+	public String getContact_name() {
+		return contact_name;
+	}
+
+	public void setContact_name(String contact_name) {
+		this.contact_name = contact_name;
+	}
+
+	public String getPhone_number() {
+		return phone_number;
+	}
+
+	public void setPhone_number(String phone_number) {
+		this.phone_number = phone_number;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 }

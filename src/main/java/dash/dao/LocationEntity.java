@@ -63,16 +63,19 @@ public class LocationEntity implements Serializable{
 	@Column(name="county")
 	private String county;
 	
+	@Column(name="contact_name")
+	private String contact_name;
+	
+	@Column(name="phone_number")
+	private String phone_number;
+	
+	@Column(name="email")
+	private String email;
+	
+	@Column(name="website")
+	private String website;
+	
 	public LocationEntity(){}
-
-	public LocationEntity(Long id, String name, String description,
-			Date creation_timestamp) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.creation_timestamp = creation_timestamp;
-	}
 	
 	public LocationEntity(Location location){
 		try {
@@ -164,6 +167,42 @@ public class LocationEntity implements Serializable{
 
 	public void setCounty(String county) {
 		this.county = county;
+	}
+
+	public String getContact_name() {
+		return contact_name;
+	}
+
+	public void setContact_name(String contact_name) {
+		this.contact_name = contact_name;
+	}
+
+	public String getPhone_number() {
+		return phone_number;
+	}
+
+	public void setPhone_number(String phone_number) {
+		this.phone_number = phone_number;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	

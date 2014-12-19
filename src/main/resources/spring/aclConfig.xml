@@ -49,8 +49,6 @@
         <constructor-arg ref="auditLogger"/>
         <property name="permissionFactory" ref="permissionFactory"/>
     </bean>
-     
-   
  
     <!-- Declare an acl cache-->  
    <bean id="aclCache" class="org.springframework.security.acls.domain.EhCacheBasedAclCache">
