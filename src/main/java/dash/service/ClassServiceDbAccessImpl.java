@@ -196,6 +196,8 @@ ClassService {
 			withNull.copyProperty(verifyClassExistenceById, "time", clas.getTime());
 			withNull.copyProperty(verifyClassExistenceById, "duration", clas.getDuration());
 			withNull.copyProperty(verifyClassExistenceById, "room",  clas.getRoom());
+			withNull.copyProperty(verifyClassExistenceById, "address",  clas.getAddress());		
+			withNull.copyProperty(verifyClassExistenceById, "finished",  clas.getFinished());		
 			
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
