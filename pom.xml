@@ -6,7 +6,7 @@
 	<artifactId>CHWApp</artifactId>
 	<packaging>war</packaging>
 	<name>RESTFUL-WS</name>
-	<description>REST-FUL web services for DASH backend</description>
+	<description>REST-FUL web services for CHW backend</description>
 
 	<properties>
 		<spring.version>4.0.3.RELEASE</spring.version>
@@ -127,6 +127,7 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- MySQL JDBC connector -->
@@ -134,6 +135,7 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- tomcat jdbc -->

@@ -43,6 +43,9 @@ public class Class implements  IAclObject{
 	@XmlElement(name="room")
 	private String room;
 	
+	@XmlElement(name="address")
+	private String address;
+	
 	@XmlElement(name="creation_timestamp")
 	private Date creation_timestamp;
 	
@@ -120,6 +123,14 @@ public class Class implements  IAclObject{
 
 	public void setRoom(String room) {
 		this.room = room;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public Date getCreation_timestamp() {

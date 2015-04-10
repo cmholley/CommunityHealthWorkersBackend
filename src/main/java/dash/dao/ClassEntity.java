@@ -51,6 +51,9 @@ public class ClassEntity implements Serializable{
 	@Column(name="room")
 	private String room;
 	
+	@Column(name="address")
+	private String address;
+	
 	@GeneratedValue
 	@Column(name="creation_timestamp")
 	private Date creation_timestamp;
@@ -131,6 +134,14 @@ public class ClassEntity implements Serializable{
 		this.room = room;
 	}
 	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public Date getCreation_timestamp() {
 		return creation_timestamp;
 	}
