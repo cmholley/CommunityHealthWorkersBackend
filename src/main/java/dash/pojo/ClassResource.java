@@ -24,6 +24,7 @@ import dash.dao.CoreEntity;
 import dash.errorhandling.AppException;
 import dash.service.ClassService;
 import dash.service.CoreService;
+import dash.service.LocationService;
 import dash.service.UserService;
 
 @Component
@@ -35,31 +36,47 @@ public class ClassResource {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private CoreService coreService;
+
+	@Autowired
+	private LocationService locationService;
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.TEXT_HTML })
 	public Response createClass(Class clas) throws AppException {
-
-		Long createClassId = classService.createClass(clas);
-		return Response
-				.status(Response.Status.CREATED)
-				// 201
-				.entity("A new class has been created")
-				.header("Location", String.valueOf(createClassId))
-				.header("ObjectId", String.valueOf(createClassId)).build();
+		Location verifyLocation = locationService
+				.verifyLocationExistenceById(clas.getLocation_id());
+		if (verifyLocation != null) {
+			Long createClassId = classService.createClass(clas, verifyLocation);
+			return Response
+					.status(Response.Status.CREATED)
+					// 201
+					.entity("A new class has been created")
+					.header("Location", String.valueOf(createClassId))
+					.header("ObjectId", String.valueOf(createClassId)).build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("The location specified does not exist").build();
+		}
 	}
 
 	@POST
 	@Path("list")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	public Response createClasses(List<Class> classes) throws AppException {
-		classService.createClasses(classes);
-		return Response.status(Response.Status.CREATED)
-				.entity("List of classes was successfully created").build();
+		Location verifyLocation = locationService
+				.verifyLocationExistenceById(classes.get(0).getLocation_id());
+		if (verifyLocation != null) {
+			classService.createClasses(classes, verifyLocation);
+			return Response.status(Response.Status.CREATED)
+					.entity("List of classes was successfully created").build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("The location specified does not exist").build();
+		}
 	}
 
 	@GET
@@ -102,22 +119,21 @@ public class ClassResource {
 				}).header("Access-Control-Allow-Headers", "X-extra-header")
 				.allow("OPTIONS").build();
 	}
-	
-	
-	//TODO: Modify so it filters out completed tasks by default
-		@GET
-		@Path("byMembership")
-		@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-		public List<Class> getClassesByMembership(
-				@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-				@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
-						throws IOException,	AppException {
-			List<Class> classes = classService.getClassesByMembership(
-					orderByInsertionDate, numberDaysToLookBack);
-			return classes;
-		}
 
-	//TODO: should move into service
+	// TODO: Modify so it filters out completed tasks by default
+	@GET
+	@Path("byMembership")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<Class> getClassesByMembership(
+			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+			throws IOException, AppException {
+		List<Class> classes = classService.getClassesByMembership(
+				orderByInsertionDate, numberDaysToLookBack);
+		return classes;
+	}
+
+	// TODO: should move into service
 	private void addCores(Class cls) {
 		List<Long> ceList = new ArrayList<Long>();
 		for (CoreEntity ce : coreService.getCoreByClassId(cls.getId()))
@@ -140,13 +156,21 @@ public class ClassResource {
 		if (classById == null) {
 			// resource not existent yet, and should be created under the
 			// specified URI
-			Long createClassId = classService.createClass(clas);
-			return Response
-					.status(Response.Status.CREATED)
-					.entity("A new class has been created AT THE LOCATION you specified")
-					.header("Location",
-							"../classes/" + String.valueOf(createClassId))
-					.build();
+			Location verifyLocation = locationService
+					.verifyLocationExistenceById(clas.getLocation_id());
+			if (verifyLocation != null) {
+				Long createClassId = classService.createClass(clas, verifyLocation);
+				return Response
+						.status(Response.Status.CREATED)
+						.entity("A new class has been created AT THE LOCATION you specified")
+						.header("Location",
+								"../classes/" + String.valueOf(createClassId))
+						.build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("The location specified does not exist")
+						.build();
+			}
 		} else {
 			// resource is existent and a full update should occur
 			clas.setLocation_id(classById.getLocation_id());
