@@ -40,7 +40,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
-	public Long createClass(Class clas, Location location) throws AppException {
+	public Long createClass(Class clas, Location loc) throws AppException {
 
 		validateInputForCreation(clas);
 
@@ -55,7 +55,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		for (Long core_id : clas.getCores()) {
 			listCores.add(new Core(core_id, classId));
 		}
-		coreService.createCores(listCores);
+		coreService.createCores(listCores, loc);
 
 		return classId;
 	}

@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import dash.dao.CoreEntity;
 import dash.errorhandling.AppException;
 import dash.pojo.Core;
+import dash.pojo.Location;
 
 /**
  *
@@ -26,7 +27,7 @@ public interface CoreService {
 	 *
 	 *Create a new class and set the current user as owner and manager.
 	 */
-	@PreAuthorize("hasPermission(#location, 'MANAGER') or hasRole('ROLE_ADMIN')")
-	public void createCores(List<Core> cores) throws AppException;
+	@PreAuthorize("hasPermission(#loc, 'MANAGER') or hasRole('ROLE_ADMIN')")
+	public void createCores(List<Core> cores, Location loc) throws AppException;
 
 }
