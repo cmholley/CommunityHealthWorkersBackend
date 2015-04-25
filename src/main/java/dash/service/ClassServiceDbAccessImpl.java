@@ -2,14 +2,18 @@ package dash.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 import javax.ws.rs.core.Response;
+
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
+
 import dash.dao.ClassDao;
 import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
@@ -154,6 +158,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	private List<Class> getClassesFromEntities(List<ClassEntity> classEntities) {
 		List<Class> response = new ArrayList<Class>();
 		for (ClassEntity classEntity : classEntities) {
+			classEntity.setFinished((classEntity.getTime() != null) ? (classEntity.getTime().before(new Date()) ? 1 : 0) : 0);
 			response.add(new Class(classEntity));
 		}
 
@@ -238,7 +243,8 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	/****************** Update Related Methods ***********************/
 	@Override
 	@Transactional
-	public void updatePartiallyClass(Class clas, Location loc) throws AppException {
+	public void updatePartiallyClass(Class clas, Location loc)
+			throws AppException {
 		// do a validation to verify existence of the resource
 		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
 		if (verifyClassExistenceById == null) {
