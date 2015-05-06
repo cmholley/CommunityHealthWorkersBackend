@@ -64,6 +64,15 @@ public class ClassEntity implements Serializable{
 	@Column(name="core_id")
 	private Long core_id;
 	
+	@Column(name="forCHW")
+	private int forCHW;
+	
+	@Column(name="forCredit")
+	private int forCredit;
+	
+	@Column(name="active")
+	private int active;
+	
 	public ClassEntity(){}
 	
 	public ClassEntity(Class clas){
@@ -164,6 +173,30 @@ public class ClassEntity implements Serializable{
 
 	public void setCore_id(Long badge_id) {
 		this.core_id = badge_id;
+	}
+
+	public int getForCHW() {
+		return forCHW;
+	}
+
+	public int getForCredit() {
+		return forCredit;
+	}
+
+	public int getActive() {
+		return active;
+	}
+
+	public void setForCHW(int forCHW) {
+		this.forCHW = forCHW;
+	}
+
+	public void setForCredit(int forCredit) {
+		this.forCredit = forCredit;
+	}
+
+	public void setActive(int active) {
+		this.active = active;
 	}
 	
 }

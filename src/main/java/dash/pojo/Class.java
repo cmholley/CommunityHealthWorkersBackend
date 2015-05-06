@@ -55,6 +55,15 @@ public class Class implements  IAclObject{
 	@XmlElement(name="cores")
 	private List<Long> cores;
 	
+	@XmlElement(name="forCHW")
+	private int forCHW;
+	
+	@XmlElement(name="forCredit")
+	private int forCredit;
+	
+	@XmlElement(name="active")
+	private int active;
+	
 	public Class(ClassEntity classEntity) {
 		try {
 			BeanUtils.copyProperties(this, classEntity);
@@ -155,5 +164,29 @@ public class Class implements  IAclObject{
 
 	public void setCores(List<Long> cores) {
 		this.cores = cores;
+	}
+	
+	public int getForCHW() {
+		return forCHW;
+	}
+
+	public int getForCredit() {
+		return forCredit;
+	}
+
+	public int getActive() {
+		return active;
+	}
+
+	public void setForCHW(int forCHW) {
+		this.forCHW = forCHW;
+	}
+
+	public void setForCredit(int forCredit) {
+		this.forCredit = forCredit;
+	}
+
+	public void setActive(int active) {
+		this.active = active;
 	}
 }
