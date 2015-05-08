@@ -21,8 +21,11 @@ import dash.pojo.Core;
 @Entity
 @Table(name="classes_cores")
 public class CoreEntity implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4389851981396869451L;
 
-	
 	@Id
 	@GeneratedValue
 	@Column(name="id")

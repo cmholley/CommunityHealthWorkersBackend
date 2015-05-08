@@ -1,15 +1,13 @@
 package dash.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-
-import dash.pojo.Core;
 
 public class CoreDaoJPA2Impl implements CoreDao {
 
@@ -28,10 +26,18 @@ public class CoreDaoJPA2Impl implements CoreDao {
 			return new ArrayList<CoreEntity>();
 		}
 	}
-	
+
 	@Override
 	public void createCore(CoreEntity coreentity) {
-			entityManager.persist(coreentity);
-			entityManager.flush();// force insert to receive the id of the post
+		entityManager.persist(coreentity);
+		entityManager.flush();// force insert to receive the id of the post
+	}
+
+	@Override
+	public void deleteCoresByClassId(Long class_id) {
+		String qlString = "DELETE FROM CoreEntity AS u WHERE u.class_id = :class_id";
+		Query query = entityManager.createQuery(qlString);
+		query.setParameter("class_id", class_id.intValue());
+		query.executeUpdate();
 	}
 }

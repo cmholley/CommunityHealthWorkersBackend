@@ -7,6 +7,7 @@ import dash.dao.CoreDao;
 import dash.dao.CoreEntity;
 import dash.errorhandling.AppException;
 import dash.pojo.Core;
+import dash.pojo.Class;
 import dash.pojo.Location;
 
 public class CoreServiceDbAccessImpl implements CoreService {
@@ -16,7 +17,8 @@ public class CoreServiceDbAccessImpl implements CoreService {
 
 	@Override
 	@Transactional
-	public void createCores(List<Core> listCores, Location loc) throws AppException {
+	public void createCores(List<Core> listCores, Location loc)
+			throws AppException {
 		for (Core core : listCores) {
 			coreDao.createCore(new CoreEntity(core));
 		}
@@ -27,4 +29,8 @@ public class CoreServiceDbAccessImpl implements CoreService {
 		return coreDao.getCoresByClassId(class_id);
 	}
 
+	@Override
+	public void deleteCores(Class clas, Location loc) throws AppException {
+		coreDao.deleteCoresByClassId(clas.getId());
+	}
 }

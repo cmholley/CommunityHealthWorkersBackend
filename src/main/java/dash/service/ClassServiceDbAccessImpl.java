@@ -158,7 +158,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	private List<Class> getClassesFromEntities(List<ClassEntity> classEntities) {
 		List<Class> response = new ArrayList<Class>();
 		for (ClassEntity classEntity : classEntities) {
-			classEntity.setFinished((classEntity.getTime() != null) ? (classEntity.getTime().before(new Date()) ? 1 : 0) : 0);
+			classEntity
+					.setFinished((classEntity.getTime() != null) ? (classEntity
+							.getTime().before(new Date()) ? 1 : 0) : 0);
 			response.add(new Class(classEntity));
 		}
 
@@ -190,6 +192,12 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		copyAllProperties(verifyClassExistenceById, clas);
 		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
 
+		coreService.deleteCores(clas, loc);
+		List<Core> listCores = new ArrayList<Core>();
+		for (Long core_id : clas.getCores()) {
+			listCores.add(new Core(core_id, clas.getId()));
+		}
+		coreService.createCores(listCores, loc);
 	}
 
 	private void copyAllProperties(Class verifyClassExistenceById, Class clas) {
@@ -208,6 +216,8 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 					clas.getRoom());
 			withNull.copyProperty(verifyClassExistenceById, "address",
 					clas.getAddress());
+			withNull.copyProperty(verifyClassExistenceById, "cores",
+					clas.getCores());
 			withNull.copyProperty(verifyClassExistenceById, "finished",
 					clas.getFinished());
 
@@ -258,6 +268,12 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		copyPartialProperties(verifyClassExistenceById, clas);
 		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
 
+		coreService.deleteCores(clas, loc);
+		List<Core> listCores = new ArrayList<Core>();
+		for (Long core_id : clas.getCores()) {
+			listCores.add(new Core(core_id, clas.getId()));
+		}
+		coreService.createCores(listCores, loc);
 	}
 
 	private void copyPartialProperties(Class verifyClassExistenceById,

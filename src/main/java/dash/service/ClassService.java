@@ -58,7 +58,8 @@ public interface ClassService {
 	public void updateFullyClass(Class clas, Location loc) throws AppException;
 
 	@PreAuthorize("hasPermission(#clas, 'MANAGER') or hasPermission(#loc, 'MANAGER') or hasRole('ROLE_MODERATOR')")
-	public void updatePartiallyClass(Class clas, Location loc) throws AppException;
+	public void updatePartiallyClass(Class clas, Location loc)
+			throws AppException;
 
 	/*
 	 * ******************** Delete related methods **********************
