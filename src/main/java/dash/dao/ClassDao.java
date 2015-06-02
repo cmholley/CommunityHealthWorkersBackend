@@ -42,4 +42,8 @@ public interface ClassDao {
 	/** removes all classes */
 	public void deleteClasses();
 
+	public List<ClassEntity> getTodaysClasses();
+
+	public List<String> getMembersForClass(ClassEntity classEntity);
+
 }
