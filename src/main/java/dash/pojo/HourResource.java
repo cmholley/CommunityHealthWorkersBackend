@@ -1,12 +1,15 @@
 package dash.pojo;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -17,7 +20,11 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.DefaultValue;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +35,7 @@ import dash.service.HourService;
 import dash.service.TaskService;
 import dash.service.UserService;
 import dash.pojo.Group;
+import dash.pojo.HourResource.JaxbList;
 
 @Component
 @Path("/hours")
@@ -44,6 +52,9 @@ public class HourResource {
 	
 	@Autowired 
 	private TaskService taskService;
+	
+	private static final String hourPicturePath = AppConstants.APPLICATION_UPLOAD_LOCATION_FOLDER
+			+ "/hours";
 	
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -265,6 +276,127 @@ public class HourResource {
 		hourService.deleteHours();
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("All hours have been successfully removed").build();
+	}
+	
+	@POST
+	@Path("/upload")
+	@Consumes({ MediaType.MULTIPART_FORM_DATA })
+	public Response uploadFile(@QueryParam("id") Long id,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@HeaderParam("Content-Length") final long fileSize)
+			throws AppException {
+
+		Hour hour = hourService.getHourById(id);
+
+		// TODO: Generate directory if not set
+		if (hour.getPicturePath() == null) {
+			String fileName = hour.getId().toString();
+			int hashcode = fileName.hashCode();
+			int mask = 255;
+			int firstDir = hashcode & mask;
+			int secondDir = (hashcode >> 8) & mask;
+			StringBuilder path = new StringBuilder(File.separator);
+			path.append(String.format("%03d", firstDir));
+			path.append(File.separator);
+			path.append(String.format("%03d", secondDir));
+			path.append(File.separator);
+			path.append(fileName);
+			hour.setPicturePath(path.toString());
+			partialUpdateHour(hour.getId(), hour);
+		}
+
+		if (!hourService.getFileNames(hour).isEmpty()) {
+			List<String> files = hourService.getFileNames(hour);
+			for (String file : files) {
+				deleteUpload(hour.getId(), file);
+			}
+		}
+		String uploadedFileLocation = hourPicturePath + "/" + hour.getPicturePath()
+				+ "/"
+				+ fileDetail.getFileName().replaceAll("%20", "_").toLowerCase();
+		;
+		// save it
+		hourService.uploadFile(uploadedInputStream, uploadedFileLocation, hour);
+
+		String output = "File uploaded to : " + uploadedFileLocation;
+		hour.setProfile_picture_filename(fileDetail.getFileName());
+		hourService.updatePartiallyHour(hour);
+		return Response.status(200).entity(output).build();
+
+	}
+
+	@GET
+	@Path("/upload")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getFileNames(@QueryParam("hourId") Long id)
+			throws AppException {
+
+		Hour hour = hourService.getHourById(id);
+		JaxbList<String> fileNames = new JaxbList<String>(
+				hourService.getFileNames(hour));
+		return Response.status(200).entity(fileNames).build();
+	}
+
+	// //Gets a specific file and allows the hour to download the pdf
+	// @GET
+	// @Path("/upload")
+	// public Response getFile(@QueryParam("hourId") Long id,
+	// @QueryParam("fileName") String fileName) throws AppException {
+	//
+	// Hour hour= hourService.getHourById(id);
+	//
+	// if(hour==null){
+	// return Response.status(Response.Status.BAD_REQUEST)
+	// .entity("Invalid hourId, unable to locate hour with id: "+id).build();
+	// }
+	//
+	// String uploadedFileLocation =
+	// AppConstants.APPLICATION_UPLOAD_LOCATION_FOLDER+hour.getPicture()+"/" +
+	// fileName;
+	//
+	//
+	// return Response.ok(hourService.getUploadFile(uploadedFileLocation, hour))
+	// .type("application/pdf").build();
+	// }
+
+	@DELETE
+	@Path("/upload")
+	public Response deleteUpload(@QueryParam("hourId") Long id,
+			@QueryParam("fileName") String fileName) throws AppException {
+
+		Hour hour = hourService.getHourById(id);
+
+		String uploadedFileLocation = hourPicturePath + "/" + hour.getPicturePath()
+				+ "/" + fileName;
+		// save it
+		hourService.deleteUploadFile(uploadedFileLocation, hour);
+
+		String output = "File removed from: " + uploadedFileLocation;
+		hour.setProfile_picture_filename("");
+		hourService.updatePartiallyHour(hour);
+		return Response.status(200).entity(output).build();
+	}
+
+	public void sethourService(HourService hourService) {
+		this.hourService = hourService;
+	}
+
+	@XmlRootElement(name = "fileNames")
+	public static class JaxbList<T> {
+		protected List<T> list;
+
+		public JaxbList() {
+		}
+
+		public JaxbList(List<T> list) {
+			this.list = list;
+		}
+
+		@XmlElement(name = "fileName")
+		public List<T> getList() {
+			return list;
+		}
 	}
 	
 }

@@ -1,6 +1,8 @@
 package dash.service;
 
+import java.io.InputStream;
 import java.util.List;
+
 
 
 
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import dash.errorhandling.AppException;
 import dash.pojo.Group;
 import dash.pojo.Hour;
+import dash.pojo.User;
 
 public interface HourService {
 	/*
@@ -95,6 +98,21 @@ public interface HourService {
 	 * but they will take up space if this is commonly used */
 	@PreAuthorize("hasRole('ROLE_ROOT')")
 	public void deleteHours();
+
+	/*
+	 * ******************** Upload related methods **********************
+	 */
+	
+	@PreAuthorize("hasPermission(#hour, 'delete') or hasRole('ROLE_ADMIN')")
+	public void deleteUploadFile(String uploadedFileLocation, Hour hour)
+			throws AppException;
+
+	@PreAuthorize("hasPermission(#hour, 'write') or hasRole('ROLE_ADMIN')")
+	public void uploadFile(InputStream uploadedInputStream,
+			String uploadedFileLocation, Hour hour) throws AppException;
+
+	@PreAuthorize("hasPermission(#hour, 'read') or hasRole('ROLE_ADMIN')")
+	public List<String> getFileNames(Hour hour);
 	
 	
 	/*

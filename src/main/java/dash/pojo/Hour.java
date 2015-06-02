@@ -1,6 +1,10 @@
 package dash.pojo;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -10,19 +14,6 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import dash.dao.HourEntity;
 import dash.security.IAclObject;
-
-
-
-
-
-
-
-
-
-
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -38,6 +29,9 @@ public class Hour implements  IAclObject{
 
 	@XmlElement(name="task_id")
 	private Long task_id;
+	
+	@XmlElement(name = "picturePath")
+	private String picturePath;
 	
 	@XmlElement(name="title")
 	private String title;
@@ -57,6 +51,9 @@ public class Hour implements  IAclObject{
 	@XmlElement(name="pending")
 	private boolean pending;
 
+	/** name of a photo stored at picturePath that is the selected profile photo*/
+	@XmlElement(name= "profile_picture_filename")
+	private String profile_picture_filename;
 	
 
 	public Hour(HourEntity hourEntity) {
@@ -157,6 +154,22 @@ public class Hour implements  IAclObject{
 
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	public String getPicturePath() {
+		return picturePath;
+	}
+
+	public void setPicturePath(String picturePath) {
+		this.picturePath = picturePath;
+	}
+
+	public String getProfile_picture_filename() {
+		return profile_picture_filename;
+	}
+
+	public void setProfile_picture_filename(String profile_picture_filename) {
+		this.profile_picture_filename = profile_picture_filename;
 	}
 
 	

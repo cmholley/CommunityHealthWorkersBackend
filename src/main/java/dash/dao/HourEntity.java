@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -42,6 +43,9 @@ public class HourEntity implements Serializable{
 	@Column(name="task_id")
 	private Long task_id;
 	
+	@Column(name = "picture")
+	private String picturePath;
+	
 	@Column(name="title")
 	private String title;
 	
@@ -59,6 +63,10 @@ public class HourEntity implements Serializable{
 	
 	@Column(name="pending")
 	private boolean pending;
+	
+	/** name of a photo stored at picturePath that is the selected profile photo*/
+	@Column(name= "profile_picture_filename")
+	private String profile_picture_filename;
 	
 	
 	public HourEntity(){}
@@ -162,6 +170,22 @@ public class HourEntity implements Serializable{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getPicturePath() {
+		return picturePath;
+	}
+
+	public void setPicturePath(String picturePath) {
+		this.picturePath = picturePath;
+	}
+
+	public String getProfile_picture_filename() {
+		return profile_picture_filename;
+	}
+
+	public void setProfile_picture_filename(String profile_picture_filename) {
+		this.profile_picture_filename = profile_picture_filename;
 	}
 	
 	
