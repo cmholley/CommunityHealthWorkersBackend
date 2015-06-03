@@ -58,14 +58,14 @@ public class UsersResource {
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON  })
 	public Response createUser(User user) throws AppException {
 		Long createUserId = userService.createUser(user);
 		return Response.status(Response.Status.CREATED)
 				// 201
 				.entity("A new user has been created at index")
 				.header("Location", String.valueOf(createUserId))
-		         .header("ObjectId", String.valueOf(createUserId)).build();
+		        .header("ObjectId", String.valueOf(createUserId)).build();
 	}
 
 	/**

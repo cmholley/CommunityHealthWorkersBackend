@@ -12,13 +12,13 @@
 		</property>
 
 		<property name="hibernate.connection.url">
-			jdbc:mysql://localhost:3306/chwapp?allowMultiQueries=true
+			jdbc:mysql://localhost:3306/CHWApp?allowMultiQueries=true
 		</property>
 		<property name="hibernate.connection.username">
 			sqluser
 		</property>
 		<property name="hibernate.connection.password">
-			3U5ELVfeTHRTn7Mx
+			hs@SQL2011
 		</property>
 	</session-factory>
 </hibernate-configuration>

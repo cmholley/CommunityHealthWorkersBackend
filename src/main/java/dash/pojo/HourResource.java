@@ -58,12 +58,13 @@ public class HourResource {
 	
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML })
+	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 	public Response createHour(Hour hour) throws AppException {
 		Long createHourId = hourService.createHour(hour);
+		hour.setId(createHourId);
 		return Response.status(Response.Status.CREATED)
 				// 201
-				.entity("A new hour has been created")
+				.entity(new GenericEntity<Hour>(hour){})
 				.header("Location", String.valueOf(createHourId))
 				.header("ObjectId", String.valueOf(createHourId)).build();
 	}
