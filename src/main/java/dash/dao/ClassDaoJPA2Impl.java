@@ -137,7 +137,7 @@ public class ClassDaoJPA2Impl implements ClassDao {
 
 	@Override
 	public List<ClassEntity> getTodaysClasses() {
-		String qlString = "SELECT u.id FROM u WHERE u.time BETWEEN :startTime AND :endTime";
+		String qlString = "SELECT u FROM ClassEntity u WHERE u.time BETWEEN :startTime AND :endTime";
 		TypedQuery<ClassEntity> query = entityManager.createQuery(qlString, ClassEntity.class);
 		
 		Calendar cal;

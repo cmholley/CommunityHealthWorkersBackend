@@ -26,8 +26,8 @@ public class QuartzInitServletContextListener implements ServletContextListener{
 		cal.set(Calendar.MILLISECOND,0);*/
 		cal.add(Calendar.SECOND, 15);
 		Date midnightDate = cal.getTime();
-		//dailyTimer.scheduleAtFixedRate(new DailyEmailJob(sce), midnightDate, 
-		//		TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)); //Executes daily
+		dailyTimer.scheduleAtFixedRate(new DailyEmailJob(sce), midnightDate, 
+				TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)); //Executes daily
 	}
 
 	@Override

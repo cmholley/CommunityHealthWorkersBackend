@@ -42,6 +42,7 @@ public class DailyEmailJob extends TimerTask{
 		for(ClassEntity classEntity : todaysClasses){
 			List<String> membersForClass = classDao.getMembersForClass(classEntity);
 			
+			
 		}
 		
 		
