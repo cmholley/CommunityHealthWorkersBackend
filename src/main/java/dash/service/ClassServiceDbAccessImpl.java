@@ -330,7 +330,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 			helper = new MimeMessageHelper(message, true);
 			helper.setFrom("NOREPLY@Housuggest.org");
 			helper.setTo("NOREPLY@Housuggest.org");
-			helper.setBcc("cmholley97@gmail.com");
+			String [] memberArray = new String[membersForClass.size()];
+			membersForClass.toArray(memberArray);
+			helper.setBcc(memberArray);
 			helper.setSubject("You have a class coming up soon.");
 			String htmlText = generateHtml(clas);
 			helper.setText(htmlText, true);

@@ -19,12 +19,11 @@ public class InitServletContextListener implements ServletContextListener{
 	public void contextInitialized(ServletContextEvent sce) {
 		Timer dailyTimer = new Timer(true);//The timer thread needs to be a daemon
 		Calendar cal = Calendar.getInstance();
-		/*cal.add(Calendar.DATE, 1);
-		cal.set(Calendar.HOUR_OF_DAY,0);
-		cal.set(Calendar.MINUTE,5);//Scheduling at 12:05am removes midnight ambiguity
+		cal.add(Calendar.DATE, 1);
+		cal.set(Calendar.HOUR_OF_DAY,8);
+		cal.set(Calendar.MINUTE,0);
 		cal.set(Calendar.SECOND,0);
-		cal.set(Calendar.MILLISECOND,0);*/
-		cal.add(Calendar.MINUTE, 1);
+		cal.set(Calendar.MILLISECOND,0);
 		Date midnightDate = cal.getTime();
 		dailyTimer.scheduleAtFixedRate(new DailyEmailTask(sce), midnightDate, 
 				TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)); //Executes daily

@@ -58,7 +58,7 @@ public class UsersResource {
 	 */
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_JSON  })
+	@Produces({ MediaType.TEXT_HTML })
 	public Response createUser(User user) throws AppException {
 		Long createUserId = userService.createUser(user);
 		return Response.status(Response.Status.CREATED)
