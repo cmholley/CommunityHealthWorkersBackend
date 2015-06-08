@@ -1,15 +1,22 @@
 package dash.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ApplicationObjectSupport;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +26,9 @@ import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
+import dash.pojo.Class;
 import dash.pojo.Core;
 import dash.pojo.Location;
-import dash.pojo.Class;
 import dash.pojo.User;
 import dash.security.CustomPermission;
 import dash.security.GenericAclController;
@@ -33,6 +40,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	ClassDao classDao;
 
 	@Autowired
+	LocationService locationService;;
+
+	@Autowired
 	private MutableAclService mutableAclService;
 
 	@Autowired
@@ -40,6 +50,12 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 
 	@Autowired
 	private CoreService coreService;
+
+	@Autowired
+	private JavaMailSender mailSender;
+
+	@Autowired
+	private SimpleMailMessage templateMessage;
 
 	/********************* Create related methods implementation ***********************/
 	@Override
@@ -303,5 +319,70 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	public void deleteMember(User user, Class clas) throws AppException {
 		aclController.deleteACE(clas, CustomPermission.MEMBER,
 				new PrincipalSid(user.getUsername()));
+	}
+
+	@Override
+	public void sendAlertEmail(List<String> membersForClass, Class clas) {
+		MimeMessage message = this.mailSender.createMimeMessage();
+
+		MimeMessageHelper helper;
+		try {
+			helper = new MimeMessageHelper(message, true);
+			helper.setFrom("NOREPLY@Housuggest.org");
+			helper.setTo("NOREPLY@Housuggest.org");
+			helper.setBcc("cmholley97@gmail.com");
+			helper.setSubject("You have a class coming up soon.");
+			String htmlText = generateHtml(clas);
+			helper.setText(htmlText, true);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mailSender.send(message);
+		} catch (MailException ex) {
+			System.err.println(ex.getMessage()); // Do we need a front end error
+													// if the sending fails?
+		}
+	}
+
+	private String generateHtml(Class clas) {
+		String html = "<html><body><p> Good Morning! </p><p> This is a friendly reminder that you have an upcoming class in 24 hours. </p>";
+		html += "<p>Name: " + clas.getName() + " <br/>";
+		if (clas.getTime() != null) {
+			SimpleDateFormat formater = new SimpleDateFormat(
+					"MMM dd yyyy 'at' hh:mm a");
+			String formattedDate = formater.format(clas.getTime());
+			html += "Time: " + formattedDate + " <br/>";
+		}
+		if (clas.getAddress() != null) {
+			html += "Address: " + clas.getAddress() + " <br/>";
+		}
+		html += "</p>";
+		Location trainingCenter = null;
+		try {
+			trainingCenter = locationService.getLocationById(clas
+					.getLocation_id());
+		} catch (AppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		html += "<p> Please contact " + trainingCenter.getName()
+				+ " if you have any questions or concerns. </p>";
+		html += "<p> We hope you enjoy this class! </p><p> CHWApp Support Team </p></body></html>";
+		return html;
+	}
+
+	@Override
+	public List<String> getMembersForClass(Class clas) {
+		List<String> members = classDao
+				.getMembersForClass(new ClassEntity(clas));
+		return members;
+	}
+
+	@Override
+	public List<Class> getTodaysClasses() {
+		List<ClassEntity> classes = classDao.getTodaysClasses();
+		return getClassesFromEntities(classes);
 	}
 }

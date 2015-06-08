@@ -177,7 +177,7 @@ public class ClassDaoJPA2Impl implements ClassDao {
 				+ " WHERE acl_object_identity.object_id_identity = :classId AND acl_object_identity.object_id_class = 5 AND acl_entry.mask = 64";
 		SQLQuery query = session.createSQLQuery(qlString);
 		query.setLong("classId", classEntity.getId());
-		List<String> userNames = query.list();		
+		List<String> userNames = query.list();
 		return userNames;
 	}		
 }

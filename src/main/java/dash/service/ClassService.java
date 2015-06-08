@@ -1,8 +1,11 @@
 package dash.service;
 
 import java.util.List;
+
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
 import dash.pojo.Location;
 import dash.pojo.Class;
@@ -89,5 +92,11 @@ public interface ClassService {
 	 * ******************** Helper methods **********************
 	 */
 	public Class verifyClassExistenceById(Long id);
+	
+	public void sendAlertEmail(List<String> membersForClass, Class clas);
+
+	public List<String> getMembersForClass(Class clas);
+
+	public List<Class> getTodaysClasses();
 
 }

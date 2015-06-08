@@ -13,17 +13,20 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dash.dao.ClassDao;
 import dash.dao.ClassEntity;
+import dash.service.ClassService;
+import dash.service.UserService;
+import dash.pojo.Class;
 
 
 //This TimerTask is designed to run every day at midnight. 
 //It will retrieve all of the studies with a start date
 //Of the current day and then initialize the job for them based of off the survey.
 
-public class DailyEmailJob extends TimerTask{
+public class DailyEmailTask extends TimerTask{
 	
 	private ServletContextEvent servletContextEvent;
 
-	public DailyEmailJob(ServletContextEvent servletContextEvent){
+	public DailyEmailTask(ServletContextEvent servletContextEvent){
 		this.servletContextEvent = servletContextEvent;
 	}
 	
@@ -34,19 +37,13 @@ public class DailyEmailJob extends TimerTask{
 		ApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContextEvent.getServletContext());
 		AutowireCapableBeanFactory factory = springContext.getAutowireCapableBeanFactory();
 		
-		ClassDao classDao = factory.getBean(ClassDao.class);
-		List<ClassEntity> todaysClasses = classDao.getTodaysClasses();
+		ClassService classService = factory.getBean(ClassService.class);
+		List<Class> todaysClasses = classService.getTodaysClasses();
 		
-		HashMap<ClassEntity, List<String>> classesAndEmails;
-		
-		for(ClassEntity classEntity : todaysClasses){
-			List<String> membersForClass = classDao.getMembersForClass(classEntity);
-			
-			
-		}
-		
-		
-		
+		for(Class clas: todaysClasses){
+			List<String> membersForClass = classService.getMembersForClass(clas);
+			classService.sendAlertEmail(membersForClass, clas);
+		}	
 	}
 
 }
