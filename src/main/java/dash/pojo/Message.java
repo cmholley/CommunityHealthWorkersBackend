@@ -23,20 +23,24 @@ import java.util.Date;
 public class Message implements IAclObject{
 
 	
-	
 	@XmlElement(name="id")
+	@Column(name="id")
 	private Long id;
 	
-	@XmlElement(name="sender_id")
+    @XmlElement(name="sender_id")
+	@Column(name="sender_id")
 	private Long sender_id;
 	
 	@XmlElement(name="task_id")
+    @Column(name="task_id")
 	private Long task_id;
 	
 	@XmlElement(name="time")
+    @Column(name="time")
 	private Date creation_timestamp;
 	
 	@XmlElement(name="content")
+    @Column(name="content")
 	private String content;
 
 	public Message(Long id, Long sender_id, Long task_id, String content, Date time) {

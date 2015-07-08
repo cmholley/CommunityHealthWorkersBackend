@@ -28,12 +28,15 @@ public class Core implements Serializable {
 	private static final long serialVersionUID = -2634351209381642240L;
 
 	@XmlElement(name = "id")
+    @Column(name = "id")
 	private int id;
 	
 	@XmlElement(name = "class_id")
+    @Column(name = "class_id")
 	private Long class_id;
 
 	@XmlElement(name = "core_id")
+    @Column(name = "core_id")
 	private Long core_id;
 
 	/*public Core(CoreEntity core) {

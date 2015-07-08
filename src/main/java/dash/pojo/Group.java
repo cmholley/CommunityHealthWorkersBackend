@@ -25,16 +25,20 @@ public class Group implements  IAclObject{
 
 
 	@XmlElement(name = "id")
+    @Column(name = "id")
 	private Long id;
 	
 
 	@XmlElement(name = "name")
+    @Column(name = "name")
 	private String name;
 	
 	@XmlElement(name = "description")
+    @Column(name = "description")
 	private String description;
 	
 	@XmlElement(name = "creation_timestamp")
+    @Column(name = "creation_timestamp")
 	private Date creation_timestamp;
 	
 	@Override

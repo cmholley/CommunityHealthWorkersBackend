@@ -29,46 +29,57 @@ public class User implements Serializable {
 
 	/** id of the user */
 	@XmlElement(name = "id")
+    @Column(name = "id")
 	private Long id;
 
 	/** username of the user */
 	@XmlElement(name = "username")
+    @Column(name = "username")
 	private String username;
 
 	/** password of the user */
 	@XmlElement(name = "password")
+    @Column(name = "password")
 	private String password;
 
 	/** firstname of the user */
 	@XmlElement(name = "firstName")
+    @Column(name = "firstName")
 	private String firstName;
 
 	/** lastname of the user */
 	@XmlElement(name = "lastName")
+    @Column(name = "lastName")
 	private String lastName;
 
 	/** city of the user */
 	@XmlElement(name = "city")
+    @Column(name = "city")
 	private String city;
 
 	/** home phone number of the user */
 	@XmlElement(name = "homePhone")
+    @XmlElement(name = "homePhone")
 	private String homePhone;
 
 	/** cellPhone number of the user */
 	@XmlElement(name = "cellPhone")
+    @Column(name = "cellPhone")
 	private String cellPhone;
 
 	/** email address of the user */
 	@XmlElement(name = "email")
+    @Column(name = "email")
 	private String email;
 
 	/** path to stored picture of the user */
 	@XmlElement(name = "picturePath")
+    @Column(name = "picturePath")
 	private String picturePath;
 
 	/** insertion date in the database */
 	@XmlElement(name = "insertionDate")
+    @Column(name = "picturePath")
 	@XmlJavaTypeAdapter(DateISO8601Adapter.class)
 	@UserDetailedView
 	private Date insertionDate;

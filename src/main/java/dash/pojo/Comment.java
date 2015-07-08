@@ -18,24 +18,31 @@ import java.util.Date;
 public class Comment implements  IAclObject{
 
 	@XmlElement(name="id")
+    @Column(name="id")
 	private Long id;
 	
 	@XmlElement(name="post_id")
+    @Column(name="post_id")
 	private Long post_id;
 	
-	@XmlElement(name="user_id")
+    @XmlElement(name="user_id")
+	@Column(name="user_id")
 	private Long user_id;
 	
 	@XmlElement(name="content")
+    @Column(name="content")
 	private String content;
 	
-	@XmlElement(name="image")
+    @XmlElement(name="image")
+	@Column(name="image")
 	private String image;
 
-	@XmlElement(name="creation_timestamp")
+    @XmlElement(name="creation_timestamp")
+	@Column(name="creation_timestamp")
 	private Date creation_timestamp;
 	
 	@XmlElement(name="latest_activity_timestamp")
+    @XmlElement(name="latest_activity_timestamp")
 	private Date latest_activity_timestamp;
 
 	public Comment(Long id, Long group_id, Long user_id, String content,

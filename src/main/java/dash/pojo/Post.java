@@ -29,31 +29,40 @@ public class Post implements  IAclObject{
 	
 	
 	@XmlElement(name="id")
+    @Column(name="id")
 	private Long id;
 	
 	@XmlElement(name="group_id")
+    @Column(name="group_id")
 	private Long group_id;
 	
 	@XmlElement(name="user_id")
+    @Column(name="user_id")
 	private Long user_id;
 	
 	@XmlElement(name="content")
+    @Column(name="content")
 	private String content;
 	
 	@XmlElement(name="image")
+    @Column(name="image")
 	private String image;
 	
 	
 	@XmlElement(name="creation_timestamp")
+    @Column(name="creation_timestamp")
 	private Date creation_timestamp;
 	
 	@XmlElement(name="latest_activity_timestamp")
+    @Column(name="creation_timestamp")
 	private Date latest_activity_timestamp;
 	
 	@XmlElement(name="like_count")
+    @Column(name="creation_timestamp")
 	private int like_count;
 	
 	@XmlElement(name="task_link_id")
+    @Column(name="creation_timestamp")
 	private Long task_link_id;
 
 	public Post(Long id, Long group_id, Long user_id, String content,

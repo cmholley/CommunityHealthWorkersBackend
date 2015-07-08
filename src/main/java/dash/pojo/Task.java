@@ -19,33 +19,43 @@ import java.util.Date;
 public class Task implements  IAclObject{
 	
 	@XmlElement(name="id")
+    @Column(name="id")
 	private Long id;
 	
 	@XmlElement(name="group_id")
+    @Column(name="group_id")
 	private Long group_id;
 	
 	@XmlElement(name="name")
+    @Column(name="name")
 	private String name;
 	
 	@XmlElement(name="description")
+    @Column(name="description")
 	private String description;
 	
 	@XmlElement(name="time")
+    @Column(name="time")
 	private Date time;
 	
 	@XmlElement(name="duration")
+    @Column(name="duration")
 	private int duration;
 	
 	@XmlElement(name="location")
+    @Column(name="location")
 	private String location;
 	
 	@XmlElement(name="creation_timestamp")
+    @Column(name="creation_timestamp")
 	private Date creation_timestamp;
 	
 	@XmlElement(name="finished")
+    @Column(name="finished")
 	private int finished;
 	
 	@XmlElement(name="badge_id")
+    @Column(name="badge_id")
 	private Long badge_id;
 	
 	
