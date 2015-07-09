@@ -303,7 +303,7 @@ public class HourResource {
 			path.append(String.format("%03d", secondDir));
 			path.append(File.separator);
 			path.append(fileName);
-			hour.setPicturePath(path.toString());
+			hour.setPicturePath(path.toString().toLowerCase());
 			partialUpdateHour(hour.getId(), hour);
 		}
 
@@ -321,7 +321,7 @@ public class HourResource {
 		hourService.uploadFile(uploadedInputStream, uploadedFileLocation, hour);
 
 		String output = "File uploaded to : " + uploadedFileLocation;
-		hour.setProfile_picture_filename(fileDetail.getFileName());
+		hour.setProfile_picture_filename(fileDetail.getFileName().toLowerCase());
 		hourService.updatePartiallyHour(hour);
 		return Response.status(200).entity(output).build();
 
