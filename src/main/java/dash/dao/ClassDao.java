@@ -2,8 +2,8 @@ package dash.dao;
 
 import java.util.List;
 
-import dash.pojo.Location;
 import dash.pojo.Class;
+import dash.pojo.Location;
 
 
 /*

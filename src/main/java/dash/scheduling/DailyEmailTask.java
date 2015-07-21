@@ -1,7 +1,6 @@
 package dash.scheduling;
 
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -11,11 +10,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import dash.dao.ClassDao;
-import dash.dao.ClassEntity;
-import dash.service.ClassService;
-import dash.service.UserService;
 import dash.pojo.Class;
+import dash.service.ClassService;
 
 
 //This TimerTask is designed to run every day at midnight. 

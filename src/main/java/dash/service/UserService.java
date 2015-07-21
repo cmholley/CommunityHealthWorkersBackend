@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
 import dash.pojo.User;
 

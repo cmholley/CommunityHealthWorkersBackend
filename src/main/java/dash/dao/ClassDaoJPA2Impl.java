@@ -20,8 +20,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
-import dash.pojo.Location;
 import dash.pojo.Class;
+import dash.pojo.Location;
 
 public class ClassDaoJPA2Impl implements ClassDao {
 	@PersistenceContext(unitName = "dashPersistence")

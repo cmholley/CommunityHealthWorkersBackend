@@ -1,16 +1,12 @@
 package dash.pojo;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 
+import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.CoreEntity;
 
 /**
  * User resource placeholder for json/xml representation

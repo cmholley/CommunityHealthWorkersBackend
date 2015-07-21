@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import dash.errorhandling.AppException;
 import dash.service.TaskService;
 import dash.service.UserService;
-import dash.pojo.Group;
 
 @Component
 @Path("/tasks")

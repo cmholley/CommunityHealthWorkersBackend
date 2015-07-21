@@ -5,6 +5,10 @@ package dash.pojo;
  * @author CarlSteven
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -14,9 +18,6 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import dash.dao.MessageEntity;
 import dash.security.IAclObject;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import org.apache.commons.beanutils.BeanUtils;
 
 import dash.pojo.Group;

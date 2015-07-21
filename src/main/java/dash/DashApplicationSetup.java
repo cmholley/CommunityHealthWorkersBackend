@@ -12,16 +12,16 @@ import dash.errorhandling.AppExceptionMapper;
 import dash.errorhandling.GenericExceptionMapper;
 import dash.errorhandling.NotFoundExceptionMapper;
 import dash.filters.LoggingResponseFilter;
+import dash.pojo.ClassResource;
 import dash.pojo.CommentResource;
 import dash.pojo.GroupResource;
 import dash.pojo.HourResource;
+import dash.pojo.LocationResource;
 import dash.pojo.MessageResource;
+import dash.pojo.PostResource;
 import dash.pojo.TaskResource;
 import dash.pojo.UserDetailedView;
 import dash.pojo.UsersResource;
-import dash.pojo.PostResource;
-import dash.pojo.LocationResource;
-import dash.pojo.ClassResource;
 
 /**
  * Registers the components to be used by the JAX-RS application

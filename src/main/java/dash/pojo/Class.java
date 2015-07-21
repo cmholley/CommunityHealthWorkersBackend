@@ -1,6 +1,10 @@
 package dash.pojo;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,10 +16,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import dash.dao.ClassEntity;
 import dash.helpers.SimpleDateAdapter;
 import dash.security.IAclObject;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
