@@ -10,11 +10,11 @@ import dash.pojo.Location;
  * @Author tswensen
  */
 public interface ClassDao {
-	public List<ClassEntity> getClasses(String orderByInsertionDate);
+	public List<Class> getClasses(String orderByInsertionDate);
 
-	public List<ClassEntity> getRecentClasses(int numberOfDaysToLookBack);
+	public List<Class> getRecentClasses(int numberOfDaysToLookBack);
 
-	public ClassEntity getClassById(Long id);
+	public Class getClassById(Long id);
 
 	/**
 	 * Find class by name
@@ -22,7 +22,7 @@ public interface ClassDao {
 	 * @param class
 	 * @return the class with the name specified or null if not existent
 	 */
-	public ClassEntity getClassByName(String name);
+	public Class getClassByName(String name);
 	
 	/**
 	 * Returns all of the classes by a given location
@@ -31,19 +31,19 @@ public interface ClassDao {
 	 * @return the list of classess
 	 * 
 	 */
-	public List<ClassEntity> getClassesByLocation(Location location);
+	public List<Class> getClassesByLocation(Location location);
 
 	public void deleteClass(Class clas);
 
-	public Long createClass(ClassEntity classentity);
+	public Long createClass(Class classentity);
 
-	public void updateClass(ClassEntity classentity);
+	public void updateClass(Class classentity);
 
 	/** removes all classes */
 	public void deleteClasses();
 
-	public List<ClassEntity> getTodaysClasses();
+	public List<Class> getTodaysClasses();
 
-	public List<String> getMembersForClass(ClassEntity classEntity);
+	public List<String> getMembersForClass(Class clas);
 
 }

@@ -1,26 +1,29 @@
 package dash.pojo;
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.HourEntity;
 import dash.security.IAclObject;
 
+@Entity
+@Table(name="entered_hours")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Hour implements  IAclObject{
 
 	
-	
+	@Id
+	@GeneratedValue
 	@XmlElement(name="id")
     @Column(name="id")
 	private Long id;
@@ -66,17 +69,7 @@ public class Hour implements  IAclObject{
 	private String profile_picture_filename;
 	
 
-	public Hour(HourEntity hourEntity) {
-		try {
-			BeanUtils.copyProperties(this, hourEntity);
-		} catch ( IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 	
 	public Hour(){}
 

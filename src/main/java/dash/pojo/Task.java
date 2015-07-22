@@ -1,24 +1,28 @@
 package dash.pojo;
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.TaskEntity;
 import dash.security.IAclObject;
 
+@Entity
+@Table(name="tasks")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Task implements  IAclObject{
 	
+	@Id
+	@GeneratedValue
 	@XmlElement(name="id")
     @Column(name="id")
 	private Long id;
@@ -75,18 +79,6 @@ public class Task implements  IAclObject{
 		this.creation_timestamp = creation_timestamp;
 		this.finished = finished;
 		this.badge_id = badge_id;
-	}
-
-	public Task(TaskEntity taskEntity) {
-		try {
-			BeanUtils.copyProperties(this, taskEntity);
-		} catch ( IllegalAccessException e) {
-
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
 	}
 	
 	public Task(){}

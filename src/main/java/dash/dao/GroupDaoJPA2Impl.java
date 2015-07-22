@@ -21,22 +21,22 @@ public class GroupDaoJPA2Impl implements GroupDao {
 
 
 	@Override
-	public List<GroupEntity> getGroups(String orderByInsertionDate) {
+	public List<Group> getGroups(String orderByInsertionDate) {
 		String sqlString = null;
 		if(orderByInsertionDate != null){
-			sqlString = "SELECT u FROM GroupEntity u"
+			sqlString = "SELECT u FROM Group u"
 					+ " ORDER BY u.creation_timestamp " + orderByInsertionDate;
 		} else {
-			sqlString = "SELECT u FROM GroupEntity u";
+			sqlString = "SELECT u FROM Group u";
 		}
-		TypedQuery<GroupEntity> query = entityManager.createQuery(sqlString,
-				GroupEntity.class);
+		TypedQuery<Group> query = entityManager.createQuery(sqlString,
+				Group.class);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public List<GroupEntity> getRecentGroups(int numberOfDaysToLookBack) {
+	public List<Group> getRecentGroups(int numberOfDaysToLookBack) {
 
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTimeZone(TimeZone.getTimeZone("UTC+6"));
@@ -44,21 +44,21 @@ public class GroupDaoJPA2Impl implements GroupDao {
 		calendar.add(Calendar.DATE, -numberOfDaysToLookBack);//substract the number of days to look back
 		Date dateToLookBackAfter = calendar.getTime();
 
-		String qlString = "SELECT u FROM GroupEntity u where u.creation_timestamp > :dateToLookBackAfter ORDER BY u.creation_timestamp DESC";
-		TypedQuery<GroupEntity> query = entityManager.createQuery(qlString,
-				GroupEntity.class);
+		String qlString = "SELECT u FROM Group u where u.creation_timestamp > :dateToLookBackAfter ORDER BY u.creation_timestamp DESC";
+		TypedQuery<Group> query = entityManager.createQuery(qlString,
+				Group.class);
 		query.setParameter("dateToLookBackAfter", dateToLookBackAfter, TemporalType.DATE);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public GroupEntity getGroupById(Long id) {
+	public Group getGroupById(Long id) {
 
 		try {
-			String qlString = "SELECT u FROM GroupEntity u WHERE u.id = ?1";
-			TypedQuery<GroupEntity> query = entityManager.createQuery(qlString,
-					GroupEntity.class);
+			String qlString = "SELECT u FROM Group u WHERE u.id = ?1";
+			TypedQuery<Group> query = entityManager.createQuery(qlString,
+					Group.class);
 			query.setParameter(1, id);
 
 			return query.getSingleResult();
@@ -68,12 +68,12 @@ public class GroupDaoJPA2Impl implements GroupDao {
 	}
 
 	@Override
-	public GroupEntity getGroupByName(String name) {
+	public Group getGroupByName(String name) {
 
 		try {
-			String qlString = "SELECT u FROM GroupEntity u WHERE u.name = ?1";
-			TypedQuery<GroupEntity> query = entityManager.createQuery(qlString,
-					GroupEntity.class);
+			String qlString = "SELECT u FROM Group u WHERE u.name = ?1";
+			TypedQuery<Group> query = entityManager.createQuery(qlString,
+					Group.class);
 			query.setParameter(1, name);
 
 			return query.getSingleResult();
@@ -86,14 +86,14 @@ public class GroupDaoJPA2Impl implements GroupDao {
 	@Override
 	public void deleteGroupById(Group groupPojo) {
 
-		GroupEntity group = entityManager
-				.find(GroupEntity.class, groupPojo.getId());
+		Group group = entityManager
+				.find(Group.class, groupPojo.getId());
 		entityManager.remove(group);
 
 	}
 
 	@Override
-	public Long createGroup(GroupEntity group) {
+	public Long createGroup(Group group) {
 
 		group.setCreation_timestamp(new Date());
 		entityManager.persist(group);
@@ -105,7 +105,7 @@ public class GroupDaoJPA2Impl implements GroupDao {
 	}
 
 	@Override
-	public void updateGroup(GroupEntity group) {
+	public void updateGroup(Group group) {
 		//TODO think about partial update and full update
 		entityManager.merge(group);
 	}
@@ -120,8 +120,8 @@ public class GroupDaoJPA2Impl implements GroupDao {
 	public int getNumberOfGroups() {
 		try {
 			String qlString = "SELECT COUNT(*) FROM group";
-			TypedQuery<GroupEntity> query = entityManager.createQuery(qlString,
-					GroupEntity.class);
+			TypedQuery<Group> query = entityManager.createQuery(qlString,
+					Group.class);
 
 			return query.getFirstResult();
 		} catch (NoResultException e) {

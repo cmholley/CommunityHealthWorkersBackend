@@ -13,7 +13,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.PostDao;
-import dash.dao.PostEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -47,7 +46,7 @@ PostService {
 	@Transactional
 	public Long createPost(Post post,  Group group) throws AppException {
 
-		long postId = postDao.createPost(new PostEntity(post));
+		long postId = postDao.createPost(post);
 		post.setId(postId);
 		aclController.createACL(post);
 		aclController.createAce(post, CustomPermission.READ);
@@ -72,7 +71,7 @@ PostService {
 	@Override
 	public List<Post> getPosts(int numberOfPosts, Long startIndex) throws AppException{
 		
-		List<PostEntity> posts = postDao.getPosts(numberOfPosts, startIndex);
+		List<Post> posts = postDao.getPosts(numberOfPosts, startIndex);
 		return getPostsFromEntities(posts);
 	}
 	
@@ -81,7 +80,7 @@ PostService {
 
 		//verify optional parameter numberDaysToLookBack first
 		
-		List<PostEntity> groupPosts = postDao.getPosts(numberOfPosts, startIndex, group);
+		List<Post> groupPosts = postDao.getPosts(numberOfPosts, startIndex, group);
 		return getPostsFromEntities(groupPosts);
 
 		
@@ -108,7 +107,7 @@ PostService {
 
 	@Override
 	public Post getPostById(Long id) throws AppException {
-		PostEntity postById = postDao.getPostById(id);
+		Post postById = postDao.getPostById(id);
 		if (postById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -118,13 +117,13 @@ PostService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Post(postDao.getPostById(id));
+		return postDao.getPostById(id);
 	}
 
-	private List<Post> getPostsFromEntities(List<PostEntity> postEntities) {
+	private List<Post> getPostsFromEntities(List<Post> postEntities) {
 		List<Post> response = new ArrayList<Post>();
-		for (PostEntity postEntity : postEntities) {
-			response.add(new Post(postEntity));
+		for (Post post : postEntities) {
+			response.add(post);
 		}
 
 		return response;
@@ -135,7 +134,7 @@ PostService {
 	
 
 //	public List<Post> getRecentPosts(int numberOfDaysToLookBack) {
-//		List<PostEntity> recentPosts = postDao
+//		List<Post> recentPosts = postDao
 //				.getRecentPosts(numberOfDaysToLookBack);
 //
 //		return getPostsFromEntities(recentPosts);
@@ -171,7 +170,7 @@ PostService {
 		}
 		copyAllProperties(verifyPostExistenceById, post);
 
-		postDao.updatePost(new PostEntity(verifyPostExistenceById));
+		postDao.updatePost(verifyPostExistenceById);
 
 	}
 
@@ -216,11 +215,11 @@ PostService {
 	@Override
 	
 	public Post verifyPostExistenceById(Long id) {
-		PostEntity postById = postDao.getPostById(id);
+		Post postById = postDao.getPostById(id);
 		if (postById == null) {
 			return null;
 		} else {
-			return new Post(postById);
+			return postById;
 		}
 	}
 
@@ -237,7 +236,7 @@ PostService {
 							+ post.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyPostExistenceById, post);
-		postDao.updatePost(new PostEntity(verifyPostExistenceById));
+		postDao.updatePost(verifyPostExistenceById);
 
 	}
 

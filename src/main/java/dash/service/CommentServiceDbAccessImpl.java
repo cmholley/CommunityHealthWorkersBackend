@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.CommentDao;
-import dash.dao.CommentEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -48,7 +47,7 @@ CommentService {
 	@Override
 	@Transactional
 	public Long createComment(Comment comment, Group group) throws AppException {
-		long commentId = commentDao.createComment(new CommentEntity(comment));
+		long commentId = commentDao.createComment(comment);
 		comment.setId(commentId);
 		aclController.createACL(comment);
 		aclController.createAce(comment, CustomPermission.READ);
@@ -71,13 +70,13 @@ CommentService {
 	@Override
 	public List<Comment> getCommentsByPost(int numberOfComments, Long startIndex, Post post) throws AppException {
 		//verify optional parameter numberDaysToLookBack first
-		List<CommentEntity> postComments = commentDao.getComments(numberOfComments, startIndex, post);
+		List<Comment> postComments = commentDao.getComments(numberOfComments, startIndex, post);
 		return getCommentsFromEntities(postComments);
 	}
 
 	@Override
 	public Comment getCommentById(Long id) throws AppException {
-		CommentEntity commentById = commentDao.getCommentById(id);
+		Comment commentById = commentDao.getCommentById(id);
 		if (commentById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -87,13 +86,13 @@ CommentService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Comment(commentDao.getCommentById(id));
+		return commentDao.getCommentById(id);
 	}
 
-	private List<Comment> getCommentsFromEntities(List<CommentEntity> commentEntities) {
+	private List<Comment> getCommentsFromEntities(List<Comment> commentEntities) {
 		List<Comment> response = new ArrayList<Comment>();
-		for (CommentEntity commentEntity : commentEntities) {
-			response.add(new Comment(commentEntity));
+		for (Comment comment : commentEntities) {
+			response.add(comment);
 		}
 
 		return response;
@@ -104,7 +103,7 @@ CommentService {
 	
 
 //	public List<Post> getRecentPosts(int numberOfDaysToLookBack) {
-//		List<PostEntity> recentPosts = commentDao
+//		List<Post> recentPosts = commentDao
 //				.getRecentPosts(numberOfDaysToLookBack);
 //
 //		return getPostsFromEntities(recentPosts);
@@ -144,7 +143,7 @@ CommentService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		commentDao.updateComment(new CommentEntity(comment));
+		commentDao.updateComment(comment);
 	}
 
 	/**
@@ -179,11 +178,11 @@ CommentService {
 
 	@Override
 	public Comment verifyCommentExistenceById(Long id) {
-		CommentEntity commentById = commentDao.getCommentById(id);
+		Comment commentById = commentDao.getCommentById(id);
 		if (commentById == null) {
 			return null;
 		} else {
-			return new Comment(commentById);
+			return commentById;
 		}
 	}
 
@@ -200,7 +199,7 @@ CommentService {
 							+ comment.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyCommentExistenceById, comment);
-		commentDao.updateComment(new CommentEntity(verifyCommentExistenceById));
+		commentDao.updateComment(verifyCommentExistenceById);
 
 	}
 

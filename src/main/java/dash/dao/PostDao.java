@@ -11,9 +11,9 @@ import dash.pojo.Post;
  */
 public interface PostDao {
 	
-	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex);
+	public List<Post> getPosts(int numberOfPosts, Long startIndex);
 	
-	public List<PostEntity> getPosts(int numberOfPosts, Long startIndex, Group group);
+	public List<Post> getPosts(int numberOfPosts, Long startIndex, Group group);
 
 	public int getNumberOfPosts();
 
@@ -23,13 +23,13 @@ public interface PostDao {
 	 * @param id
 	 * @return
 	 */
-	public PostEntity getPostById(Long id);
+	public Post getPostById(Long id);
 	
 	public void deletePostById(Post post);
 
-	public Long createPost(PostEntity post);
+	public Long createPost(Post post);
 
-	public void updatePost(PostEntity post);
+	public void updatePost(Post post);
 
 	/** removes all posts */
 	public void deletePosts();

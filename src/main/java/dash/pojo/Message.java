@@ -5,25 +5,28 @@ package dash.pojo;
  * @author CarlSteven
  */
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.MessageEntity;
 import dash.security.IAclObject;
 
+@Entity
+@Table(name="message")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Message implements IAclObject{
 
-	
+	@Id
+	@GeneratedValue
 	@XmlElement(name="id")
 	@Column(name="id")
 	private Long id;
@@ -53,17 +56,7 @@ public class Message implements IAclObject{
 		this.creation_timestamp = time;
 	}
 
-	public Message(MessageEntity messageEntity) {
-		try {
-			BeanUtils.copyProperties(this, messageEntity);
-		} catch ( IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 	
 	public Message(){}
 
@@ -88,11 +81,11 @@ public class Message implements IAclObject{
 		this.task_id = task_id;
 	}
 
-	public Date getcreation_timestamp() {
+	public Date getCreation_timestamp() {
 		return creation_timestamp;
 	}
 
-	public void setcreation_timestamp(Date time) {
+	public void setCreation_timestamp(Date time) {
 		this.creation_timestamp = time;
 	}
 

@@ -14,7 +14,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.TaskDao;
-import dash.dao.TaskEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -51,7 +50,7 @@ TaskService {
 		validateInputForCreation(task);
 
 		//verify existence of resource in the db (feed must be unique)
-		TaskEntity taskByName = taskDao.getTaskByName(task.getName());
+		Task taskByName = taskDao.getTaskByName(task.getName());
 		if (taskByName != null) {
 			throw new AppException(
 					Response.Status.CONFLICT.getStatusCode(),
@@ -62,7 +61,7 @@ TaskService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		long taskId = taskDao.createTask(new TaskEntity(task));
+		long taskId = taskDao.createTask(task);
 		task.setId(taskId);
 		aclController.createACL(task);
 		aclController.createAce(task, CustomPermission.MANAGER);
@@ -96,7 +95,7 @@ TaskService {
 
 		//verify optional parameter numberDaysToLookBack first
 		if(numberDaysToLookBack!=null){
-			List<TaskEntity> recentTasks = taskDao
+			List<Task> recentTasks = taskDao
 					.getRecentTasks(numberDaysToLookBack);
 			return getTasksFromEntities(recentTasks);
 		}
@@ -108,7 +107,7 @@ TaskService {
 					"Please set either ASC or DESC for the orderByInsertionDate parameter",
 					null, AppConstants.DASH_POST_URL);
 		}
-		List<TaskEntity> tasks = taskDao.getTasks(orderByInsertionDate);
+		List<Task> tasks = taskDao.getTasks(orderByInsertionDate);
 
 		return getTasksFromEntities(tasks);
 	}
@@ -116,7 +115,7 @@ TaskService {
 	@Override
 	public List<Task> getTasksByGroup(Group group){
 		
-		List<TaskEntity> tasks = taskDao.getTasksByGroup(group);
+		List<Task> tasks = taskDao.getTasksByGroup(group);
 		return getTasksFromEntities(tasks);
 		
 	}
@@ -149,17 +148,17 @@ TaskService {
 	// TODO: This doesnt need to exist. It is the exact same thing as
 	// getTaskById(Long)
 	public Task verifyTaskExistenceById(Long id) {
-		TaskEntity taskById = taskDao.getTaskById(id);
+		Task taskById = taskDao.getTaskById(id);
 		if (taskById == null) {
 			return null;
 		} else {
-			return new Task(taskById);
+			return taskById;
 		}
 	}
 
 	@Override
 	public Task getTaskById(Long id) throws AppException {
-		TaskEntity taskById = taskDao.getTaskById(id);
+		Task taskById = taskDao.getTaskById(id);
 		if (taskById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -169,20 +168,20 @@ TaskService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Task(taskDao.getTaskById(id));
+		return taskDao.getTaskById(id);
 	}
 
-	private List<Task> getTasksFromEntities(List<TaskEntity> taskEntities) {
+	private List<Task> getTasksFromEntities(List<Task> taskEntities) {
 		List<Task> response = new ArrayList<Task>();
-		for (TaskEntity taskEntity : taskEntities) {
-			response.add(new Task(taskEntity));
+		for (Task task : taskEntities) {
+			response.add(task);
 		}
 
 		return response;
 	}
 
 	public List<Task> getRecentTasks(int numberOfDaysToLookBack) {
-		List<TaskEntity> recentTasks = taskDao
+		List<Task> recentTasks = taskDao
 				.getRecentTasks(numberOfDaysToLookBack);
 
 		return getTasksFromEntities(recentTasks);
@@ -216,7 +215,7 @@ TaskService {
 							AppConstants.DASH_POST_URL);
 		}
 		copyAllProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(new TaskEntity(verifyTaskExistenceById));
+		taskDao.updateTask(verifyTaskExistenceById);
 
 	}
 
@@ -276,7 +275,7 @@ TaskService {
 							+ task.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(new TaskEntity(verifyTaskExistenceById));
+		taskDao.updateTask(verifyTaskExistenceById);
 
 	}
 

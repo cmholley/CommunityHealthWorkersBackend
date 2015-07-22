@@ -20,14 +20,14 @@ public class MessageDaoJPA2Impl implements MessageDao {
 	private EntityManager entityManager;
 
 	@Override
-	public List<MessageEntity> getMessages(int numberOfMessages, Long startIndex) {
+	public List<Message> getMessages(int numberOfMessages, Long startIndex) {
 		String sqlString = null;
 		
-		sqlString = "SELECT u FROM MessageEntity u"
+		sqlString = "SELECT u FROM Message u"
 				+ " ORDER BY u.creation_timestamp ASC";
 	
-		TypedQuery<MessageEntity> query = entityManager.createQuery(sqlString,
-				MessageEntity.class);
+		TypedQuery<Message> query = entityManager.createQuery(sqlString,
+				Message.class);
 		query.setFirstResult(startIndex.intValue());
 		query.setMaxResults(numberOfMessages);
 
@@ -35,12 +35,12 @@ public class MessageDaoJPA2Impl implements MessageDao {
 	}
 
 	@Override
-	public List<MessageEntity> getMessages(int numberOfMessages,
+	public List<Message> getMessages(int numberOfMessages,
 			Long startIndex, Task task) {
-		String qlString = "SELECT u FROM MessageEntity u where u.task_id = ?1 "
+		String qlString = "SELECT u FROM Message u where u.task_id = ?1 "
 				+ "ORDER BY u.creation_timestamp ASC";
-		TypedQuery<MessageEntity> query = entityManager.createQuery(qlString,
-				MessageEntity.class);
+		TypedQuery<Message> query = entityManager.createQuery(qlString,
+				Message.class);
 		query.setFirstResult(startIndex.intValue());
 		query.setMaxResults(numberOfMessages);
 		query.setParameter(1, task.getId() );
@@ -52,8 +52,8 @@ public class MessageDaoJPA2Impl implements MessageDao {
 	public int getNumberOfMessages() {
 		try {
 			String qlString = "SELECT COUNT(*) FROM message";
-			TypedQuery<MessageEntity> query = entityManager.createQuery(qlString,
-					MessageEntity.class);
+			TypedQuery<Message> query = entityManager.createQuery(qlString,
+					Message.class);
 
 			return query.getFirstResult();
 		} catch (NoResultException e) {
@@ -62,11 +62,11 @@ public class MessageDaoJPA2Impl implements MessageDao {
 	}
 
 	@Override
-	public MessageEntity getMessageById(Long id) {
+	public Message getMessageById(Long id) {
 		try {
-			String qlString = "SELECT u FROM MessageEntity u WHERE u.id = ?1";
-			TypedQuery<MessageEntity> query = entityManager.createQuery(qlString,
-					MessageEntity.class);
+			String qlString = "SELECT u FROM Message u WHERE u.id = ?1";
+			TypedQuery<Message> query = entityManager.createQuery(qlString,
+					Message.class);
 			query.setParameter(1, id);
 
 			return query.getSingleResult();
@@ -77,13 +77,13 @@ public class MessageDaoJPA2Impl implements MessageDao {
 
 	@Override
 	public void deleteMessageById(Message message) {
-		MessageEntity entity = entityManager
-				.find(MessageEntity.class, message.getId());
+		Message entity = entityManager
+				.find(Message.class, message.getId());
 		entityManager.remove(entity);		
 	}
 
 	@Override
-	public Long createMessage(MessageEntity message) {
+	public Long createMessage(Message message) {
 		message.setCreation_timestamp(new Date());
 		entityManager.persist(message);
 		entityManager.flush();// force insert to receive the id of the post
@@ -94,7 +94,7 @@ public class MessageDaoJPA2Impl implements MessageDao {
 	}
 
 	@Override
-	public void updateMessage(MessageEntity message) {
+	public void updateMessage(Message message) {
 		//TODO think about partial update and full update
 //		message.setCreation_timestamp(new Date());
 		entityManager.merge(message);

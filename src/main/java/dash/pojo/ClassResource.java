@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -20,10 +19,8 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import dash.dao.CoreEntity;
 import dash.errorhandling.AppException;
 import dash.service.ClassService;
-import dash.service.CoreService;
 import dash.service.LocationService;
 import dash.service.UserService;
 
@@ -36,9 +33,6 @@ public class ClassResource {
 
 	@Autowired
 	private UserService userService;
-
-	@Autowired
-	private CoreService coreService;
 
 	@Autowired
 	private LocationService locationService;
@@ -87,9 +81,6 @@ public class ClassResource {
 			throws IOException, AppException {
 		List<Class> classes = classService.getClasses(orderByInsertionDate,
 				numberDaysToLookBack);
-		for (Class c : classes) {
-			addCores(c);
-		}
 		return classes;
 	}
 
@@ -100,9 +91,6 @@ public class ClassResource {
 			@QueryParam("location") Location location) throws IOException,
 			AppException {
 		List<Class> classes = classService.getClassesByLocation(location);
-		for (Class c : classes) {
-			addCores(c);
-		}
 		return classes;
 	}
 
@@ -113,7 +101,6 @@ public class ClassResource {
 			@QueryParam("detailed") boolean detailed) throws IOException,
 			AppException {
 		Class classById = classService.getClassById(id);
-		addCores(classById);
 		return Response.status(Response.Status.OK)
 				.entity(new GenericEntity<Class>(classById) {
 				}).header("Access-Control-Allow-Headers", "X-extra-header")
@@ -133,13 +120,6 @@ public class ClassResource {
 		return classes;
 	}
 
-	// TODO: should move into service
-	private void addCores(Class cls) {
-		List<Long> ceList = new ArrayList<Long>();
-		for (CoreEntity ce : coreService.getCoreByClassId(cls.getId()))
-			ceList.add((long) ce.getCore_id());
-		cls.setCores(ceList);
-	}
 
 	/************************ Update Methods *********************/
 

@@ -11,9 +11,9 @@ import dash.pojo.Post;
  */
 public interface CommentDao {
 	
-	public List<CommentEntity> getComments(int numberOfPosts, Long startIndex);
+	public List<Comment> getComments(int numberOfPosts, Long startIndex);
 	
-	public List<CommentEntity> getComments(int numberOfPosts, Long startIndex, Post post);
+	public List<Comment> getComments(int numberOfPosts, Long startIndex, Post post);
 
 	public int getNumberOfComments();
 
@@ -23,13 +23,13 @@ public interface CommentDao {
 	 * @param id
 	 * @return
 	 */
-	public CommentEntity getCommentById(Long id);
+	public Comment getCommentById(Long id);
 	
 	public void deleteCommentById(Comment comment);
 
-	public Long createComment(CommentEntity comment);
+	public Long createComment(Comment comment);
 
-	public void updateComment(CommentEntity comment);
+	public void updateComment(Comment comment);
 
 	/** removes all posts */
 	public void deleteComments();

@@ -22,12 +22,10 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.ClassDao;
-import dash.dao.ClassEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
 import dash.pojo.Class;
-import dash.pojo.Core;
 import dash.pojo.Location;
 import dash.pojo.User;
 import dash.security.CustomPermission;
@@ -47,10 +45,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 
 	@Autowired
 	private GenericAclController<Class> aclController;
-
-	@Autowired
-	private CoreService coreService;
-
+	
 	@Autowired
 	private JavaMailSender mailSender;
 
@@ -63,20 +58,10 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	public Long createClass(Class clas, Location loc) throws AppException {
 
 		validateInputForCreation(clas);
-
-		ClassEntity newEnt = new ClassEntity(clas);
-		long classId = classDao.createClass(newEnt);
+		long classId = classDao.createClass(clas);
 		clas.setId(classId);
 		aclController.createACL(clas);
 		aclController.createAce(clas, CustomPermission.MANAGER);
-
-		// add cores to intersection table
-		List<Core> listCores = new ArrayList<Core>();
-		for (Long core_id : clas.getCores()) {
-			listCores.add(new Core(core_id, classId));
-		}
-		coreService.createCores(listCores, loc);
-
 		return classId;
 	}
 
@@ -108,7 +93,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 
 		// verify optional parameter numberDaysToLookBack first
 		if (numberDaysToLookBack != null) {
-			List<ClassEntity> recentClasses = classDao
+			List<Class> recentClasses = classDao
 					.getRecentClasses(numberDaysToLookBack);
 			return getClassesFromEntities(recentClasses);
 		}
@@ -120,7 +105,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 					"Please set either ASC or DESC for the orderByInsertionDate parameter",
 					null, AppConstants.DASH_POST_URL);
 		}
-		List<ClassEntity> classes = classDao.getClasses(orderByInsertionDate);
+		List<Class> classes = classDao.getClasses(orderByInsertionDate);
 
 		return getClassesFromEntities(classes);
 	}
@@ -128,7 +113,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	@Override
 	public List<Class> getClassesByLocation(Location location) {
 
-		List<ClassEntity> classes = classDao.getClassesByLocation(location);
+		List<Class> classes = classDao.getClassesByLocation(location);
 		return getClassesFromEntities(classes);
 
 	}
@@ -142,17 +127,17 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 
 	@Override
 	public Class verifyClassExistenceById(Long id) {
-		ClassEntity classById = classDao.getClassById(id);
+		Class classById = classDao.getClassById(id);
 		if (classById == null) {
 			return null;
 		} else {
-			return new Class(classById);
+			return classById;
 		}
 	}
 
 	@Override
 	public Class getClassById(Long id) throws AppException {
-		ClassEntity classById = classDao.getClassById(id);
+		Class classById = classDao.getClassById(id);
 		if (classById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404, "The class you requested with id " + id
@@ -161,7 +146,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 							+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Class(classDao.getClassById(id));
+		return classDao.getClassById(id);
 	}
 
 	@Override
@@ -171,20 +156,20 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		return getClasses(orderByInsertionDate, numberDaysToLookBack);
 	}
 
-	private List<Class> getClassesFromEntities(List<ClassEntity> classEntities) {
+	private List<Class> getClassesFromEntities(List<Class> classEntities) {
 		List<Class> response = new ArrayList<Class>();
-		for (ClassEntity classEntity : classEntities) {
-			classEntity
-					.setFinished((classEntity.getTime() != null) ? (classEntity
+		for (Class clas : classEntities) {
+			clas
+					.setFinished((clas.getTime() != null) ? (clas
 							.getTime().before(new Date()) ? 1 : 0) : 0);
-			response.add(new Class(classEntity));
+			response.add(clas);
 		}
 
 		return response;
 	}
 
 	public List<Class> getRecentClasses(int numberOfDaysToLookBack) {
-		List<ClassEntity> recentClasses = classDao
+		List<Class> recentClasses = classDao
 				.getRecentClasses(numberOfDaysToLookBack);
 
 		return getClassesFromEntities(recentClasses);
@@ -206,16 +191,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 							+ clas.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyAllProperties(verifyClassExistenceById, clas);
-		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
-
-		coreService.deleteCores(clas, loc);
-		List<Core> listCores = new ArrayList<Core>();
-		for (Long core_id : clas.getCores()) {
-			listCores.add(new Core(core_id, clas.getId()));
-		}
-		coreService.createCores(listCores, loc);
+		classDao.updateClass(verifyClassExistenceById);
 	}
-
+	
 	private void copyAllProperties(Class verifyClassExistenceById, Class clas) {
 
 		BeanUtilsBean withNull = new BeanUtilsBean();
@@ -282,14 +260,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 							+ clas.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyClassExistenceById, clas);
-		classDao.updateClass(new ClassEntity(verifyClassExistenceById));
-
-		coreService.deleteCores(clas, loc);
-		List<Core> listCores = new ArrayList<Core>();
-		for (Long core_id : clas.getCores()) {
-			listCores.add(new Core(core_id, clas.getId()));
-		}
-		coreService.createCores(listCores, loc);
+		classDao.updateClass(verifyClassExistenceById);
 	}
 
 	private void copyPartialProperties(Class verifyClassExistenceById,
@@ -378,13 +349,13 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	@Override
 	public List<String> getMembersForClass(Class clas) {
 		List<String> members = classDao
-				.getMembersForClass(new ClassEntity(clas));
+				.getMembersForClass(clas);
 		return members;
 	}
 
 	@Override
 	public List<Class> getTodaysClasses() {
-		List<ClassEntity> classes = classDao.getTodaysClasses();
+		List<Class> classes = classDao.getTodaysClasses();
 		return getClassesFromEntities(classes);
 	}
 }

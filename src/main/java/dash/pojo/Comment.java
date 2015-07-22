@@ -1,22 +1,28 @@
 package dash.pojo;
 
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.CommentEntity;
 import dash.security.IAclObject;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
 
+@Entity
+@Table(name="comment")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Comment implements  IAclObject{
 
+	@Id
+	@GeneratedValue
 	@XmlElement(name="id")
     @Column(name="id")
 	private Long id;
@@ -42,7 +48,7 @@ public class Comment implements  IAclObject{
 	private Date creation_timestamp;
 	
 	@XmlElement(name="latest_activity_timestamp")
-    @XmlElement(name="latest_activity_timestamp")
+    @Column(name="latest_activity_timestamp")
 	private Date latest_activity_timestamp;
 
 	public Comment(Long id, Long group_id, Long user_id, String content,
@@ -58,17 +64,7 @@ public class Comment implements  IAclObject{
 		this.latest_activity_timestamp = latest_activity_timestamp;
 	}
 
-	public Comment(CommentEntity groupEntity) {
-		try {
-			BeanUtils.copyProperties(this, groupEntity);
-		} catch ( IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 	
 	public Comment(){}
 

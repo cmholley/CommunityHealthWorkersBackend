@@ -1,9 +1,8 @@
 package dash.pojo;
 
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,15 +10,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.ClassEntity;
 import dash.helpers.SimpleDateAdapter;
 import dash.security.IAclObject;
+
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Class implements  IAclObject{
+	
+	public static enum Cores{
+		Advocacy,
+		Capacity_Building, 
+		Communication_Skills, 
+		Community_Service,
+		Coordination,
+		Interpersonal_Communication, 
+		Knowledge_Base, 
+		Organizational, 
+		Service_Coordination,
+		Skills,
+		Teaching_Skills;
+	}
+	
 	
 	@XmlElement(name="id")
 	private Long id;
@@ -53,7 +65,7 @@ public class Class implements  IAclObject{
 	private int finished;
 	
 	@XmlElement(name="cores")
-	private List<Long> cores;
+	private Set<Cores> cores; //enum
 	
 	@XmlElement(name="forCHW")
 	private int forCHW;
@@ -64,17 +76,6 @@ public class Class implements  IAclObject{
 	@XmlElement(name="active")
 	private int active;
 	
-	public Class(ClassEntity classEntity) {
-		try {
-			BeanUtils.copyProperties(this, classEntity);
-		} catch ( IllegalAccessException e) {
-
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 	
 	public Class(){}
 
@@ -158,13 +159,6 @@ public class Class implements  IAclObject{
 		this.finished = finished;
 	}
 	
-	public List<Long> getCores() {
-		return cores;
-	}
-
-	public void setCores(List<Long> cores) {
-		this.cores = cores;
-	}
 	
 	public int getForCHW() {
 		return forCHW;
@@ -188,5 +182,13 @@ public class Class implements  IAclObject{
 
 	public void setActive(int active) {
 		this.active = active;
+	}
+
+	public Set<Cores> getCores() {
+		return cores;
+	}
+
+	public void setCores(Set<Cores> cores) {
+		this.cores = cores;
 	}
 }

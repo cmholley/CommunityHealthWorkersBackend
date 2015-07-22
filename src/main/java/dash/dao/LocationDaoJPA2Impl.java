@@ -25,22 +25,22 @@ public class LocationDaoJPA2Impl implements LocationDao {
 	private EntityManager entityManager;
 
 	@Override
-	public List<LocationEntity> getLocations(String orderByInsertionDate) {
+	public List<Location> getLocations(String orderByInsertionDate) {
 		String sqlString = null;
 		if(orderByInsertionDate != null){
-			sqlString = "SELECT u FROM LocationEntity u"
+			sqlString = "SELECT u FROM Location u"
 					+ " ORDER BY u.creation_timestamp " + orderByInsertionDate;
 		} else {
-			sqlString = "SELECT u FROM LocationEntity u";
+			sqlString = "SELECT u FROM Location u";
 		}
-		TypedQuery<LocationEntity> query = entityManager.createQuery(sqlString,
-				LocationEntity.class);
+		TypedQuery<Location> query = entityManager.createQuery(sqlString,
+				Location.class);
 
 		return query.getResultList();
 	}
 	
 	@Override
-	public List<LocationEntity> getRecentLocations(int numberOfDaysToLookBack) {
+	public List<Location> getRecentLocations(int numberOfDaysToLookBack) {
 
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTimeZone(TimeZone.getTimeZone("UTC+6"));
@@ -48,21 +48,21 @@ public class LocationDaoJPA2Impl implements LocationDao {
 		calendar.add(Calendar.DATE, -numberOfDaysToLookBack);//substract the number of days to look back
 		Date dateToLookBackAfter = calendar.getTime();
 
-		String qlString = "SELECT u FROM LocationEntity u where u.creation_timestamp > :dateToLookBackAfter ORDER BY u.creation_timestamp DESC";
-		TypedQuery<LocationEntity> query = entityManager.createQuery(qlString,
-				LocationEntity.class);
+		String qlString = "SELECT u FROM Location u where u.creation_timestamp > :dateToLookBackAfter ORDER BY u.creation_timestamp DESC";
+		TypedQuery<Location> query = entityManager.createQuery(qlString,
+				Location.class);
 		query.setParameter("dateToLookBackAfter", dateToLookBackAfter, TemporalType.DATE);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public LocationEntity getLocationByName(String name) {
+	public Location getLocationByName(String name) {
 
 		try {
-			String qlString = "SELECT u FROM LocationEntity u WHERE u.name = ?1";
-			TypedQuery<LocationEntity> query = entityManager.createQuery(qlString,
-					LocationEntity.class);
+			String qlString = "SELECT u FROM Location u WHERE u.name = ?1";
+			TypedQuery<Location> query = entityManager.createQuery(qlString,
+					Location.class);
 			query.setParameter(1, name);
 
 			return query.getSingleResult();
@@ -72,12 +72,12 @@ public class LocationDaoJPA2Impl implements LocationDao {
 	}
 	
 	@Override
-	public LocationEntity getLocationById(Long id) {
+	public Location getLocationById(Long id) {
 
 		try {
-			String qlString = "SELECT u FROM LocationEntity u WHERE u.id = ?1";
-			TypedQuery<LocationEntity> query = entityManager.createQuery(qlString,
-					LocationEntity.class);
+			String qlString = "SELECT u FROM Location u WHERE u.id = ?1";
+			TypedQuery<Location> query = entityManager.createQuery(qlString,
+					Location.class);
 			query.setParameter(1, id);
 
 			return query.getSingleResult();
@@ -87,7 +87,7 @@ public class LocationDaoJPA2Impl implements LocationDao {
 	}
 
 	@Override
-	public Long createLocation(LocationEntity location) {
+	public Long createLocation(Location location) {
 
 		location.setCreation_timestamp(new Date());
 		entityManager.persist(location);
@@ -99,14 +99,14 @@ public class LocationDaoJPA2Impl implements LocationDao {
 	@Override
 	public void deleteLocation(Location locationPojo) {
 
-		LocationEntity location = entityManager
-				.find(LocationEntity.class, locationPojo.getId());
+		Location location = entityManager
+				.find(Location.class, locationPojo.getId());
 		entityManager.remove(location);
 
 	}
 
 	@Override
-	public void updateLocation(LocationEntity location) {
+	public void updateLocation(Location location) {
 		//TODO think about partial update and full update
 		entityManager.merge(location);
 	}

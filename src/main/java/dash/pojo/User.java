@@ -1,19 +1,19 @@
 package dash.pojo;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.UserEntity;
 import dash.helpers.DateISO8601Adapter;
 
 /**
@@ -22,6 +22,8 @@ import dash.helpers.DateISO8601Adapter;
  * @author plindner
  *
  */
+@Entity
+@Table(name="user_data")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class User implements Serializable {
@@ -29,6 +31,8 @@ public class User implements Serializable {
 	private static final long serialVersionUID = -8039686696076337053L;
 
 	/** id of the user */
+	@Id
+	@GeneratedValue
 	@XmlElement(name = "id")
     @Column(name = "id")
 	private Long id;
@@ -60,7 +64,7 @@ public class User implements Serializable {
 
 	/** home phone number of the user */
 	@XmlElement(name = "homePhone")
-    @XmlElement(name = "homePhone")
+    @Column(name = "homePhone")
 	private String homePhone;
 
 	/** cellPhone number of the user */
@@ -80,22 +84,10 @@ public class User implements Serializable {
 
 	/** insertion date in the database */
 	@XmlElement(name = "insertionDate")
-    @Column(name = "picturePath")
+    @Column(name = "insertionDate")
 	@XmlJavaTypeAdapter(DateISO8601Adapter.class)
 	@UserDetailedView
 	private Date insertionDate;
-
-	public User(UserEntity userEntity) {
-		try {
-			BeanUtils.copyProperties(this, userEntity);
-		} catch ( IllegalAccessException e) {
-
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 
 	public User( String username,  String password,
 			String firstName,  String lastName,  String city,

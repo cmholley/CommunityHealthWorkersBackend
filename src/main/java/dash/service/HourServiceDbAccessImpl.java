@@ -23,7 +23,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.HourDao;
-import dash.dao.HourEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -60,7 +59,7 @@ HourService {
 	@Transactional
 	public Long createHour(Hour hour) throws AppException {
 		hour.setPending(true);
-		long hourId = hourDao.createHour(new HourEntity(hour));
+		long hourId = hourDao.createHour(hour);
 		hour.setId(hourId);
 		aclController.createACL(hour);
 		aclController.createAce(hour, CustomPermission.READ);
@@ -85,7 +84,7 @@ HourService {
 	@Override
 	public List<Hour> getHours(int numberOfHours, Long startIndex, boolean onlyPending) throws AppException{
 		
-		List<HourEntity> hours = hourDao.getHours(numberOfHours, startIndex, onlyPending, "ASC");
+		List<Hour> hours = hourDao.getHours(numberOfHours, startIndex, onlyPending, "ASC");
 		return getHoursFromEntities(hours);
 	}
 	
@@ -94,7 +93,7 @@ HourService {
 
 		//verify optional parameter numberDaysToLookBack first
 		List<Task> tasksByGroup = taskService.getTasksByGroup(group);
-		List<HourEntity> groupHours= new ArrayList<HourEntity>();
+		List<Hour> groupHours= new ArrayList<Hour>();
 		for(Task task: tasksByGroup){
 			groupHours.addAll( hourDao.getHours(numberOfHours, startIndex, task, onlyPending));
 		}
@@ -107,7 +106,7 @@ HourService {
 	public List<Hour> getHoursByMyUser(int numberOfHours, Long startIndex, boolean onlyPending) throws AppException {
 		
 		
-		List<HourEntity> hours = hourDao.getHours(numberOfHours, startIndex, onlyPending, "DESC");
+		List<Hour> hours = hourDao.getHours(numberOfHours, startIndex, onlyPending, "DESC");
 		return getHoursFromEntities(hours);
 		
 	}
@@ -115,7 +114,7 @@ HourService {
 
 	@Override
 	public Hour getHourById(Long id) throws AppException {
-		HourEntity hourById = hourDao.getHourById(id);
+		Hour hourById = hourDao.getHourById(id);
 		if (hourById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -125,13 +124,13 @@ HourService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Hour(hourDao.getHourById(id));
+		return hourDao.getHourById(id);
 	}
 
-	private List<Hour> getHoursFromEntities(List<HourEntity> hourEntities) {
+	private List<Hour> getHoursFromEntities(List<Hour> hourEntities) {
 		List<Hour> response = new ArrayList<Hour>();
-		for (HourEntity hourEntity : hourEntities) {
-			response.add(new Hour(hourEntity));
+		for (Hour hour : hourEntities) {
+			response.add(hour);
 		}
 
 		return response;
@@ -142,7 +141,7 @@ HourService {
 	
 
 //	public List<Hour> getRecentHours(int numberOfDaysToLookBack) {
-//		List<HourEntity> recentHours = hourDao
+//		List<Hour> recentHours = hourDao
 //				.getRecentHours(numberOfDaysToLookBack);
 //
 //		return getHoursFromEntities(recentHours);
@@ -176,7 +175,7 @@ HourService {
 		verifyHourExistenceById.setPending(true);
 		verifyHourExistenceById.setApproved(false);
 
-		hourDao.updateHour(new HourEntity(verifyHourExistenceById));
+		hourDao.updateHour(verifyHourExistenceById);
 	}
 	
 	@Override
@@ -225,11 +224,11 @@ HourService {
 	@Override
 	
 	public Hour verifyHourExistenceById(Long id) {
-		HourEntity hourById = hourDao.getHourById(id);
+		Hour hourById = hourDao.getHourById(id);
 		if (hourById == null) {
 			return null;
 		} else {
-			return new Hour(hourById);
+			return hourById;
 		}
 	}
 
@@ -248,7 +247,7 @@ HourService {
 		copyPartialProperties(verifyHourExistenceById, hour);
 		verifyHourExistenceById.setApproved(false);
 		verifyHourExistenceById.setPending(true);
-		hourDao.updateHour(new HourEntity(verifyHourExistenceById));
+		hourDao.updateHour(verifyHourExistenceById);
 
 	}
 	@Override
@@ -279,7 +278,7 @@ HourService {
 		
 		hour.setApproved(approved);
 		hour.setPending(false);
-		hourDao.updateHour(new HourEntity(hour));
+		hourDao.updateHour(hour);
 		
 		
 	}

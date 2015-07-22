@@ -73,9 +73,6 @@
 	<bean id="classService" class="dash.service.ClassServiceDbAccessImpl" />
 	<bean id="classResource" class="dash.pojo.ClassResource" />
 
-	<bean id="coreDao" class="dash.dao.CoreDaoJPA2Impl" />
-	<bean id="coreService" class="dash.service.CoreServiceDbAccessImpl" />
-
 
 	<bean id="aclController" class="dash.security.GenericAclController" />
 

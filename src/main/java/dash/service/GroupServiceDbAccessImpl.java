@@ -14,7 +14,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.GroupDao;
-import dash.dao.GroupEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -55,7 +54,7 @@ GroupService {
 		validateInputForCreation(group);
 
 		//verify existence of resource in the db (feed must be unique)
-		GroupEntity groupByName = groupDao.getGroupByName(group.getName());
+		Group groupByName = groupDao.getGroupByName(group.getName());
 		if (groupByName != null) {
 			throw new AppException(
 					Response.Status.CONFLICT.getStatusCode(),
@@ -66,7 +65,7 @@ GroupService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		long groupId = groupDao.createGroup(new GroupEntity(group));
+		long groupId = groupDao.createGroup(group);
 		group.setId(groupId);
 		aclController.createACL(group);
 		aclController.createAce(group, CustomPermission.MANAGER);
@@ -100,7 +99,7 @@ GroupService {
 
 		//verify optional parameter numberDaysToLookBack first
 		if(numberDaysToLookBack!=null){
-			List<GroupEntity> recentGroups = groupDao
+			List<Group> recentGroups = groupDao
 					.getRecentGroups(numberDaysToLookBack);
 			return getGroupsFromEntities(recentGroups);
 		}
@@ -112,7 +111,7 @@ GroupService {
 					"Please set either ASC or DESC for the orderByInsertionDate parameter",
 					null, AppConstants.DASH_POST_URL);
 		}
-		List<GroupEntity> groups = groupDao.getGroups(orderByInsertionDate);
+		List<Group> groups = groupDao.getGroups(orderByInsertionDate);
 
 		return getGroupsFromEntities(groups);
 	}
@@ -139,7 +138,7 @@ GroupService {
 
 	@Override
 	public Group getGroupById(Long id) throws AppException {
-		GroupEntity groupById = groupDao.getGroupById(id);
+		Group groupById = groupDao.getGroupById(id);
 		if (groupById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -149,20 +148,20 @@ GroupService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Group(groupDao.getGroupById(id));
+		return groupDao.getGroupById(id);
 	}
 
-	private List<Group> getGroupsFromEntities(List<GroupEntity> groupEntities) {
+	private List<Group> getGroupsFromEntities(List<Group> groupEntities) {
 		List<Group> response = new ArrayList<Group>();
-		for (GroupEntity groupEntity : groupEntities) {
-			response.add(new Group(groupEntity));
+		for (Group group : groupEntities) {
+			response.add(group);
 		}
 
 		return response;
 	}
 
 	public List<Group> getRecentGroups(int numberOfDaysToLookBack) {
-		List<GroupEntity> recentGroups = groupDao
+		List<Group> recentGroups = groupDao
 				.getRecentGroups(numberOfDaysToLookBack);
 
 		return getGroupsFromEntities(recentGroups);
@@ -196,7 +195,7 @@ GroupService {
 							AppConstants.DASH_POST_URL);
 		}
 		copyAllProperties(verifyGroupExistenceById, group);
-		groupDao.updateGroup(new GroupEntity(group));
+		groupDao.updateGroup(group);
 	}
 
 	private void copyAllProperties(Group verifyGroupExistenceById, Group group) {
@@ -238,11 +237,11 @@ GroupService {
 	// TODO: This doesnt need to exist. It is the exact same thing as
 	// getGroupById(Long)
 	public Group verifyGroupExistenceById(Long id) {
-		GroupEntity groupById = groupDao.getGroupById(id);
+		Group groupById = groupDao.getGroupById(id);
 		if (groupById == null) {
 			return null;
 		} else {
-			return new Group(groupById);
+			return groupById;
 		}
 	}
 
@@ -259,7 +258,7 @@ GroupService {
 							+ group.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyGroupExistenceById, group);
-		groupDao.updateGroup(new GroupEntity(verifyGroupExistenceById));
+		groupDao.updateGroup(verifyGroupExistenceById);
 
 	}
 

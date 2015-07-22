@@ -1,27 +1,31 @@
 package dash.pojo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.LocationEntity;
 import dash.security.IAclObject;
 
 /**
  * Location Pojo
  * @Author plindner
  */
+@Entity
+@Table(name="locations")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Location implements  IAclObject {
 
+	@Id
+	@GeneratedValue
 	@XmlElement(name = "id")
     @Column(name = "id")
 	private Long id;
@@ -81,18 +85,7 @@ public class Location implements  IAclObject {
 	
 	public Location(){};
 	
-	public Location(LocationEntity locationEntity) {
-		try {
-			BeanUtils.copyProperties(this, locationEntity);
-		} catch ( IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
-	
 	@Override
 	public Long getId() {
 		return id;

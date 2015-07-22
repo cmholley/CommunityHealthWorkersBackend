@@ -13,7 +13,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.MessageDao;
-import dash.dao.MessageEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -45,7 +44,7 @@ MessageService {
 	@Override
 	@Transactional
 	public Long createMessage(Message message, Task task) throws AppException {
-		long messageId = messageDao.createMessage(new MessageEntity(message));
+		long messageId = messageDao.createMessage(message);
 		message.setId(messageId);
 		aclController.createACL(message);
 		aclController.createAce(message, CustomPermission.READ);
@@ -70,7 +69,7 @@ MessageService {
 
 		//verify optional parameter numberDaysToLookBack first
 		
-		List<MessageEntity> messages = messageDao.getMessages(numberOfPosts, startIndex, task);
+		List<Message> messages = messageDao.getMessages(numberOfPosts, startIndex, task);
 		return getMessagesFromEntities(messages);
 
 		
@@ -79,7 +78,7 @@ MessageService {
 	
 	@Override
 	public Message getMessageById(Long id) throws AppException {
-		MessageEntity messageById = messageDao.getMessageById(id);
+		Message messageById = messageDao.getMessageById(id);
 		if (messageById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -89,20 +88,20 @@ MessageService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Message(messageDao.getMessageById(id));
+		return messageDao.getMessageById(id);
 	}
 
-	private List<Message> getMessagesFromEntities(List<MessageEntity> groupPosts) {
+	private List<Message> getMessagesFromEntities(List<Message> groupPosts) {
 		List<Message> response = new ArrayList<Message>();
-		for (MessageEntity postEntity : groupPosts) {
-			response.add(new Message(postEntity));
+		for (Message post : groupPosts) {
+			response.add(post);
 		}
 
 		return response;
 	}
 	
 //	public List<Post> getRecentPosts(int numberOfDaysToLookBack) {
-//		List<PostEntity> recentPosts = postDao
+//		List<Post> recentPosts = postDao
 //				.getRecentPosts(numberOfDaysToLookBack);
 //
 //		return getPostsFromEntities(recentPosts);
@@ -142,7 +141,7 @@ MessageService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		messageDao.updateMessage(new MessageEntity(message));
+		messageDao.updateMessage(message);
 	}
 
 	/**
@@ -177,11 +176,11 @@ MessageService {
 
 	@Override
 	public Message verifyMessageExistenceById(Long id) {
-		MessageEntity messageById = messageDao.getMessageById(id);
+		Message messageById = messageDao.getMessageById(id);
 		if (messageById == null) {
 			return null;
 		} else {
-			return new Message(messageById);
+			return messageById;
 		}
 	}
 
@@ -204,7 +203,7 @@ MessageService {
 					"" + message.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyMessageExistenceById, message);
-		messageDao.updateMessage(new MessageEntity(verifyMessageExistenceById));
+		messageDao.updateMessage(verifyMessageExistenceById);
 	}
 
 	private void copyPartialProperties(Message verifyPostExistenceById, Message post) {

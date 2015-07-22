@@ -1,19 +1,21 @@
 package dash.pojo;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.beanutils.BeanUtils;
-
-import dash.dao.GroupEntity;
 import dash.security.IAclObject;
 
+@Entity
+@Table(name="group_data")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Group implements  IAclObject{
@@ -23,7 +25,8 @@ public class Group implements  IAclObject{
 
 	private static final long serialVersionUID = -1126021260367221880L;
 
-
+	@Id
+	@GeneratedValue
 	@XmlElement(name = "id")
     @Column(name = "id")
 	private Long id;
@@ -58,17 +61,7 @@ public class Group implements  IAclObject{
 	}
 
 	
-	public Group(GroupEntity groupEntity) {
-		try {
-			BeanUtils.copyProperties(this, groupEntity);
-		} catch ( IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch ( InvocationTargetException e) {
-
-			e.printStackTrace();
-		}
-	}
 	
 	public Group(){}
 

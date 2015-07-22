@@ -14,7 +14,6 @@ import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.transaction.annotation.Transactional;
 
 import dash.dao.LocationDao;
-import dash.dao.LocationEntity;
 import dash.errorhandling.AppException;
 import dash.filters.AppConstants;
 import dash.helpers.NullAwareBeanUtilsBean;
@@ -51,7 +50,7 @@ LocationService {
 		validateInputForCreation(location);
 
 		//verify existence of resource in the db (feed must be unique)
-		LocationEntity locationByName = locationDao.getLocationByName(location.getName());
+		Location locationByName = locationDao.getLocationByName(location.getName());
 		if (locationByName != null) {
 			throw new AppException(
 					Response.Status.CONFLICT.getStatusCode(),
@@ -62,7 +61,7 @@ LocationService {
 							AppConstants.DASH_POST_URL);
 		}
 
-		long locationId = locationDao.createLocation(new LocationEntity(location));
+		long locationId = locationDao.createLocation(location);
 		location.setId(locationId);
 		aclController.createACL(location);
 		if (user_name != null)
@@ -96,7 +95,7 @@ LocationService {
 
 		//verify optional parameter numberDaysToLookBack first
 		if(numberDaysToLookBack!=null){
-			List<LocationEntity> recentLocations = locationDao
+			List<Location> recentLocations = locationDao
 					.getRecentLocations(numberDaysToLookBack);
 			return getLocationsFromEntities(recentLocations);
 		}
@@ -108,7 +107,7 @@ LocationService {
 					"Please set either ASC or DESC for the orderByInsertionDate parameter",
 					null, AppConstants.DASH_POST_URL);
 		}
-		List<LocationEntity> locations = locationDao.getLocations(orderByInsertionDate);
+		List<Location> locations = locationDao.getLocations(orderByInsertionDate);
 
 		return getLocationsFromEntities(locations);
 	}
@@ -119,17 +118,17 @@ LocationService {
 				&& !("ASC".equalsIgnoreCase(orderByInsertionDate) || "DESC".equalsIgnoreCase(orderByInsertionDate));
 	}
 
-	private List<Location> getLocationsFromEntities(List<LocationEntity> locationEntities) {
+	private List<Location> getLocationsFromEntities(List<Location> locationEntities) {
 		List<Location> response = new ArrayList<Location>();
-		for (LocationEntity locationEntity : locationEntities) {
-			response.add(new Location(locationEntity));
+		for (Location location : locationEntities) {
+			response.add(location);
 		}
 
 		return response;
 	}
 
 	public List<Location> getRecentLocations(int numberOfDaysToLookBack) {
-		List<LocationEntity> recentLocations = locationDao
+		List<Location> recentLocations = locationDao
 				.getRecentLocations(numberOfDaysToLookBack);
 
 		return getLocationsFromEntities(recentLocations);
@@ -144,7 +143,7 @@ LocationService {
 	
 	@Override
 	public Location getLocationById(Long id) throws AppException {
-		LocationEntity locationById = locationDao.getLocationById(id);
+		Location locationById = locationDao.getLocationById(id);
 		if (locationById == null) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -154,7 +153,7 @@ LocationService {
 					+ " in the database", AppConstants.DASH_POST_URL);
 		}
 
-		return new Location(locationDao.getLocationById(id));
+		return locationDao.getLocationById(id);
 	}
 
 	/********************* UPDATE-related methods implementation ***********************/
@@ -173,7 +172,7 @@ LocationService {
 							AppConstants.DASH_POST_URL);
 		}
 		copyAllProperties(verifyLocationExistenceById, location);
-		locationDao.updateLocation(new LocationEntity(location));
+		locationDao.updateLocation(location);
 	}
 
 	private void copyAllProperties(Location verifyLocationExistenceById, Location location) {
@@ -213,11 +212,11 @@ LocationService {
 	
 	@Override
 	public Location verifyLocationExistenceById(Long id) {
-		LocationEntity locationById = locationDao.getLocationById(id);
+		Location locationById = locationDao.getLocationById(id);
 		if (locationById == null) {
 			return null;
 		} else {
-			return new Location(locationById);
+			return locationById;
 		}
 	}
 
@@ -234,7 +233,7 @@ LocationService {
 							+ location.getId(), AppConstants.DASH_POST_URL);
 		}
 		copyPartialProperties(verifyLocationExistenceById, location);
-		locationDao.updateLocation(new LocationEntity(verifyLocationExistenceById));
+		locationDao.updateLocation(verifyLocationExistenceById);
 
 	}
 
