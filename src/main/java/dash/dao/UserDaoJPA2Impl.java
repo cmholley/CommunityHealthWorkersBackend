@@ -89,7 +89,7 @@ UserDao {
 	public String getRoleByName(String username){
 		
 		try{
-			String qlString = "SELECT u.authority FROM Authority u  WHERE u.username= ?1";
+			String qlString = "SELECT u.authority FROM AuthorityEntity u  WHERE u.username= ?1";
 			TypedQuery<String> query = entityManager.createQuery(qlString, String.class);
 			query.setParameter(1, username);
 			

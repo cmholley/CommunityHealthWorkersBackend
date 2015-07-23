@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -43,8 +44,8 @@ public class User implements Serializable {
 	private String username;
 
 	/** password of the user */
+	@Transient
 	@XmlElement(name = "password")
-    @Column(name = "password")
 	private String password;
 
 	/** firstname of the user */
@@ -79,12 +80,12 @@ public class User implements Serializable {
 
 	/** path to stored picture of the user */
 	@XmlElement(name = "picturePath")
-    @Column(name = "picturePath")
+    @Column(name = "picture")
 	private String picturePath;
 
 	/** insertion date in the database */
 	@XmlElement(name = "insertionDate")
-    @Column(name = "insertionDate")
+    @Column(name = "insertion_date")
 	@XmlJavaTypeAdapter(DateISO8601Adapter.class)
 	@UserDetailedView
 	private Date insertionDate;
