@@ -1,6 +1,5 @@
 package dash.pojo;
 
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,74 +15,55 @@ import javax.xml.bind.annotation.XmlRootElement;
 import dash.security.IAclObject;
 
 @Entity
-@Table(name="tasks")
+@Table(name = "tasks")
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Task implements  IAclObject{
-	
+public class Task implements IAclObject {
+
 	@Id
 	@GeneratedValue
-	@XmlElement(name="id")
-    @Column(name="id")
+	@XmlElement(name = "id")
+	@Column(name = "id")
 	private Long id;
-	
-	@XmlElement(name="group_id")
-    @Column(name="group_id")
-	private Long group_id;
-	
-	@XmlElement(name="name")
-    @Column(name="name")
-	private String name;
-	
-	@XmlElement(name="description")
-    @Column(name="description")
-	private String description;
-	
-	@XmlElement(name="time")
-    @Column(name="time")
-	private Date time;
-	
-	@XmlElement(name="duration")
-    @Column(name="duration")
-	private int duration;
-	
-	@XmlElement(name="location")
-    @Column(name="location")
-	private String location;
-	
-	@XmlElement(name="creation_timestamp")
-    @Column(name="creation_timestamp")
-	private Date creation_timestamp;
-	
-	@XmlElement(name="finished")
-    @Column(name="finished")
-	private int finished;
-	
-	@XmlElement(name="badge_id")
-    @Column(name="badge_id")
-	private Long badge_id;
-	
-	
-	
-	
-	public Task(Long id, Long group_id, String name, String description, Date time,
-			int duration, String location, Date creation_timestamp,
-			int finished, Long badge_id) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.time = time;
-		this.duration = duration;
-		this.location = location;
-		this.creation_timestamp = creation_timestamp;
-		this.finished = finished;
-		this.badge_id = badge_id;
-	}
-	
-	public Task(){}
 
-	
+	@XmlElement(name = "group_id")
+	@Column(name = "group_id")
+	private Long group_id;
+
+	@XmlElement(name = "name")
+	@Column(name = "name")
+	private String name;
+
+	@XmlElement(name = "description")
+	@Column(name = "description")
+	private String description;
+
+	@XmlElement(name = "time")
+	@Column(name = "time")
+	private Date time;
+
+	@XmlElement(name = "duration")
+	@Column(name = "duration")
+	private int duration;
+
+	@XmlElement(name = "location")
+	@Column(name = "location")
+	private String location;
+
+	@XmlElement(name = "creation_timestamp")
+	@Column(name = "creation_timestamp")
+	private Date creation_timestamp;
+
+	@XmlElement(name = "finished")
+	@Column(name = "finished")
+	private boolean finished;
+
+	@XmlElement(name = "badge_id")
+	@Column(name = "badge_id")
+	private Long badge_id;
+
+	public Task() {
+	}
 
 	@Override
 	public String toString() {
@@ -106,7 +86,6 @@ public class Task implements  IAclObject{
 	public Long getId() {
 		return id;
 	}
-	
 
 	public void setId(Long id) {
 		this.id = id;
@@ -119,7 +98,6 @@ public class Task implements  IAclObject{
 	public void setGroup_id(Long group_id) {
 		this.group_id = group_id;
 	}
-
 
 	public String getName() {
 		return name;
@@ -169,11 +147,11 @@ public class Task implements  IAclObject{
 		this.creation_timestamp = creation_timestamp;
 	}
 
-	public int getFinished() {
+	public boolean getFinished() {
 		return finished;
 	}
 
-	public void setFinished(int finished) {
+	public void setFinished(boolean finished) {
 		this.finished = finished;
 	}
 
@@ -184,11 +162,5 @@ public class Task implements  IAclObject{
 	public void setBadge_id(Long badge_id) {
 		this.badge_id = badge_id;
 	}
-
-
-
-	
-
-	
 
 }

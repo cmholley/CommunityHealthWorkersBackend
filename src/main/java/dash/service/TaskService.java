@@ -43,15 +43,15 @@ public interface TaskService {
 	 */
 	
 	public List<Task> getTasks(String orderByInsertionDate,
-			Integer numberDaysToLookBack) throws AppException;
+			Integer numberDaysToLookBack, boolean completedOnly) throws AppException;
 
 	@PostFilter("hasPermission(filterObject, 'MEMBER')")
 	public List<Task> getTasksByMembership(String orderByInsertionDate,
-			Integer numberDaysToLookBack) throws AppException;
+			Integer numberDaysToLookBack, boolean completedOnly) throws AppException;
 	
 	@PostFilter("hasPermission(filterObject, 'Manager')")
 	public List<Task> getTasksByManager(String orderByInsertionDate,
-			Integer numberDaysToLookBack) throws AppException;
+			Integer numberDaysToLookBack, boolean completedOnly) throws AppException;
 	
 	public List<Task> getTasksByGroup( Group group) throws AppException;
 	

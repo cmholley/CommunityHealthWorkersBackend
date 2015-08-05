@@ -52,8 +52,6 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	@Autowired
 	private SimpleMailMessage templateMessage;
 	
-	//private static final Logger logger = LoggerFactory.getLogger(ClassServiceDbAccessImpl.class);
-
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional

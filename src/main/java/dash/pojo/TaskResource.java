@@ -51,10 +51,11 @@ public class TaskResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Task> getTasks(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack,
+			@QueryParam("completedonly") boolean completedOnly)
 					throws IOException,	AppException {
 		List<Task> tasks = taskService.getTasks(
-				orderByInsertionDate, numberDaysToLookBack);
+				orderByInsertionDate, numberDaysToLookBack, completedOnly);
 		return tasks;
 	}
 	
@@ -64,10 +65,11 @@ public class TaskResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Task> getTasksByMembership(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack,
+			@QueryParam("completedonly") boolean completedOnly)
 					throws IOException,	AppException {
 		List<Task> tasks = taskService.getTasksByMembership(
-				orderByInsertionDate, numberDaysToLookBack);
+				orderByInsertionDate, numberDaysToLookBack, completedOnly);
 		return tasks;
 	}
 	
@@ -77,10 +79,12 @@ public class TaskResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Task> getTasksByManager(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
-			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
+			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack,
+			@QueryParam("completedonly") boolean completedOnly)
 					throws IOException,	AppException {
 		List<Task> tasks = taskService.getTasksByManager(
-				orderByInsertionDate, numberDaysToLookBack);
+				orderByInsertionDate, numberDaysToLookBack, completedOnly);
+		
 		return tasks;
 	}
 	
