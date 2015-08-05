@@ -35,7 +35,6 @@ public interface MessageService {
 	@PreAuthorize("hasPermission(#task, 'member') or hasPermission(#task, 'manager')")
 	public List<Message> getMessagesByTask(int numberOfPosts, Long startIndex, Task task) throws AppException;
 	
-	//TODO: add proper permission filtering
 	public Message getMessageById(Long id) throws AppException;
 
 	/*

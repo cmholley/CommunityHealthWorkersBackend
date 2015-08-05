@@ -47,7 +47,6 @@ public interface UserService {
 	public List<User> getMyUser(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
 	
-	//TODO: add proper permission filtering
 	public User getUserById(Long id) throws AppException;
 	
 	public List<String> getRole(User user);

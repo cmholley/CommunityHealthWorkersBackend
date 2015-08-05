@@ -43,7 +43,6 @@ public interface GroupService {
 	public List<Group> getGroupsByManager(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
 	
-	//TODO: add proper permission filtering
 	public Group getGroupById(Long id) throws AppException;
 
 	/*

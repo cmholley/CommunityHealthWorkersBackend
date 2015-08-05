@@ -40,8 +40,6 @@ public interface CommentService {
 	 */
 	public List<Comment> getCommentsByPost(int numberOfPosts, Long startIndex, Post post) throws AppException;
 
-
-	//TODO: add proper permission filtering
 	public Comment getCommentById(Long id) throws AppException;
 
 	/*

@@ -47,7 +47,6 @@ public interface HourService {
 	@PostFilter("hasPermission(filterObject, 'WRITE')")
 	public List<Hour> getHoursByMyUser(int numberOfHours, Long startIndex, boolean onlyPending) throws AppException;
 	
-	//TODO: add proper permission filtering
 	public Hour getHourById(Long id) throws AppException;
 
 	/*

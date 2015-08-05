@@ -55,7 +55,6 @@ public interface TaskService {
 	
 	public List<Task> getTasksByGroup( Group group) throws AppException;
 	
-	//TODO: add proper permission filtering	
 	public Task getTaskById(Long id) throws AppException;
 
 	/*

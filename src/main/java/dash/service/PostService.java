@@ -42,7 +42,6 @@ public interface PostService {
 	
 	public List<Post> getPostsByGroup(int numberOfPosts, Long startIndex, Group group) throws AppException;
 	
-	//TODO: add proper permission filtering
 	public Post getPostById(Long id) throws AppException;
 
 	/*
