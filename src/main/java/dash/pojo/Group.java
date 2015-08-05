@@ -20,17 +20,11 @@ import dash.security.IAclObject;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Group implements  IAclObject{
 
-	
-
-
-	private static final long serialVersionUID = -1126021260367221880L;
-
 	@Id
 	@GeneratedValue
 	@XmlElement(name = "id")
     @Column(name = "id")
 	private Long id;
-	
 
 	@XmlElement(name = "name")
     @Column(name = "name")
@@ -48,20 +42,6 @@ public class Group implements  IAclObject{
 	public Long getId() {
 		return id;
 	}
-
-	
-	
-	public Group(Long id, String name, String description,
-			Date creation_timestamp) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.creation_timestamp = creation_timestamp;
-	}
-
-	
-
 	
 	public Group(){}
 
@@ -75,8 +55,6 @@ public class Group implements  IAclObject{
 				+ (creation_timestamp != null ? "creation_timestamp="
 						+ creation_timestamp : "") + "]";
 	}
-
-
 
 	public void setId(Long id) {
 		this.id = id;
@@ -105,7 +83,4 @@ public class Group implements  IAclObject{
 	public void setCreation_timestamp(Date creation_timestamp) {
 		this.creation_timestamp = creation_timestamp;
 	}
-
-	
-
 }

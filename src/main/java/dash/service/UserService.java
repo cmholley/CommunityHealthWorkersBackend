@@ -46,21 +46,12 @@ public interface UserService {
 	@PostFilter("hasPermission(filterObject, 'READ')")
 	public List<User> getMyUser(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
-	/**
-	 * Returns a user given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */
 	
+	//TODO: add proper permission filtering
 	public User getUserById(Long id) throws AppException;
 	
 	public List<String> getRole(User user);
 
-	/*
-	 * ******************** Update related methods **********************
-	 */
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_ADMIN')")
 	public void updateFullyUser(User user) throws AppException;
 
@@ -78,25 +69,13 @@ public interface UserService {
 	
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public void setRoleAdmin(User user);
-	/*
-	 * ******************** Delete related methods **********************
-	 */
-
-
+	
 	@PreAuthorize("hasPermission(#user, 'DELETE') or hasRole('ROLE_ADMIN')")
 	public void deleteUser(User user);
-//	/** removes all users */
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public void deleteUsers();
 
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public User verifyUserExistenceById(Long id);
-
 	public int getNumberOfUsers();
 
 

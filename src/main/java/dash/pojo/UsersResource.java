@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -42,10 +41,9 @@ public class UsersResource {
 	@Autowired
 	private UserService userService;
 
-
-
 	/*
-	 * *********************************** CREATE ***********************************
+	 * *********************************** CREATE
+	 * ***********************************
 	 */
 
 	/**
@@ -61,11 +59,12 @@ public class UsersResource {
 	@Produces({ MediaType.TEXT_HTML })
 	public Response createUser(User user) throws AppException {
 		Long createUserId = userService.createUser(user);
-		return Response.status(Response.Status.CREATED)
+		return Response
+				.status(Response.Status.CREATED)
 				// 201
 				.entity("A new user has been created at index")
 				.header("Location", String.valueOf(createUserId))
-		        .header("ObjectId", String.valueOf(createUserId)).build();
+				.header("ObjectId", String.valueOf(createUserId)).build();
 	}
 
 	/**
@@ -104,11 +103,10 @@ public class UsersResource {
 				// 201
 				.entity("A new user/resource has been created at /services/users/"
 						+ createUserid)
-						.header("Location",
-								"http://localhost:8888/services/users/"
-										+ String.valueOf(createUserid)).build();
+				.header("Location",
+						"http://localhost:8888/services/users/"
+								+ String.valueOf(createUserid)).build();
 	}
-
 
 	/**
 	 * A list of resources (here users) provided in json format will be added to
@@ -128,10 +126,11 @@ public class UsersResource {
 	}
 
 	/*
-	 * *********************************** READ ***********************************
+	 * *********************************** READ
+	 * ***********************************
 	 */
 	/**
-	 * Returns all resources (users) from the database
+	 * Returns all users from the database
 	 *
 	 * @return
 	 * @throws IOException
@@ -139,30 +138,26 @@ public class UsersResource {
 	 * @throws JsonGenerationException
 	 * @throws AppException
 	 */
-	
-	//TODO: Create a get method for app level roles
-	
-	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<User> getUsers(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
 			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
-					throws IOException,	AppException {
-		List<User> users = userService.getUsers(
-				orderByInsertionDate, numberDaysToLookBack);
+			throws IOException, AppException {
+		List<User> users = userService.getUsers(orderByInsertionDate,
+				numberDaysToLookBack);
 		return users;
 	}
-	
+
 	@GET
 	@Path("myUser")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<User> getMyUser(
 			@QueryParam("orderByInsertionDate") String orderByInsertionDate,
 			@QueryParam("numberDaysToLookBack") Integer numberDaysToLookBack)
-					throws IOException,	AppException {
-		List<User> users = userService.getMyUser(
-				orderByInsertionDate, numberDaysToLookBack);
+			throws IOException, AppException {
+		List<User> users = userService.getMyUser(orderByInsertionDate,
+				numberDaysToLookBack);
 		return users;
 	}
 
@@ -170,41 +165,33 @@ public class UsersResource {
 	@Path("{id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getUserById(@PathParam("id") Long id,
-			@QueryParam("detailed") boolean detailed)
-					throws IOException,	AppException {
+			@QueryParam("detailed") boolean detailed) throws IOException,
+			AppException {
 		User userById = userService.getUserById(id);
-		return Response
-				.status(200)
-				.entity(new GenericEntity<User>(userById) {
-				},
-				detailed ? new Annotation[] { UserDetailedView.Factory
-						.get() } : new Annotation[0])
-						.header("Access-Control-Allow-Headers", "X-extra-header")
-						.allow("OPTIONS").build();
+		return Response.status(200).entity(new GenericEntity<User>(userById) {
+		}).header("Access-Control-Allow-Headers", "X-extra-header")
+				.allow("OPTIONS").build();
 	}
-	
+
 	@GET
 	@Path("myRole")
-	@Produces( {MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getMyRole() throws IOException, AppException {
-		
-		try{
-			List<String> role=userService.getRole(userService.getMyUser("ASC", null).get(0));
-			return Response.status(Response.Status.OK)
-					.entity(role).build();
-		}catch(Exception e){
+
+		try {
+			List<String> role = userService.getRole(userService.getMyUser(
+					"ASC", null).get(0));
+			return Response.status(Response.Status.OK).entity(role).build();
+		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-					.entity(e.getMessage())
-					.build();
+					.entity(e.getMessage()).build();
 		}
-		
-		
-				
-		
+
 	}
 
 	/*
-	 * *********************************** UPDATE ***********************************
+	 * *********************************** UPDATE
+	 * ***********************************
 	 */
 
 	/**
@@ -224,26 +211,30 @@ public class UsersResource {
 	public Response putUserById(@PathParam("id") Long id, User user)
 			throws AppException {
 
-		User userById = userService.verifyUserExistenceById(id);
-
-		if (userById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
+		try {
+			userService.getUserById(id);
+		} catch (AppException ex) {
+			
+			if (ex.getStatus() == 404) {
+			// user not existent yet
 			Long createUserId = userService.createUser(user);
 			return Response
 					.status(Response.Status.CREATED)
 					// 201
 					.entity("A new user has been created AT THE LOCATION you specified")
 					.header("Location", String.valueOf(createUserId)).build();
-		} else {
-			// resource is existent and a full update should occur
-			userService.updateFullyUser(user);
-			return Response
-					.status(Response.Status.OK)
-					// 200
-					.entity("The user you specified has been fully updated created AT THE LOCATION you specified")
-					.header("Location", String.valueOf(id)).build();
+			}
+
 		}
+
+		// resource is existent and a full update should occur
+		userService.updateFullyUser(user);
+		return Response
+				.status(Response.Status.OK)
+				// 200
+				.entity("The user " + user.getUsername()
+						+ " has been fully updated.").build();
+
 	}
 
 	// PARTIAL update
@@ -255,37 +246,53 @@ public class UsersResource {
 			throws AppException {
 		user.setId(id);
 		userService.updatePartiallyUser(user);
-		return Response
-				.status(Response.Status.OK)
+		return Response.status(Response.Status.OK)
 				// 200
 				.entity("The user you specified has been successfully updated")
 				.build();
 	}
-	
-	//Changes this users Role
-	//Expects role to = {ROLE_USER, ROLE_MODERATOR, ROLE_ADMIN}
+
+	// Changes this users Role
+	// Expects role to = {ROLE_USER, ROLE_MODERATOR, ROLE_ADMIN}
 	@POST
 	@Path("{id}/role")
-	public Response updateUserRole(@PathParam("id")Long id, 
+	public Response updateUserRole(@PathParam("id") Long id,
 			@QueryParam("role") String role) throws AppException {
-		
-		User user =userService.getUserById(id);
-		switch(userService.getRole(user).get(0)){
-			case "ROLE_ROOT":	return Response.status(Response.Status.BAD_REQUEST)
-					.entity("Cannot modify root user permissions").build(); 
-			case "ROLE_ADMIN":	if(userService.getRole(userService.getMyUser("ASC", null).get(0)).contains("ROLE_ADMIN")
-					||userService.getRole(userService.getMyUser("ASC", null).get(0)).contains("ROLE_ROOT")){break;}
-			else return Response.status(401).entity("You do not have required permissions for this"
-					+ ".  You must have admin priviliges to modify another admin's role.")
-					.build();
-			case "ROLE_VISITOR": return Response.status(Response.Status.BAD_REQUEST)
+
+		User user = userService.getUserById(id);
+		switch (userService.getRole(user).get(0)) {
+		case "ROLE_ROOT":
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity("Cannot modify root user permissions").build();
+		case "ROLE_ADMIN":
+			if (userService.getRole(userService.getMyUser("ASC", null).get(0))
+					.contains("ROLE_ADMIN")
+					|| userService.getRole(
+							userService.getMyUser("ASC", null).get(0))
+							.contains("ROLE_ROOT")) {
+				break;
+			} else
+				return Response
+						.status(401)
+						.entity("You do not have required permissions for this"
+								+ ".  You must have admin priviliges to modify another admin's role.")
+						.build();
+		case "ROLE_VISITOR":
+			return Response.status(Response.Status.BAD_REQUEST)
 					.entity("Cannot modify visitor user permissions").build();
 		}
-		switch(role){
-			case "ROLE_USER": userService.setRoleUser(user);break;
-			case "ROLE_MODERATOR": userService.setRoleModerator(user); break;
-			case "ROLE_ADMIN": userService.setRoleAdmin(user); break;
-			default: return Response.status(Response.Status.BAD_REQUEST)
+		switch (role) {
+		case "ROLE_USER":
+			userService.setRoleUser(user);
+			break;
+		case "ROLE_MODERATOR":
+			userService.setRoleModerator(user);
+			break;
+		case "ROLE_ADMIN":
+			userService.setRoleAdmin(user);
+			break;
+		default:
+			return Response.status(Response.Status.BAD_REQUEST)
 					.entity("The role you specified does not exist").build();
 		}
 		return Response
@@ -293,7 +300,7 @@ public class UsersResource {
 				.entity("The users role you specified has been successfully updated")
 				.build();
 	}
-	
+
 	@POST
 	@Path("{id}/password")
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -302,41 +309,31 @@ public class UsersResource {
 			throws AppException {
 		user.setId(id);
 		userService.resetPassword(user);
-		return Response
-				.status(Response.Status.OK)
+		return Response.status(Response.Status.OK)
 				// 200
 				.entity("The user you specified has been successfully updated")
 				.build();
 	}
 
-	/*
-	 * *********************************** DELETE ***********************************
+	/**
+	 * Delete a user
+	 * 
+	 * @param id
+	 *            User ID
+	 * @return
+	 * @throws AppException
 	 */
-	 
-	 
 	@DELETE
 	@Path("{id}")
 	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteUser(@PathParam("id") Long id)
-			throws AppException {
-		User user= new User();
+	public Response deleteUser(@PathParam("id") Long id) throws AppException {
+		User user = new User();
 		user.setId(id);
 		userService.deleteUser(user);
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("User successfully removed from database").build();
 	}
 
-	@DELETE
-	@Path("admin")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteUsers() {
-		userService.deleteUsers();
-		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All users have been successfully removed").build();
-	}
-
-	
-	
 	public void setuserService(UserService userService) {
 		this.userService = userService;
 	}

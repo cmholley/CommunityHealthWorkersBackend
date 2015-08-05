@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,15 +45,6 @@ public class GroupResource {
 		         .header("ObjectId", String.valueOf(createGroupId)).build();
 	}
 	
-	@POST
-	@Path("list")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public Response createGroups(List<Group> groups) throws AppException {
-		groupService.createGroups(groups);
-		return Response.status(Response.Status.CREATED) // 201
-				.entity("List of groups was successfully created").build();
-	}
-	
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Group> getGroups(
@@ -93,16 +83,13 @@ public class GroupResource {
 	@GET
 	@Path("{id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getGroupById(@PathParam("id") Long id,
-			@QueryParam("detailed") boolean detailed)
+	public Response getGroupById(@PathParam("id") Long id)
 					throws IOException,	AppException {
 		Group groupById = groupService.getGroupById(id);
 		return Response
 				.status(200)
 				.entity(new GenericEntity<Group>(groupById) {
-				},
-				detailed ? new Annotation[] { GroupDetailedView.Factory
-						.get() } : new Annotation[0])
+				})
 						.header("Access-Control-Allow-Headers", "X-extra-header")
 						.allow("OPTIONS").build();
 	}
@@ -114,11 +101,10 @@ public class GroupResource {
 	public Response putGroupById(@PathParam("id") Long id, Group group)
 			throws AppException {
 
-		Group groupById = groupService.verifyGroupExistenceById(id);
+		Group groupById = groupService.getGroupById(id);
 
 		if (groupById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
+			// resource not existent yet, and should be created under the specified URI
 			Long createGroupId = groupService.createGroup(group);
 			return Response
 					.status(Response.Status.CREATED)
@@ -169,15 +155,6 @@ public class GroupResource {
 		groupService.deleteGroup(group);
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("Group successfully removed from database").build();
-	}
-
-	@DELETE
-	@Path("admin")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteGroups() {
-		groupService.deleteGroups();
-		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All groups have been successfully removed").build();
 	}
 	
 	@PUT

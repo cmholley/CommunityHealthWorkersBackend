@@ -41,13 +41,7 @@ public interface CommentService {
 	public List<Comment> getCommentsByPost(int numberOfPosts, Long startIndex, Post post) throws AppException;
 
 
-	/**
-	 * Returns a post given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */
+	//TODO: add proper permission filtering
 	public Comment getCommentById(Long id) throws AppException;
 
 	/*
@@ -65,22 +59,9 @@ public interface CommentService {
 	@PreAuthorize("hasPermission(#comment, 'delete') or hasRole('ROLE_MODERATOR')")
 	public void deleteComment(Comment comment);
 	
-	/** removes all posts
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteComments();
-	
-	
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public Comment verifyCommentExistenceById(Long id);
-
 	public int getNumberOfPosts();
 
 }

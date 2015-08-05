@@ -153,15 +153,6 @@ public class LocationResource {
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("Location successfully removed from database").build();
 	}
-
-	@DELETE
-	@Path("admin")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteLocations() {
-		locationService.deleteLocations();
-		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All locations have been successfully removed").build();
-	}
 	
 	@PUT
 	@Path("{id}/MANAGER/{user}")

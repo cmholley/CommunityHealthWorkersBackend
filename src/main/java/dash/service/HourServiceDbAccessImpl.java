@@ -68,18 +68,6 @@ HourService {
 		return hourId;
 	}
 
-	
-
-	//Inactive
-	@Override
-	@Transactional
-	public void createHours(List<Hour> hours) throws AppException {
-		for (Hour hour : hours) {
-			//createHour(hour);
-		}
-	}
-
-
 	// ******************** Read related methods implementation **********************
 	@Override
 	public List<Hour> getHours(int numberOfHours, Long startIndex, boolean onlyPending) throws AppException{
@@ -161,16 +149,9 @@ HourService {
 	@Override
 	@Transactional
 	public void updateFullyHour(Hour hour) throws AppException {
-		Hour verifyHourExistenceById = verifyHourExistenceById(hour
+		Hour verifyHourExistenceById = getHourById(hour
 				.getId());
-		if (verifyHourExistenceById == null) {
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ hour.getId(),
-							AppConstants.DASH_POST_URL);
-		}
+		
 		copyAllProperties(verifyHourExistenceById, hour);
 		verifyHourExistenceById.setPending(true);
 		verifyHourExistenceById.setApproved(false);
@@ -215,35 +196,10 @@ HourService {
 
 	@Override
 	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Hours to delete
-	public void deleteHours() {
-		hourDao.deleteHours();
-	}
-
-	@Override
-	
-	public Hour verifyHourExistenceById(Long id) {
-		Hour hourById = hourDao.getHourById(id);
-		if (hourById == null) {
-			return null;
-		} else {
-			return hourById;
-		}
-	}
-
-	@Override
-	@Transactional
 	public void updatePartiallyHour(Hour hour) throws AppException {
 		//do a validation to verify existence of the resource
-		Hour verifyHourExistenceById = verifyHourExistenceById(hour.getId());
-		if (verifyHourExistenceById == null) {
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ hour.getId(), AppConstants.DASH_POST_URL);
-		}
+		Hour verifyHourExistenceById = getHourById(hour.getId());
+		
 		copyPartialProperties(verifyHourExistenceById, hour);
 		verifyHourExistenceById.setApproved(false);
 		verifyHourExistenceById.setPending(true);

@@ -130,17 +130,8 @@ MessageService {
 					AppConstants.DASH_POST_URL);
 		}
 
-		Message verifyMessageExistenceById = verifyMessageExistenceById(message
-				.getId());
-		if (verifyMessageExistenceById == null) {
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ message.getId(),
-							AppConstants.DASH_POST_URL);
-		}
-
+		//verify whether message exists
+		getMessageById(message.getId());
 		messageDao.updateMessage(message);
 	}
 
@@ -168,34 +159,10 @@ MessageService {
 
 	@Override
 	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Posts to delete
-	public void deleteMessages() {
-		messageDao.deleteMessages();
-	}
-
-	@Override
-	public Message verifyMessageExistenceById(Long id) {
-		Message messageById = messageDao.getMessageById(id);
-		if (messageById == null) {
-			return null;
-		} else {
-			return messageById;
-		}
-	}
-
-	@Override
-	@Transactional
 	public void updatePartiallyMessage(Message message, Task task) throws AppException {
 		//do a validation to verify existence of the resource
-		Message verifyMessageExistenceById = verifyMessageExistenceById(message.getId());
-		if (verifyMessageExistenceById == null) {
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ message.getId(), AppConstants.DASH_POST_URL);
-		}
+		Message verifyMessageExistenceById = getMessageById(message.getId());
+		
 		if(verifyMessageExistenceById.getSender_id() != message.getSender_id()) {
 			throw new AppException(Response.Status.FORBIDDEN.getStatusCode(),
 					404,
@@ -212,11 +179,9 @@ MessageService {
 		try {
 			notNull.copyProperties(verifyPostExistenceById, post);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}

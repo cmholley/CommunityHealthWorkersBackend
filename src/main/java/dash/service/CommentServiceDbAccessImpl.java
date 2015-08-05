@@ -39,10 +39,6 @@ CommentService {
 	@Autowired
 	private GenericAclController<Comment> aclController;
 
-	private static final String SORT_ORDER=null;
-	private static final Integer NUM_DAYS_LOOKBACK=null;
-
-
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
@@ -131,19 +127,20 @@ CommentService {
 					"required properties - name, description",
 					AppConstants.DASH_POST_URL);
 		}
-
-		Comment verifyPostExistenceById = verifyCommentExistenceById(comment
-				.getId());
-		if (verifyPostExistenceById == null) {
+		
+		try {
+			//do a validation whether comment exists
+			getCommentById(comment.getId());
+			commentDao.updateComment(comment);
+		} catch (AppException ex) {
+	
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ comment.getId(),
 							AppConstants.DASH_POST_URL);
-		}
-
-		commentDao.updateComment(comment);
+		}		
 	}
 
 	/**
@@ -170,37 +167,19 @@ CommentService {
 
 	@Override
 	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Posts to delete
-	public void deleteComments() {
-		commentDao.deleteComments();
-	}
-
-	@Override
-	public Comment verifyCommentExistenceById(Long id) {
-		Comment commentById = commentDao.getCommentById(id);
-		if (commentById == null) {
-			return null;
-		} else {
-			return commentById;
-		}
-	}
-
-	@Override
-	@Transactional
 	public void updatePartiallyComment(Comment comment) throws AppException {
-		//do a validation to verify existence of the resource
-		Comment verifyCommentExistenceById = verifyCommentExistenceById(comment.getId());
-		if (verifyCommentExistenceById == null) {
+		
+		try {
+			Comment verifyCommentExistenceById = getCommentById(comment.getId());
+			copyPartialProperties(verifyCommentExistenceById, comment);
+			commentDao.updateComment(verifyCommentExistenceById);
+		} catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ comment.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyCommentExistenceById, comment);
-		commentDao.updateComment(verifyCommentExistenceById);
-
 	}
 
 	private void copyPartialProperties(Comment verifyCommentExistenceById, Comment comment) {
@@ -209,13 +188,10 @@ CommentService {
 		try {
 			notNull.copyProperties(verifyCommentExistenceById, comment);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
-
 	}
 
 

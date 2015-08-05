@@ -35,13 +35,7 @@ public interface MessageService {
 	@PreAuthorize("hasPermission(#task, 'member') or hasPermission(#task, 'manager')")
 	public List<Message> getMessagesByTask(int numberOfPosts, Long startIndex, Task task) throws AppException;
 	
-	/**
-	 * Returns a post given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */	
+	//TODO: add proper permission filtering
 	public Message getMessageById(Long id) throws AppException;
 
 	/*
@@ -56,27 +50,12 @@ public interface MessageService {
 	/*
 	 * ******************** Delete related methods **********************
 	 */
-
-
 	@PreAuthorize("hasPermission(#message, 'delete') or hasRole('ROLE_MODERATOR')")
 	public void deleteMessage(Message message);
-	
-	/** removes all posts
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteMessages();
-	
 	
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public Message verifyMessageExistenceById(Long id);
-
 	public int getNumberOfMessages();
 
 }

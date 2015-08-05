@@ -51,6 +51,8 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 
 	@Autowired
 	private SimpleMailMessage templateMessage;
+	
+	//private static final Logger logger = LoggerFactory.getLogger(ClassServiceDbAccessImpl.class);
 
 	/********************* Create related methods implementation ***********************/
 	@Override
@@ -216,11 +218,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 					clas.getFinished());
 
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e);
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e);
 		}
 
 	}
@@ -234,14 +234,6 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		classDao.deleteClass(clas);
 		aclController.deleteACL(clas);
 
-	}
-
-	@Override
-	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Classes to delete
-	public void deleteClasses() {
-		classDao.deleteClasses();
 	}
 
 	/****************** Update Related Methods ***********************/
@@ -270,11 +262,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		try {
 			notNull.copyProperties(verifyClassExistenceById, clas);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e);
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e);
 		}
 	}
 
@@ -308,14 +298,13 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 			String htmlText = generateHtml(clas);
 			helper.setText(htmlText, true);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e);
 		}
 		try {
 			mailSender.send(message);
-		} catch (MailException ex) {
-			System.err.println(ex.getMessage()); // Do we need a front end error
-													// if the sending fails?
+		} catch (MailException e) {
+			// TODO: Do we need a front end error if the sending fails?
+			logger.debug("debugging info for exception: ", e); 
 		}
 	}
 
@@ -337,8 +326,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 			trainingCenter = locationService.getLocationById(clas
 					.getLocation_id());
 		} catch (AppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 		html += "<p> Please contact " + trainingCenter.getName()
 				+ " if you have any questions or concerns. </p>";

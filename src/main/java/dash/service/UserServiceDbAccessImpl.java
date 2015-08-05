@@ -41,11 +41,8 @@ UserService {
 
 	@Autowired
 	private UserLoginController authoritiesController;
-
 	
 	public static final String userRole = "ROLE_USER";
-	
-
 
 	/********************* Create related methods implementation ***********************/
 	@Override
@@ -196,21 +193,22 @@ UserService {
 	@Override
 	@Transactional
 	public void updateFullyUser(User user) throws AppException {
-		//do a validation to verify FULL update with PUT
 		
-		User verifyUserExistenceById = verifyUserExistenceById(user
-				.getId());
-		if (verifyUserExistenceById == null) {
+		try {
+			//verify existence of user
+			User verifyUserExistenceById = getUserById(user.getId());
+			
+			copyAllProperties(verifyUserExistenceById, user);
+			userDao.updateUser(verifyUserExistenceById);
+			
+		} catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ user.getId(),
 							AppConstants.DASH_POST_URL);
-		}
-		
-		copyAllProperties(verifyUserExistenceById, user);
-		userDao.updateUser(verifyUserExistenceById);
+		}		
 	}
 
 	
@@ -232,11 +230,9 @@ UserService {
 			withNull.copyProperty(verifyUserExistenceById, "email", user.getEmail());
 			withNull.copyProperty(verifyUserExistenceById, "picture", user.getPicture());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}
@@ -256,37 +252,20 @@ UserService {
 
 	@Override
 	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Users to delete
-	public void deleteUsers() {
-		userDao.deleteUsers();
-	}
-
-	@Override
-	public User verifyUserExistenceById(Long id) {
-		User userById = userDao.getUserById(id);
-		if (userById == null) {
-			return null;
-		} else {
-			return userById;
-		}
-	}
-
-	@Override
-	@Transactional
 	public void updatePartiallyUser(User user) throws AppException {
-		//do a validation to verify existence of the resource
-		User verifyUserExistenceById = verifyUserExistenceById(user.getId());
-		if (verifyUserExistenceById == null) {
+		
+		try {
+			// do a validation to verify existence of the resource
+			User verifyUserExistenceById = getUserById(user.getId());
+			copyPartialProperties(verifyUserExistenceById, user);
+			userDao.updateUser(verifyUserExistenceById);
+		} catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ user.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyUserExistenceById, user);
-		userDao.updateUser(verifyUserExistenceById);
-
 	}
 
 	private void copyPartialProperties(User verifyUserExistenceById, User user) {
@@ -295,39 +274,37 @@ UserService {
 		try {
 			notNull.copyProperties(verifyUserExistenceById, user);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}
 	
 	@Override
 	@Transactional
-	public void resetPassword(User user) throws AppException{
-		User verifyUserExistenceById = verifyUserExistenceById(user.getId());
-		if (verifyUserExistenceById == null) {
+	public void resetPassword(User user) throws AppException {
+		try {
+			//verify existence of user
+			getUserById(user.getId());
+			
+			authoritiesController.passwordReset(user);
+		} catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ user.getId(), AppConstants.DASH_POST_URL);
-		}else
-		{
-			authoritiesController.passwordReset(user);
 		}
-		
-		
 	}
 
-	/****************** Methods for Acl *****************/
+	//****************** Methods for Acl *****************/
 
-
-
-	// Creates/Updates the ACL of user
-	// Is also an example of how to implement class specific ACL helper methods.
+	/**
+	 * Creates/Updates the ACL of user
+	 * @param user 
+	 * @param recipient
+	 */
 	public void createUserACL(User user, Sid recipient) {
 		MutableAcl acl;
 		ObjectIdentity oid = new ObjectIdentityImpl(User.class,

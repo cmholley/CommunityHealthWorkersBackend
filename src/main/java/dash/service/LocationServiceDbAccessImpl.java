@@ -182,11 +182,9 @@ LocationService {
 			withNull.copyProperty(verifyLocationExistenceById, "name", location.getName());
 			withNull.copyProperty(verifyLocationExistenceById, "description", location.getDescription());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}
@@ -200,14 +198,6 @@ LocationService {
 		locationDao.deleteLocation(location);
 		aclController.deleteACL(location);
 
-	}
-
-	@Override
-	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// locations to delete
-	public void deleteLocations() {
-		locationDao.deleteLocations();
 	}
 	
 	@Override
@@ -243,11 +233,9 @@ LocationService {
 		try {
 			notNull.copyProperties(verifyLocationExistenceById, location);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}

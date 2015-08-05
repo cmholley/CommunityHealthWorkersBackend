@@ -18,12 +18,6 @@ public interface GroupService {
 	public Long createGroup(Group group) throws AppException;
 
 	/*
-	 * Create multiple groups as ROOT, testing purposes only.
-	 */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void createGroups(List<Group> groups) throws AppException;
-
-	/*
 	 * ******************* Read related methods ********************
 	 */
 	/**
@@ -49,16 +43,7 @@ public interface GroupService {
 	public List<Group> getGroupsByManager(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
 	
-	/**
-	 * Returns a group given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */
-	
-	
-	
+	//TODO: add proper permission filtering
 	public Group getGroupById(Long id) throws AppException;
 
 	/*
@@ -73,16 +58,8 @@ public interface GroupService {
 	/*
 	 * ******************** Delete related methods **********************
 	 */
-
-
 	@PreAuthorize("hasPermission(#group, 'MANAGER') or hasRole('ROLE_MODERATOR')")
 	public void deleteGroup(Group group);
-	/** removes all groups
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteGroups();
 	
 	/**
 	 * ACL related methods
@@ -103,19 +80,13 @@ public interface GroupService {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	public void addMember(User user, Group group) throws AppException;
 	
-	//Removes memeber
+	//Removes member
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasRole('ROLE_MODERATOR') or hasPermission(#group, 'MANAGER')")
 	public void deleteMember(User user, Group group) throws AppException;
-	
 
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public Group verifyGroupExistenceById(Long id);
-
 	public int getNumberOfGroups();
 
 }

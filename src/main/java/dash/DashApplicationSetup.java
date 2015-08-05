@@ -1,7 +1,5 @@
 package dash;
 
-import java.lang.annotation.Annotation;
-
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.message.filtering.EntityFilteringFeature;
@@ -20,7 +18,6 @@ import dash.pojo.LocationResource;
 import dash.pojo.MessageResource;
 import dash.pojo.PostResource;
 import dash.pojo.TaskResource;
-import dash.pojo.UserDetailedView;
 import dash.pojo.UsersResource;
 
 /**
@@ -60,8 +57,6 @@ public class DashApplicationSetup extends ResourceConfig {
 		register(MultiPartFeature.class);
 		register(EntityFilteringFeature.class);
 
-		property(EntityFilteringFeature.ENTITY_FILTERING_SCOPE,
-				new Annotation[] { UserDetailedView.Factory.get() });
 	}
 }
 

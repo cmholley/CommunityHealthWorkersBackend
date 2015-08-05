@@ -69,14 +69,6 @@ public interface ClassService {
 	@PreAuthorize("hasPermission(#clas, 'MANAGER') or hasPermission(#loc, 'MANAGER') or hasRole('ROLE_MODERATOR')")
 	public void deleteClass(Class clas, Location loc) throws AppException;
 
-	/**
-	 * removes all classes DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything but
-	 * they will take up space if this is commonly used
-	 */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteClasses();
-
 	/*
 	 * ******************** Membership related methods **********************
 	 */

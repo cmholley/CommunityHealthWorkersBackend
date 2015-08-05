@@ -87,7 +87,6 @@ public class User implements Serializable {
 	@XmlElement(name = "insertionDate")
     @Column(name = "insertion_date")
 	@XmlJavaTypeAdapter(DateISO8601Adapter.class)
-	@UserDetailedView
 	private Date insertionDate;
 
 	public User( String username,  String password,

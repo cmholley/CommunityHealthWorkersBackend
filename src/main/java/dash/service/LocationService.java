@@ -67,12 +67,6 @@ public interface LocationService {
 	 */
 	@PreAuthorize("hasPermission(#location, 'MANAGER') or hasRole('ROLE_MODERATOR')")
 	public void deleteLocation(Location location);
-	/** removes all locations
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteLocations();
 	
 	/**
 	 * ACL related methods

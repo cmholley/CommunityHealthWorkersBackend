@@ -232,15 +232,6 @@ public class ClassResource {
 		}
 	}
 
-	@DELETE
-	@Path("admin")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteClasses() {
-		classService.deleteClasses();
-		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All classes have been successfully removed").build();
-	}
-
 	// TODO: Implement mechanism to limit the number of people that can sign up
 	// for a class.
 	@POST

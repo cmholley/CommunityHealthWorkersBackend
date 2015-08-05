@@ -78,16 +78,6 @@ TaskService {
 		//etc...
 	}
 
-	//Inactive
-	@Override
-	@Transactional
-	public void createTasks(List<Task> tasks) throws AppException {
-		for (Task task : tasks) {
-			//createTask(task);
-		}
-	}
-
-
 	// ******************** Read related methods implementation **********************
 	@Override
 	public List<Task> getTasks(String orderByInsertionDate,
@@ -135,25 +125,11 @@ TaskService {
 	
 		return getTasks(orderByInsertionDate, numberDaysToLookBack);
 	}
-	
-	
 
 	private boolean isOrderByInsertionDateParameterValid(
 			String orderByInsertionDate) {
 		return orderByInsertionDate!=null
 				&& !("ASC".equalsIgnoreCase(orderByInsertionDate) || "DESC".equalsIgnoreCase(orderByInsertionDate));
-	}
-	
-	@Override
-	// TODO: This doesnt need to exist. It is the exact same thing as
-	// getTaskById(Long)
-	public Task verifyTaskExistenceById(Long id) {
-		Task taskById = taskDao.getTaskById(id);
-		if (taskById == null) {
-			return null;
-		} else {
-			return taskById;
-		}
 	}
 
 	@Override
@@ -201,22 +177,20 @@ TaskService {
 	@Override
 	@Transactional
 	public void updateFullyTask(Task task, Group group) throws AppException {
-		//do a validation to verify FULL update with PUT
 		
-
-		Task verifyTaskExistenceById = verifyTaskExistenceById(task
-				.getId());
-		if (verifyTaskExistenceById == null) {
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
+		try {
+			Task verifyTaskExistenceById = getTaskById(task.getId());
+			copyAllProperties(verifyTaskExistenceById, task);
+			taskDao.updateTask(verifyTaskExistenceById);
+		}
+		catch (AppException ex) {
+				throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ task.getId(),
 							AppConstants.DASH_POST_URL);
 		}
-		copyAllProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(verifyTaskExistenceById);
-
 	}
 
 	private void copyAllProperties(Task verifyTaskExistenceById, Task task) {
@@ -230,11 +204,9 @@ TaskService {
 			withNull.copyProperty(verifyTaskExistenceById, "location",  task.getLocation());
 			withNull.copyProperty(verifyTaskExistenceById, "badge_id",  task.getBadge_id());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}
@@ -250,14 +222,6 @@ TaskService {
 
 	}
 
-	@Override
-	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Tasks to delete
-	public void deleteTasks() {
-		taskDao.deleteTasks();
-	}
-	
 	/****************** Update Related Methods ***********************/
 
 	
@@ -265,18 +229,19 @@ TaskService {
 	@Override
 	@Transactional
 	public void updatePartiallyTask(Task task, Group group) throws AppException {
-		//do a validation to verify existence of the resource
-		Task verifyTaskExistenceById = verifyTaskExistenceById(task.getId());
-		if (verifyTaskExistenceById == null) {
+		
+		try {
+			Task verifyTaskExistenceById = getTaskById(task.getId());
+			copyPartialProperties(verifyTaskExistenceById, task);
+			taskDao.updateTask(verifyTaskExistenceById);
+		}
+		catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ task.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyTaskExistenceById, task);
-		taskDao.updateTask(verifyTaskExistenceById);
-
 	}
 
 	private void copyPartialProperties(Task verifyTaskExistenceById, Task task) {
@@ -285,11 +250,9 @@ TaskService {
 		try {
 			notNull.copyProperties(verifyTaskExistenceById, task);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}

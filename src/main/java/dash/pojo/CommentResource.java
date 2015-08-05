@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,10 +108,7 @@ public class CommentResource {
 		Comment commentById = commentService.getCommentById(id);
 		return Response
 				.status(200)
-				.entity(new GenericEntity<Comment>(commentById) {
-				},
-				detailed ? new Annotation[] { PostDetailedView.Factory
-						.get() } : new Annotation[0])
+				.entity(new GenericEntity<Comment>(commentById) {})
 						.header("Access-Control-Allow-Headers", "X-extra-header")
 						.allow("OPTIONS").build();
 	}

@@ -13,17 +13,17 @@ import dash.pojo.User;
 public interface TaskService {
 	/*
 	 * ******************** Create related methods **********************
-	 *
-	 *Create a new task and set the current user as owner and manager.
+	 */
+	
+	/**
+	 * Create a new task and set the current user as owner and manager.
+	 * @param task
+	 * @param group
+	 * @return
+	 * @throws AppException
 	 */
 	@PreAuthorize("hasPermission(#group, 'member') or hasPermission(#group, 'MANAGER') or hasRole('ROLE_MODERATOR')")
 	public Long createTask(Task task, Group group) throws AppException;
-
-	/*
-	 * Create multiple tasks as ROOT, testing purposes only.
-	 */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void createTasks(List<Task> tasks) throws AppException;
 
 	/*
 	 * ******************* Read related methods ********************
@@ -53,19 +53,9 @@ public interface TaskService {
 	public List<Task> getTasksByManager(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException;
 	
-	
 	public List<Task> getTasksByGroup( Group group) throws AppException;
 	
-	/**
-	 * Returns a task given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */
-	
-	
-	
+	//TODO: add proper permission filtering	
 	public Task getTaskById(Long id) throws AppException;
 
 	/*
@@ -82,17 +72,9 @@ public interface TaskService {
 	/*
 	 * ******************** Delete related methods **********************
 	 */
-
-
 	@PreAuthorize("hasPermission(#task, 'MANAGER') or hasPermission(#group, 'manager') "
 			+ "or hasRole('ROLE_MODERATOR')")
 	public void deleteTask(Task task, Group group) throws AppException;
-	/** removes all tasks
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteTasks();
 	
 	/**
 	 * *******************  ACL related methods  ****************************
@@ -119,17 +101,11 @@ public interface TaskService {
 	//Removes member
 	@PreAuthorize("hasPermission(#user, 'WRITE') or hasPermission(#group, 'manager') "
 			+ "or hasRole('ROLE_MODERATOR') or hasPermission(#task, 'MANAGER')")
-	public void deleteMember(User user, Task task, Group group) throws AppException;
-	
+	public void deleteMember(User user, Task task, Group group) throws AppException;	
 
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public Task verifyTaskExistenceById(Long id);
-
 	public int getNumberOfTasks();
 
 }

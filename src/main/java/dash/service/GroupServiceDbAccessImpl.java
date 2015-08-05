@@ -42,10 +42,6 @@ GroupService {
 	@Autowired
 	private TaskService taskService;
 	
-
-	
-
-
 	/********************* Create related methods implementation ***********************/
 	@Override
 	@Transactional
@@ -81,16 +77,6 @@ GroupService {
 		
 		//etc...
 	}
-
-	//Inactive
-	@Override
-	@Transactional
-	public void createGroups(List<Group> groups) throws AppException {
-		for (Group  group : groups) {
-			//createGroup(group);
-		}
-	}
-
 
 	// ******************** Read related methods implementation **********************
 	@Override
@@ -146,7 +132,7 @@ GroupService {
 					+ " was not found in the database",
 					"Verify the existence of the group with the id " + id
 					+ " in the database", AppConstants.DASH_POST_URL);
-		}
+		}	
 
 		return groupDao.getGroupById(id);
 	}
@@ -175,18 +161,17 @@ GroupService {
 
 	}
 
-
-
 	/********************* UPDATE-related methods implementation ***********************/
 	@Override
 	@Transactional
 	public void updateFullyGroup(Group group) throws AppException {
 		
-		
-		
-		Group verifyGroupExistenceById = verifyGroupExistenceById(group
-				.getId());
-		if (verifyGroupExistenceById == null) {
+		try {
+			Group verifyGroupExistenceById = getGroupById(group.getId());
+			copyAllProperties(verifyGroupExistenceById, group);
+			groupDao.updateGroup(group);
+		}
+		catch (AppException ex) {
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
@@ -194,8 +179,7 @@ GroupService {
 							+ group.getId(),
 							AppConstants.DASH_POST_URL);
 		}
-		copyAllProperties(verifyGroupExistenceById, group);
-		groupDao.updateGroup(group);
+		
 	}
 
 	private void copyAllProperties(Group verifyGroupExistenceById, Group group) {
@@ -205,13 +189,10 @@ GroupService {
 			withNull.copyProperty(verifyGroupExistenceById, "name", group.getName());
 			withNull.copyProperty(verifyGroupExistenceById, "description", group.getDescription());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
-
 	}
 
 	/********************* DELETE-related methods implementation ***********************/
@@ -219,47 +200,25 @@ GroupService {
 	@Override
 	@Transactional
 	public void deleteGroup(Group group) {
-
 		groupDao.deleteGroupById(group);
 		aclController.deleteACL(group);
-
-	}
-
-	@Override
-	@Transactional
-	// TODO: This shouldn't exist? If it must, then it needs to accept a list of
-	// Groups to delete
-	public void deleteGroups() {
-		groupDao.deleteGroups();
-	}
-
-	@Override
-	// TODO: This doesnt need to exist. It is the exact same thing as
-	// getGroupById(Long)
-	public Group verifyGroupExistenceById(Long id) {
-		Group groupById = groupDao.getGroupById(id);
-		if (groupById == null) {
-			return null;
-		} else {
-			return groupById;
-		}
 	}
 
 	@Override
 	@Transactional
 	public void updatePartiallyGroup(Group group) throws AppException {
-		//do a validation to verify existence of the resource
-		Group verifyGroupExistenceById = verifyGroupExistenceById(group.getId());
-		if (verifyGroupExistenceById == null) {
+		
+		try {
+			Group verifyGroupExistenceById = getGroupById(group.getId());
+			copyPartialProperties(verifyGroupExistenceById, group);
+			groupDao.updateGroup(verifyGroupExistenceById);		}
+		catch (AppException ex){
 			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
 					404,
 					"The resource you are trying to update does not exist in the database",
 					"Please verify existence of data in the database for the id - "
 							+ group.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyGroupExistenceById, group);
-		groupDao.updateGroup(verifyGroupExistenceById);
-
 	}
 
 	private void copyPartialProperties(Group verifyGroupExistenceById, Group group) {
@@ -268,11 +227,9 @@ GroupService {
 		try {
 			notNull.copyProperties(verifyGroupExistenceById, group);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("debugging info for exception: ", e); 
 		}
 
 	}

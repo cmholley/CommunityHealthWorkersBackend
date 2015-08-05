@@ -1,7 +1,6 @@
 package dash.pojo;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -46,15 +45,6 @@ public class TaskResource {
 				.entity("A new task has been created")
 				.header("Location", String.valueOf(createTaskId))
 				.header("ObjectId", String.valueOf(createTaskId)).build();
-	}
-	
-	@POST
-	@Path("list")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public Response createTasks(List<Task> tasks) throws AppException {
-		taskService.createTasks(tasks);
-		return Response.status(Response.Status.CREATED) // 201
-				.entity("List of tasks was successfully created").build();
 	}
 	
 	@GET
@@ -116,20 +106,20 @@ public class TaskResource {
 		Task taskById = taskService.getTaskById(id);
 		return Response
 				.status(200)
-				.entity(new GenericEntity<Task>(taskById) {
-				},
-				detailed ? new Annotation[] { TaskDetailedView.Factory
-						.get() } : new Annotation[0])
+				.entity(new GenericEntity<Task>(taskById) {})
 						.header("Access-Control-Allow-Headers", "X-extra-header")
 						.allow("OPTIONS").build();
 	}
 	
-	//TODO: We need to create some kind of way
+	//************************ Update Methods *********************/
 	
-	/************************ Update Methods *********************/
-	
-	
-	//Full update or creation in not already existing
+	/**
+	 * Full update or creation in not already existing
+	 * @param id
+	 * @param task
+	 * @return
+	 * @throws AppException
+	 */
 	@PUT
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -138,7 +128,7 @@ public class TaskResource {
 			throws AppException {
 		task.setId(id);
 		Group group = new Group();
-		Task taskById = taskService.verifyTaskExistenceById(id);
+		Task taskById = taskService.getTaskById(id);
 		
 		if (taskById == null) {
 			// resource not existent yet, and should be created under the
@@ -175,24 +165,22 @@ public class TaskResource {
 			throws AppException {
 		task.setId(id);
 		Group group = new Group();
-		Task taskById = taskService.verifyTaskExistenceById(id);
-		
-		if (taskById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
+		try {
+			taskService.getTaskById(id);
+			group.setId(task.getGroup_id());
+			//TODO: needs to be tested, something is not right here
+			taskService.updatePartiallyTask(task, group);
+			return Response
+					.status(Response.Status.OK)
+					// 200
+					.entity("The task you specified has been successfully updated")
+					.build();
+		} catch (AppException ex) {
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location", String.valueOf(task)).build();
-		} else {
-			group.setId(task.getGroup_id());
-		}
-		taskService.updatePartiallyTask(task, group);
-		return Response
-				.status(Response.Status.OK)
-				// 200
-				.entity("The task you specified has been successfully updated")
-				.build();
+					.entity("Task Id " + id + " not found")
+					.build();	
+		}	
 	}
 
 	/*
@@ -204,32 +192,21 @@ public class TaskResource {
 	public Response deleteTask(@PathParam("id") Long id)
 			throws AppException {
 		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
+		try {
+			Task task = taskService.getTaskById(id);
+			group.setId(task.getGroup_id());
+			taskService.deleteTask(task, group);
+		} catch (AppException ex) {
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
+					.entity("Task with Id " + id + " not found")
 					.header("Location",
 							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
+									+ id).build();
 		}
 		
-		taskService.deleteTask(task, group);
 		return Response.status(Response.Status.NO_CONTENT)// 204
 				.entity("Task successfully removed from database").build();
-	}
-
-	@DELETE
-	@Path("admin")
-	@Produces({ MediaType.TEXT_HTML })
-	public Response deleteTasks() {
-		taskService.deleteTasks();
-		return Response.status(Response.Status.NO_CONTENT)// 204
-				.entity("All tasks have been successfully removed").build();
 	}
 	
 	@PUT
@@ -240,22 +217,22 @@ public class TaskResource {
 	{
 		User user= userService.getUserById(userId);
 		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
+		try {
+			Task task = taskService.getTaskById(id);
+			group.setId(task.getGroup_id());
+			taskService.resetManager(user, task);
+			
+			return Response
+					.status(Response.Status.OK)
+					.entity("MANAGER RESET: User " + user.getUsername() + " set as sole MANAGER for task " + task.getId())
+					.build();
+			
+		} catch (AppException ex) {
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
-		}
-		taskService.resetManager(user, task);
-		return Response.status(Response.Status.OK).entity("MANAGER RESET: User "+user.getUsername()
-				+" set as sole MANAGER for task "+task.getId()).build();
+					.entity("Task Id " + id + " not found.")
+					.build();
+		}	
 	}
 	
 	@POST
@@ -266,22 +243,23 @@ public class TaskResource {
 	{
 		User user= userService.getUserById(userId);
 		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
+		
+		try {
+			Task task = taskService.getTaskById(id);
+			group.setId(task.getGroup_id());
+			taskService.addManager(user, task, group);
+			return Response
+					.status(Response.Status.OK)
+					.entity("MANAGER ADDED: User " + user.getUsername()
+					+" added as a MANAGER for task " + task.getId())
+					.build();
+		} catch (AppException ex) {
 			return Response
 					.status(Response.Status.BAD_REQUEST)
-					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
-		}else
-		{
-			group.setId(task.getGroup_id());
+					.entity("Task Id " + id + " not found")
+					.build();
+			
 		}
-		taskService.addManager(user, task, group);
-		return Response.status(Response.Status.OK).entity("MANAGER ADDED: User "+user.getUsername()
-				+" added as a MANAGER for task "+task.getId()).build();
 	}
 	
 	@DELETE
@@ -292,22 +270,19 @@ public class TaskResource {
 	{
 		User user= userService.getUserById(userId);
 		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
-		if(task.getGroup_id() == null)
-		{
+		
+		try {
+			Task task = taskService.getTaskById(id);
+			group.setId(task.getGroup_id());
+			taskService.deleteManager(user, task, group);
+			return Response.status(Response.Status.OK).entity("MANAGER DELETED: User "+user.getUsername()
+					+" removed as MANAGER for task "+task.getId()).build();
+		} catch (AppException ex) {
 			return Response
 					.status(Response.Status.BAD_REQUEST)
 					.entity("Task Id not found")
-					.header("Location",
-							"http://localhost:8080/services/tasks/"
-									+ String.valueOf(task)).build();
+					.build();
 		}
-		else{
-			group.setId(task.getGroup_id());
-		}
-		taskService.deleteManager(user, task, group);
-		return Response.status(Response.Status.OK).entity("MANAGER DELETED: User "+user.getUsername()
-				+" removed as MANAGER for task "+task.getId()).build();
 	}
 
 	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
@@ -318,7 +293,7 @@ public class TaskResource {
 	throws AppException
 	{
 		User user= userService.getUserById(userId);
-		Task task= taskService.verifyTaskExistenceById(id);
+		Task task= taskService.getTaskById(id);
 		taskService.addMember(user, task);
 		return Response.status(Response.Status.OK).entity("MEMBER ADDED: User "+user.getUsername()
 				+" set as MEMBER for task "+task.getId()).build();
@@ -333,7 +308,7 @@ public class TaskResource {
 	{
 		User user= userService.getUserById(userId);
 		Group group = new Group();
-		Task task = taskService.verifyTaskExistenceById(id);
+		Task task = taskService.getTaskById(id);
 		if(task.getId() == null)
 		{
 			return Response

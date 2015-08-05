@@ -11,19 +11,18 @@ import dash.pojo.Group;
 import dash.pojo.Hour;
 
 public interface HourService {
-	/*
-	 * ******************** Create related methods **********************
-	 *
-	 *Create a new hour and set the current user as owner and manager.
-	 */
-	
-	public Long createHour(Hour hour) throws AppException;
 
 	/*
-	 * Create multiple hours as ROOT, testing purposes only.
+	 * ******************** Create related methods **********************
 	 */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void createHours(List<Hour> hours) throws AppException;
+	
+	/**
+	 * Create a new hour and set the current user as owner and manager.
+	 * @param hour
+	 * @return
+	 * @throws AppException
+	 */
+	public Long createHour(Hour hour) throws AppException;
 
 	/*
 	 * ******************* Read related methods ********************
@@ -47,16 +46,8 @@ public interface HourService {
 	
 	@PostFilter("hasPermission(filterObject, 'WRITE')")
 	public List<Hour> getHoursByMyUser(int numberOfHours, Long startIndex, boolean onlyPending) throws AppException;
-	/**
-	 * Returns a hour given its id
-	 *
-	 * @param id
-	 * @return
-	 * @throws AppException
-	 */
 	
-	
-	
+	//TODO: add proper permission filtering
 	public Hour getHourById(Long id) throws AppException;
 
 	/*
@@ -79,24 +70,16 @@ public interface HourService {
 
 	@PreAuthorize("hasPermission(#group, 'manager') or hasRole('ROLE_MODERATOR')")
 	public void approveHour(Hour hour, Group group, boolean approved) throws AppException;
+	
 	/*
 	 * ******************** Delete related methods **********************
 	 */
-
-
 	@PreAuthorize("hasPermission(#hour, 'delete') or hasRole('ROLE_MODERATOR')")
 	public void deleteHour(Hour hour);
-	/** removes all hours
-	 * DO NOT USE, IMPROPERLY UPDATES ACL_OBJECT table
-	 * Functional but does not destroy old acl's which doesnt hurt anything
-	 * but they will take up space if this is commonly used */
-	@PreAuthorize("hasRole('ROLE_ROOT')")
-	public void deleteHours();
-
+	
 	/*
 	 * ******************** Upload related methods **********************
 	 */
-	
 	@PreAuthorize("hasPermission(#hour, 'delete') or hasRole('ROLE_ADMIN')")
 	public void deleteUploadFile(String uploadedFileLocation, Hour hour)
 			throws AppException;
@@ -112,11 +95,6 @@ public interface HourService {
 	/*
 	 * ******************** Helper methods **********************
 	 */
-	// TODO: This also should not exist, or it should be changed to
-	// private/protected. Redundant
-	// Could be made a boolean so it was not a security vulnerability
-	public Hour verifyHourExistenceById(Long id);
-
 	public int getNumberOfHours();
 
 }
