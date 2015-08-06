@@ -303,7 +303,6 @@ public class TaskResource {
 				+" set as MEMBER for task "+task.getId()).build();
 	}
 	
-	//TODO: Implement mechanism to limit the number of people that can sign up for a task.
 	@DELETE
 	@Path("{id}/MEMBER/{user}")
 	@Produces({MediaType.TEXT_HTML})
