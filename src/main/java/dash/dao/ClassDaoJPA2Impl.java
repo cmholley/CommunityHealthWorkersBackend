@@ -125,7 +125,6 @@ public class ClassDaoJPA2Impl implements ClassDao {
 
 	@Override
 	public void updateClass(Class clas) {
-		//TODO think about partial update and full update
 		entityManager.merge(clas);
 	}
 

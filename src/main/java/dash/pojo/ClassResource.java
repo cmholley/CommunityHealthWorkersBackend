@@ -7,7 +7,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -107,7 +106,7 @@ public class ClassResource {
 				.allow("OPTIONS").build();
 	}
 
-	// TODO: Modify so it filters out completed tasks by default
+	// TODO: Modify so it filters out completed classes by default
 	@GET
 	@Path("byMembership")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -120,59 +119,8 @@ public class ClassResource {
 		return classes;
 	}
 
-
 	/************************ Update Methods *********************/
 
-	// Full update or creation in not already existing
-	@PUT
-	@Path("{id}")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML })
-	public Response putClassById(@PathParam("id") Long id, Class clas)
-			throws AppException {
-		clas.setId(id);
-		Class classById = classService.verifyClassExistenceById(id);
-
-		if (classById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
-			Location verifyLocation = locationService
-					.verifyLocationExistenceById(id);
-			if (verifyLocation != null) {
-				Long createClassId = classService.createClass(clas,
-						verifyLocation);
-				return Response
-						.status(Response.Status.CREATED)
-						.entity("A new class has been created AT THE LOCATION you specified")
-						.header("Location",
-								"../classes/" + String.valueOf(createClassId))
-						.build();
-			} else {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("The location specified does not exist")
-						.build();
-			}
-		} else {
-			// resource is existent and a full update should occur
-			clas.setLocation_id(classById.getLocation_id());
-			Location verifyLocation = locationService
-					.verifyLocationExistenceById(clas.getLocation_id());
-			if (verifyLocation != null) {
-				classService.updateFullyClass(clas, verifyLocation);
-				return Response
-						.status(Response.Status.OK)
-						.entity("The class you specified has been fully updated AT THE LOCATION you specified")
-						.header("Location", "../classes/" + String.valueOf(id))
-						.build();
-			} else {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("The location specified does not exist")
-						.build();
-			}
-		}
-	}
-
-	// PARTIAL update
 	@POST
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })
@@ -180,11 +128,11 @@ public class ClassResource {
 	public Response partialUpdateTask(@PathParam("id") Long id, Class clas)
 			throws AppException {
 		clas.setId(id);
-		Class classById = classService.verifyClassExistenceById(id);
+		try {
+			classService.getClassById(id);
+		} catch (AppException ex) {
 
-		if (classById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
+			// resource not existent yet, and should be created
 			return Response.status(Response.Status.BAD_REQUEST)
 					.entity("Class Id not found")
 					.header("Location", String.valueOf(clas)).build();
@@ -213,39 +161,49 @@ public class ClassResource {
 	@Path("{id}")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response deleteClass(@PathParam("id") Long id) throws AppException {
-		Class clas = classService.verifyClassExistenceById(id);
-		if (clas == null) {
+
+		try {
+			Class clas = classService.getClassById(id);
+
+			Location verifyLocation = locationService
+					.verifyLocationExistenceById(clas.getLocation_id());
+			if (verifyLocation != null) {
+				classService.deleteClass(clas, verifyLocation);
+				return Response.status(Response.Status.NO_CONTENT)
+						// 204
+						.entity("Class successfully removed from database")
+						.build();
+			} else {
+				return Response.status(Response.Status.NOT_FOUND)
+						.entity("The location specified does not exist")
+						.build();
+			}
+		} catch (AppException ex) {
 			return Response.status(Response.Status.BAD_REQUEST)
-					.entity("Class Id not found")
-					.header("Location", "../classes/" + String.valueOf(clas))
-					.build();
+					.entity("Class with Id: " + id + " not found.").build();
 		}
-		Location verifyLocation = locationService
-				.verifyLocationExistenceById(clas.getLocation_id());
-		if (verifyLocation != null) {
-			classService.deleteClass(clas, verifyLocation);
-			return Response.status(Response.Status.NO_CONTENT)// 204
-					.entity("Class successfully removed from database").build();
-		} else {
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("The location specified does not exist").build();
-		}
+
 	}
 
-	// TODO: Implement mechanism to limit the number of people that can sign up
-	// for a class.
 	@POST
 	@Path("{id}/MEMBER/{user}")
 	@Produces({ MediaType.TEXT_HTML })
 	public Response addMember(@PathParam("user") Long userId,
 			@PathParam("id") Long id) throws AppException {
 		User user = userService.getUserById(userId);
-		Class clas = classService.verifyClassExistenceById(id);
-		classService.addMember(user, clas);
-		return Response
-				.status(Response.Status.OK)
-				.entity("MEMBER ADDED: User " + user.getUsername()
-						+ " set as MEMBER for class " + clas.getId()).build();
+
+		try {
+			Class clas = classService.getClassById(id);
+			classService.addMember(user, clas);
+			return Response
+					.status(Response.Status.OK)
+					.entity("MEMBER ADDED: User " + user.getUsername()
+							+ " set as MEMBER for class " + clas.getId())
+					.build();
+		} catch (AppException ex) {
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity("Class with Id: " + id + " not found.").build();
+		}
 	}
 
 	@DELETE
@@ -254,20 +212,21 @@ public class ClassResource {
 	public Response deleteMember(@PathParam("user") Long userId,
 			@PathParam("id") Long id) throws AppException {
 		User user = userService.getUserById(userId);
-		Class clas = classService.verifyClassExistenceById(id);
-		if (clas == null) {
-			return Response.status(Response.Status.BAD_REQUEST)
-					.entity("Class Id not found")
-					.header("Location", "../classes/" + String.valueOf(clas))
+
+		try {
+			Class clas = classService.getClassById(id);
+			classService.deleteMember(user, clas);
+			return Response
+					.status(Response.Status.OK)
+					.entity("MEMBER deleted: User " + user.getUsername()
+							+ " removed as MEMBER from class id " + clas.getId())
 					.build();
+
+		} catch (AppException ex) {
+			return Response.status(Response.Status.BAD_REQUEST)
+					.entity("Class with Id: " + id + " not found.").build();
 		}
 
-		classService.deleteMember(user, clas);
-		return Response
-				.status(Response.Status.OK)
-				.entity("MEMBER DELETED: User " + user.getUsername()
-						+ " removed as MEMBER from task " + clas.getId())
-				.build();
 	}
 
 }

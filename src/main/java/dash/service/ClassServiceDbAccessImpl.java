@@ -52,29 +52,14 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	@Autowired
 	private SimpleMailMessage templateMessage;
 	
-	/********************* Create related methods implementation ***********************/
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
 	@Transactional
+	@Override
 	public Long createClass(Class clas, Location loc) throws AppException {
 
-		validateInputForCreation(clas);
-		long classId = classDao.createClass(clas);
-		clas.setId(classId);
-		aclController.createACL(clas);
-		aclController.createAce(clas, CustomPermission.MANAGER);
-		return classId;
-	}
-
-	@Override
-	@Transactional
-	public void createClasses(List<Class> classes, Location location)
-			throws AppException {
-		for (Class clas : classes) {
-			createClass(clas, location);
-		}
-	}
-
-	private void validateInputForCreation(Class clas) throws AppException {
+		//validate input, check whether class has at least a name
 		if (clas.getName() == null) {
 			throw new AppException(
 					Response.Status.BAD_REQUEST.getStatusCode(),
@@ -83,10 +68,31 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 					"Please verify that the classname is properly generated/set",
 					AppConstants.DASH_POST_URL);
 		}
+		
+		long classId = classDao.createClass(clas);
+		clas.setId(classId);
+		aclController.createACL(clas);
+		aclController.createAce(clas, CustomPermission.MANAGER);
+		return classId;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	@Override
+	public void createClasses(List<Class> classes, Location location)
+			throws AppException {
+		for (Class clas : classes) {
+			createClass(clas, location);
+		}
 	}
 
 	// ******************** Read related methods implementation
-	// **********************
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Class> getClasses(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException {
@@ -110,6 +116,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		return getClassesFromEntities(classes);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Class> getClassesByLocation(Location location) {
 
@@ -125,16 +134,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 						.equalsIgnoreCase(orderByInsertionDate));
 	}
 
-	@Override
-	public Class verifyClassExistenceById(Long id) {
-		Class classById = classDao.getClassById(id);
-		if (classById == null) {
-			return null;
-		} else {
-			return classById;
-		}
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Class getClassById(Long id) throws AppException {
 		Class classById = classDao.getClassById(id);
@@ -149,6 +151,9 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		return classDao.getClassById(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Class> getClassesByMembership(String orderByInsertionDate,
 			Integer numberDaysToLookBack) throws AppException {
@@ -176,52 +181,6 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	}
 
 	/********************* UPDATE-related methods implementation ***********************/
-	@Override
-	@Transactional
-	public void updateFullyClass(Class clas, Location loc) throws AppException {
-		// do a validation to verify FULL update with PUT
-
-		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
-		if (verifyClassExistenceById == null) {
-			throw new AppException(
-					Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ clas.getId(), AppConstants.DASH_POST_URL);
-		}
-		copyAllProperties(verifyClassExistenceById, clas);
-		classDao.updateClass(verifyClassExistenceById);
-	}
-	
-	private void copyAllProperties(Class verifyClassExistenceById, Class clas) {
-
-		BeanUtilsBean withNull = new BeanUtilsBean();
-		try {
-			withNull.copyProperty(verifyClassExistenceById, "description",
-					clas.getDescription());
-			withNull.copyProperty(verifyClassExistenceById, "name",
-					clas.getName());
-			withNull.copyProperty(verifyClassExistenceById, "time",
-					clas.getTime());
-			withNull.copyProperty(verifyClassExistenceById, "duration",
-					clas.getDuration());
-			withNull.copyProperty(verifyClassExistenceById, "room",
-					clas.getRoom());
-			withNull.copyProperty(verifyClassExistenceById, "address",
-					clas.getAddress());
-			withNull.copyProperty(verifyClassExistenceById, "cores",
-					clas.getCores());
-			withNull.copyProperty(verifyClassExistenceById, "finished",
-					clas.getFinished());
-
-		} catch (IllegalAccessException e) {
-			logger.debug("debugging info for exception: ", e);
-		} catch (InvocationTargetException e) {
-			logger.debug("debugging info for exception: ", e);
-		}
-
-	}
 
 	/********************* DELETE-related methods implementation ***********************/
 
@@ -240,15 +199,8 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	public void updatePartiallyClass(Class clas, Location loc)
 			throws AppException {
 		// do a validation to verify existence of the resource
-		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
-		if (verifyClassExistenceById == null) {
-			throw new AppException(
-					Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ clas.getId(), AppConstants.DASH_POST_URL);
-		}
+		Class verifyClassExistenceById = getClassById(clas.getId());
+		
 		copyPartialProperties(verifyClassExistenceById, clas);
 		classDao.updateClass(verifyClassExistenceById);
 	}
