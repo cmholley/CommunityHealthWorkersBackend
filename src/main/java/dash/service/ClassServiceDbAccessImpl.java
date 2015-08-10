@@ -126,16 +126,6 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	}
 
 	@Override
-	public Class verifyClassExistenceById(Long id) {
-		Class classById = classDao.getClassById(id);
-		if (classById == null) {
-			return null;
-		} else {
-			return classById;
-		}
-	}
-
-	@Override
 	public Class getClassById(Long id) throws AppException {
 		Class classById = classDao.getClassById(id);
 		if (classById == null) {
@@ -190,9 +180,12 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 	@Transactional
 	public void updatePartiallyClass(Class clas, Location loc)
 			throws AppException {
-		// do a validation to verify existence of the resource
-		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
-		if (verifyClassExistenceById == null) {
+		try {
+			// do a validation to verify existence of the resource
+			Class verifyClassExistenceById = getClassById(clas.getId());
+			copyPartialProperties(verifyClassExistenceById, clas);
+			classDao.updateClass(verifyClassExistenceById);
+		} catch (AppException ex) {
 			throw new AppException(
 					Response.Status.NOT_FOUND.getStatusCode(),
 					404,
@@ -200,8 +193,6 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 					"Please verify existence of data in the database for the id - "
 							+ clas.getId(), AppConstants.DASH_POST_URL);
 		}
-		copyPartialProperties(verifyClassExistenceById, clas);
-		classDao.updateClass(verifyClassExistenceById);
 	}
 
 	private void copyPartialProperties(Class verifyClassExistenceById,
