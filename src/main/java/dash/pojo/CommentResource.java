@@ -114,35 +114,6 @@ public class CommentResource {
 	}
 	
 	/************************ Update Methods *********************/
-	
-	
-	//Full update in not already existing
-	@PUT
-	@Path("{id}")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML })
-	public Response putCommentById(@PathParam("id") Long id, Comment comment)
-			throws AppException {
-		Comment commentById = commentService.getCommentById(id);
-		
-		if (commentById == null) {
-			return Response
-					.status(Response.Status.NOT_FOUND)
-					// 404
-					.entity("Comment does not exist with specified id: " + id).build();
-		} else {
-			// resource is existent and a full update should occur
-			commentService.updateFullyComment(commentById);
-			return Response
-					.status(Response.Status.OK)
-					// 200
-					.entity("The comment you specified has been fully updated AT THE LOCATION you specified")
-					.header("Location",
-							"http://localhost:8888/services/comments/"
-									+ String.valueOf(id)).build();
-		}
-	}
-
 	// PARTIAL update
 	@POST
 	@Path("{id}")

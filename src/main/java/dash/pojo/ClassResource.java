@@ -123,56 +123,6 @@ public class ClassResource {
 
 	/************************ Update Methods *********************/
 
-	// Full update or creation in not already existing
-	@PUT
-	@Path("{id}")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.TEXT_HTML })
-	public Response putClassById(@PathParam("id") Long id, Class clas)
-			throws AppException {
-		clas.setId(id);
-		Class classById = classService.verifyClassExistenceById(id);
-
-		if (classById == null) {
-			// resource not existent yet, and should be created under the
-			// specified URI
-			Location verifyLocation = locationService
-					.verifyLocationExistenceById(id);
-			if (verifyLocation != null) {
-				Long createClassId = classService.createClass(clas,
-						verifyLocation);
-				return Response
-						.status(Response.Status.CREATED)
-						.entity("A new class has been created AT THE LOCATION you specified")
-						.header("Location",
-								"../classes/" + String.valueOf(createClassId))
-						.build();
-			} else {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("The location specified does not exist")
-						.build();
-			}
-		} else {
-			// resource is existent and a full update should occur
-			clas.setLocation_id(classById.getLocation_id());
-			Location verifyLocation = locationService
-					.verifyLocationExistenceById(clas.getLocation_id());
-			if (verifyLocation != null) {
-				classService.updateFullyClass(clas, verifyLocation);
-				return Response
-						.status(Response.Status.OK)
-						.entity("The class you specified has been fully updated AT THE LOCATION you specified")
-						.header("Location", "../classes/" + String.valueOf(id))
-						.build();
-			} else {
-				return Response.status(Response.Status.NOT_FOUND)
-						.entity("The location specified does not exist")
-						.build();
-			}
-		}
-	}
-
-	// PARTIAL update
 	@POST
 	@Path("{id}")
 	@Consumes({ MediaType.APPLICATION_JSON })

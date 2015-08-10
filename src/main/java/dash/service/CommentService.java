@@ -46,9 +46,6 @@ public interface CommentService {
 	 * ******************** Update related methods **********************
 	 */
 	@PreAuthorize("hasPermission(#comment, 'write') or hasRole('ROLE_MODERATOR')")
-	public void updateFullyComment(Comment comment) throws AppException;
-
-	@PreAuthorize("hasPermission(#comment, 'write') or hasRole('ROLE_MODERATOR')")
 	public void updatePartiallyComment(Comment comment) throws AppException;
 
 	/*

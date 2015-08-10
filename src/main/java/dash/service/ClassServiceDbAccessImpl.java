@@ -175,56 +175,7 @@ public class ClassServiceDbAccessImpl extends ApplicationObjectSupport
 		return getClassesFromEntities(recentClasses);
 	}
 
-	/********************* UPDATE-related methods implementation ***********************/
-	@Override
-	@Transactional
-	public void updateFullyClass(Class clas, Location loc) throws AppException {
-		// do a validation to verify FULL update with PUT
-
-		Class verifyClassExistenceById = verifyClassExistenceById(clas.getId());
-		if (verifyClassExistenceById == null) {
-			throw new AppException(
-					Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ clas.getId(), AppConstants.DASH_POST_URL);
-		}
-		copyAllProperties(verifyClassExistenceById, clas);
-		classDao.updateClass(verifyClassExistenceById);
-	}
-	
-	private void copyAllProperties(Class verifyClassExistenceById, Class clas) {
-
-		BeanUtilsBean withNull = new BeanUtilsBean();
-		try {
-			withNull.copyProperty(verifyClassExistenceById, "description",
-					clas.getDescription());
-			withNull.copyProperty(verifyClassExistenceById, "name",
-					clas.getName());
-			withNull.copyProperty(verifyClassExistenceById, "time",
-					clas.getTime());
-			withNull.copyProperty(verifyClassExistenceById, "duration",
-					clas.getDuration());
-			withNull.copyProperty(verifyClassExistenceById, "room",
-					clas.getRoom());
-			withNull.copyProperty(verifyClassExistenceById, "address",
-					clas.getAddress());
-			withNull.copyProperty(verifyClassExistenceById, "cores",
-					clas.getCores());
-			withNull.copyProperty(verifyClassExistenceById, "finished",
-					clas.getFinished());
-
-		} catch (IllegalAccessException e) {
-			logger.debug("debugging info for exception: ", e);
-		} catch (InvocationTargetException e) {
-			logger.debug("debugging info for exception: ", e);
-		}
-
-	}
-
 	/********************* DELETE-related methods implementation ***********************/
-
 	@Override
 	@Transactional
 	public void deleteClass(Class clas, Location loc) throws AppException {

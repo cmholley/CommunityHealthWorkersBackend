@@ -119,13 +119,11 @@ public class ClassDaoJPA2Impl implements ClassDao {
 		entityManager.flush();// force insert to receive the id of the group
 
 		// Give admin over new group to the new group
-
 		return clas.getId();
 	}
 
 	@Override
 	public void updateClass(Class clas) {
-		//TODO think about partial update and full update
 		entityManager.merge(clas);
 	}
 

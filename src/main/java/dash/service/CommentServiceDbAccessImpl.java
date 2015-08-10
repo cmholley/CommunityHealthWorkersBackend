@@ -51,16 +51,13 @@ CommentService {
 		aclController.createAce(comment, CustomPermission.DELETE);
 		return commentId;
 	}
-
 	
-
-	//Inactive
+	//TODO: Inactive
 	@Override
 	@Transactional
 	public void createComments(List<Comment> comments) throws AppException {
 		
 	}
-
 
 	// ******************** Read related methods implementation **********************
 	@Override
@@ -93,17 +90,6 @@ CommentService {
 
 		return response;
 	}
-	
-
-	
-	
-
-//	public List<Post> getRecentPosts(int numberOfDaysToLookBack) {
-//		List<Post> recentPosts = commentDao
-//				.getRecentPosts(numberOfDaysToLookBack);
-//
-//		return getPostsFromEntities(recentPosts);
-//	}
 
 	@Override
 	public int getNumberOfPosts() {
@@ -113,58 +99,7 @@ CommentService {
 
 	}
 
-
-
 	/********************* UPDATE-related methods implementation ***********************/
-	@Override
-	@Transactional
-	public void updateFullyComment(Comment comment) throws AppException {
-		//do a validation to verify FULL update with PUT
-		if (isFullUpdate(comment)) {
-			throw new AppException(Response.Status.BAD_REQUEST.getStatusCode(),
-					400,
-					"Please specify all properties for Full UPDATE",
-					"required properties - name, description",
-					AppConstants.DASH_POST_URL);
-		}
-		
-		try {
-			//do a validation whether comment exists
-			getCommentById(comment.getId());
-			commentDao.updateComment(comment);
-		} catch (AppException ex) {
-	
-			throw new AppException(Response.Status.NOT_FOUND.getStatusCode(),
-					404,
-					"The resource you are trying to update does not exist in the database",
-					"Please verify existence of data in the database for the id - "
-							+ comment.getId(),
-							AppConstants.DASH_POST_URL);
-		}		
-	}
-
-	/**
-	 * Verifies the "completeness" of post resource sent over the wire
-	 *
-	 * @param Post
-	 * @return
-	 */
-	private boolean isFullUpdate(Comment comment) {
-		return comment.getId() == null
-				|| comment.getContent() == null
-				|| comment.getImage() == null;
-	}
-
-	/********************* DELETE-related methods implementation ***********************/
-
-	@Override
-	@Transactional
-	public void deleteComment(Comment comment) {
-		commentDao.deleteCommentById(comment);
-		aclController.deleteACL(comment);
-
-	}
-
 	@Override
 	@Transactional
 	public void updatePartiallyComment(Comment comment) throws AppException {
@@ -194,5 +129,12 @@ CommentService {
 		}
 	}
 
+	/********************* DELETE-related methods implementation ***********************/
+	@Override
+	@Transactional
+	public void deleteComment(Comment comment) {
+		commentDao.deleteCommentById(comment);
+		aclController.deleteACL(comment);
 
+	}
 }
