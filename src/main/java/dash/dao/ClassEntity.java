@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -72,6 +73,12 @@ public class ClassEntity implements Serializable{
 	
 	@Column(name="active")
 	private int active;
+	
+	@Column (name="cost")
+	private String cost;
+	
+	@Column (name="registration_info")
+	private String registrationInfo;
 	
 	public ClassEntity(){}
 	
@@ -197,6 +204,22 @@ public class ClassEntity implements Serializable{
 
 	public void setActive(int active) {
 		this.active = active;
+	}
+
+	public String getCost() {
+		return cost;
+	}
+
+	public void setCost(String cost) {
+		this.cost = cost;
+	}
+
+	public String getRegistrationInfo() {
+		return registrationInfo;
+	}
+
+	public void setRegistrationInfo(String registrationInfo) {
+		this.registrationInfo = registrationInfo;
 	}
 	
 }

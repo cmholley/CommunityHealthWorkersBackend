@@ -64,6 +64,28 @@ public class Class implements  IAclObject{
 	@XmlElement(name="active")
 	private int active;
 	
+	@XmlElement (name="cost")
+	private String cost;
+	
+	@XmlElement (name="registration_info")
+	private String registrationInfo;
+	
+	public String getCost() {
+		return cost;
+	}
+
+	public void setCost(String cost) {
+		this.cost = cost;
+	}
+
+	public String getRegistrationInfo() {
+		return registrationInfo;
+	}
+
+	public void setRegistrationInfo(String registrationInfo) {
+		this.registrationInfo = registrationInfo;
+	}
+
 	public Class(ClassEntity classEntity) {
 		try {
 			BeanUtils.copyProperties(this, classEntity);
